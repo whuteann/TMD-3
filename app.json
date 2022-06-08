@@ -1,16 +1,33 @@
 {
   "expo": {
-    "name": "TMD-3",
-    "slug": "TMD-3",
-    "version": "1.0.0",
+    "name": "TMD",
+    "slug": "TMD",
+    "version": "0.0.5",
+    "owner": "studio20",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "sdkVersion": "42.0.0",
+    "icon": "./assets/images/icon.png",
+    "notification": {
+      "icon": "./assets/images/icon.png"
+    },
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#ffffff",
+          "sounds": [
+            "./local/assets/notification-sound.wav",
+            "./local/assets/notification-sound-other.wav"
+          ]
+        }
+      ]
+    ],
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -18,16 +35,49 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tth.tmd",
+      "buildNumber": "1"
     },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+    "extra": {
+      "firebase": {
+        "debug": {
+          "API_KEY": "AIzaSyAUvp3uoVR7PU_rnDQ52eOkRIDYiz5VmAk",
+          "AUTH_DOMAIN": "tmd-dev-3af10.firebaseapp.com",
+          "PROJECT_ID": "tmd-dev-3af10",
+          "STORAGE_BUCKET": "tmd-dev-3af10.appspot.com",
+          "MESSAGING_SENDER_ID": "850599432178",
+          "APP_ID": "1:850599432178:web:3c25784fbb556ce089a56b"
+        },
+        "prod": {}
+      },
+      "algolia": {
+        "debug": {
+          "id": "OZ8ARR91LK",
+          "search_key": "5de1cf4392a82c97a369f92bbc3abc9a",
+          "api_key": "bf27aa756cf853701ba487e4379e6e22"
+        },
+        "prod": {
+          "id": "",
+          "search_key": "",
+          "api_key": ""
+        }
       }
     },
+    "android": {
+      "versionCode": 5,
+      "googleServicesFile": "./google-services.json",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.thetechyhub.tmd"
+    },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "build": {
+        "babel": {}
+      }
     }
   }
 }

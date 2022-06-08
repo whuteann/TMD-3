@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "850599432178",
+    "project_id": "tmd-dev-3af10",
+    "storage_bucket": "tmd-dev-3af10.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:850599432178:android:f3998b79fee93ac289a56b",
+        "android_client_info": {
+          "package_name": "com.thetechyhub.tmd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "850599432178-s6h0sgs1etcmmlej8hnl2ncmt5030o80.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqYpza3Z-FBbx9L7Ftm2stagBPDXovDyQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "850599432178-s6h0sgs1etcmmlej8hnl2ncmt5030o80.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

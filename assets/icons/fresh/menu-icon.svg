@@ -1,0 +1,16 @@
+<svg id="menu" xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
+  <rect id="Rectangle_14" data-name="Rectangle 14" width="50" height="50" fill="#fff" opacity="0"/>
+  <g id="Group_7" data-name="Group 7" transform="translate(-384.746 -408.737)">
+    <g id="Icon_feather-menu" data-name="Icon feather-menu">
+      <g id="Path_42" data-name="Path 42">
+        <path id="Path_5025" data-name="Path 5025" d="M423.581,435.071H395.562a1.5,1.5,0,0,1,0-3h28.019a1.5,1.5,0,0,1,0,3Z" fill="#282828"/>
+      </g>
+      <g id="Path_43" data-name="Path 43">
+        <path id="Path_5026" data-name="Path 5026" d="M423.581,425.731H395.562a1.5,1.5,0,0,1,0-3h28.019a1.5,1.5,0,0,1,0,3Z" fill="#282828"/>
+      </g>
+      <g id="Path_44" data-name="Path 44">
+        <path id="Path_5027" data-name="Path 5027" d="M423.581,444.411H395.562a1.5,1.5,0,0,1,0-3h28.019a1.5,1.5,0,0,1,0,3Z" fill="#282828"/>
+      </g>
+    </g>
+  </g>
+</svg>
