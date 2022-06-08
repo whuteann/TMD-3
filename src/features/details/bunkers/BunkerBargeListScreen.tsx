@@ -17,29 +17,29 @@ import { getListStyle } from '../../../constants/Style';
 
 const BunkerBargeListScreen = ({ navigation }: RootNavigationProps<"BunkerBargeList">) => {
   const [search, setSearch] = useState('');
-	const [bunkers, setBunkers] = useState<Bunker[]>([]);
+  const [bunkers, setBunkers] = useState<Bunker[]>([]);
 
   const tailwind = useTailwind();
   const dispatch = useDispatch();
-  
+
   const [cursor, setCursor] = useState<number | undefined>(undefined);
-	const [isPaginating, setIsPaginating] = useState<boolean>(false);
+  const [isPaginating, setIsPaginating] = useState<boolean>(false);
   const LIMIT = 20;
 
-	useEffect(() => {
-		getData()
-	}, [search]);
-  
-	const getData = async () => {
-		try {
-			const data: Bunker[] = [];
-			const result = await AlgoliaHelper.bunkerIndexRef.search<Bunker>(search, {
-        filters: "deleted:false",
-				cacheable: true,
-				hitsPerPage: LIMIT
-			});
+  useEffect(() => {
+    getData()
+  }, [search]);
 
-			if (result.page + 1 > result.nbPages) {
+  const getData = async () => {
+    try {
+      const data: Bunker[] = [];
+      const result = await AlgoliaHelper.bunkerIndexRef.search<Bunker>(search, {
+        filters: "deleted:false",
+        cacheable: true,
+        hitsPerPage: LIMIT
+      });
+
+      if (result.page + 1 > result.nbPages) {
         setCursor(undefined);
       } else {
         setCursor(result.page + 1);
@@ -48,26 +48,26 @@ const BunkerBargeListScreen = ({ navigation }: RootNavigationProps<"BunkerBargeL
       for (const hit of result.hits) {
         let status: string | null = null;
 
-				const bunker = {
+        const bunker = {
           ...hit,
           id: hit.objectID
-				} as Bunker;
+        } as Bunker;
 
-        data.push(bunker); 
+        data.push(bunker);
       }
 
       setBunkers(data);
-		} catch {
+    } catch {
 
-		}
-	}
+    }
+  }
 
   const onPaginate = async () => {
     if (isPaginating || !cursor) return;
     setIsPaginating(true);
 
     const data: Bunker[] = [];
-    
+
     const result = await AlgoliaHelper.bunkerIndexRef.search<Bunker>(search, {
       filters: "deleted:false",
       page: cursor,
@@ -81,9 +81,9 @@ const BunkerBargeListScreen = ({ navigation }: RootNavigationProps<"BunkerBargeL
     }
 
     for (const hit of result.hits) {
-      const bunker = { 
+      const bunker = {
         ...hit,
-        id: hit.objectID 
+        id: hit.objectID
       } as Bunker;
 
       data.push(bunker);
@@ -103,38 +103,40 @@ const BunkerBargeListScreen = ({ navigation }: RootNavigationProps<"BunkerBargeL
     dispatch(setRefresh(false));
   }
 
-  return ( 
-    <Body 
-      header={<HeaderStack title={"Bunker Barge Details"} navigateProp={navigation} />} 
+  return (
+    <Body
+      header={<HeaderStack title={"Bunker Barge Details"} navigateProp={navigation} />}
       onRefresh={onRefresh}
       style={tailwind("mt-6")}
       fixedScroll={true}>
-      <SearchBar 
-        placeholder='Search' 
-        value={ search }
-        onChangeText={ (value) => setSearch(value) } />
-      
-      <AddButtonText 
-        text={"Create new bunker barge"} 
+      <SearchBar
+        placeholder='Search'
+        value={search}
+        onChangeText={(value) => setSearch(value)} />
+
+      <AddButtonText
+        text={"Create new bunker barge"}
         onPress={() => { navigation.navigate("CreateBunker") }} />
-      
-      <Header 
-        title="Bunker Barges" 
-        alignment='text-left' 
+
+      <Header
+        title="Bunker Barges"
+        alignment='text-left'
         color='text-black'
         style={tailwind('my-3')} />
-      
+
       <View style={tailwind('w-full mt-3')}>
         <FlatList
-          contentContainerStyle={ getListStyle() }
-          ItemSeparatorComponent={ () => <CardSpace /> }
+          contentContainerStyle={getListStyle()}
+          ItemSeparatorComponent={() => <CardSpace />}
           scrollEnabled={true}
           showsVerticalScrollIndicator={false}
           data={bunkers}
           onEndReachedThreshold={0.8}
           onEndReached={onPaginate}
           keyExtractor={(item: any, index: number) => index.toString()}
-          renderItem={({ item }: { item: any }) => { console.log(item); return <BunkerCard title={item.name} navigate={() => { navigation.navigate("BunkerDetail", { docID: item.id }) }} status="" />}}
+          renderItem={({ item }: { item: any }) => {
+            return <BunkerCard title={item.name} navigate={() => { navigation.navigate("BunkerDetail", { docID: item.id }); }} status="" />;
+          }}
         />
       </View>
     </Body>

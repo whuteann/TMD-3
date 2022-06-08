@@ -14,7 +14,7 @@ export const generateSalesSummaryExcel = async (month: number, year: number, ema
 
   generateSalesExcelFunc(data)
     .then((result) => {
-      console.log(result)
+
       onSuccess();
     })
     .catch((err) => {
@@ -35,7 +35,7 @@ export const generateArchivedQuotationExcel = async (month: number, year: number
 
   generateArchivedQuotationFunc(data)
     .then((result) => {
-      console.log(result)
+
       onSuccess();
     })
     .catch((err) => {
@@ -44,55 +44,53 @@ export const generateArchivedQuotationExcel = async (month: number, year: number
 
 }
 
-export const buildExcel = (data: Array<Quotation>) => {
-  let most_products: number = 1;
-  let most_ports: number = 1;
-  let sheet_content: Array<Array<string>> = [];
-  console.log(data);
+// export const buildExcel = (data: Array<Quotation>) => {
+//   let most_products: number = 1;
+//   let most_ports: number = 1;
+//   let sheet_content: Array<Array<string>> = [];
 
-  getRFQs((rfqReasons) => {
-    data.map(quo => {
-      let quotation_row: Array<string> = [];
-      let products: Array<string> = [];
-      let ports: Array<string> = [];
+//   getRFQs((rfqReasons) => {
+//     data.map(quo => {
+//       let quotation_row: Array<string> = [];
+//       let products: Array<string> = [];
+//       let ports: Array<string> = [];
 
-      let rfq_reason = rfqReasons.find(element => element.reason === quo.reject_reason)
+//       let rfq_reason = rfqReasons.find(element => element.reason === quo.reject_reason)
 
-      quo.products.map((product, index) => {
-        let prices: string = ""
-        product.prices.map((price, index) => {
-          if (index == 0) {
-            prices = `${price.value} ${price.unit}`;
-          } else {
-            prices = `${price.value} ${price.unit}, ${prices}`;
-          }
-        })
-        products = products.concat([product.product.name, prices])
-        if (index + 1 > most_products) {
-          most_products = most_products + 1;
-        }
-      })
+//       quo.products.map((product, index) => {
+//         let prices: string = ""
+//         product.prices.map((price, index) => {
+//           if (index == 0) {
+//             prices = `${price.value} ${price.unit}`;
+//           } else {
+//             prices = `${price.value} ${price.unit}, ${prices}`;
+//           }
+//         })
+//         products = products.concat([product.product.name, prices])
+//         if (index + 1 > most_products) {
+//           most_products = most_products + 1;
+//         }
+//       })
 
-      quo.ports.map((port, index) => {
-        ports = ports.concat([`${port.port}, ${port.delivery_location}`])
-        if (index + 1 > most_ports) {
-          most_ports = most_ports + 1;
-        }
-      })
+//       quo.ports.map((port, index) => {
+//         ports = ports.concat([`${port.port}, ${port.delivery_location}`])
+//         if (index + 1 > most_ports) {
+//           most_ports = most_ports + 1;
+//         }
+//       })
 
-      quotation_row = [quo.display_id, quo.customer?.name!]
-        .concat(products)
-        .concat([quo.barging_fee])
-        .concat(ports)
-        .concat([quo.payment_term, quo.currency_rate, quo.conversion_factor || "-", quo.validity_date, quo.validity_time, quo.reject_notes || "-", rfq_reason.code, rfq_reason.reason])
+//       quotation_row = [quo.display_id, quo.customer?.name!]
+//         .concat(products)
+//         .concat([quo.barging_fee])
+//         .concat(ports)
+//         .concat([quo.payment_term, quo.currency_rate, quo.conversion_factor || "-", quo.validity_date, quo.validity_time, quo.reject_notes || "-", rfq_reason.code, rfq_reason.reason])
 
-      sheet_content.push(quotation_row);
-    })
+//       sheet_content.push(quotation_row);
+//     })
 
-    sheet_content
-    console.log(sheet_content);
-  }, () => { })
-}
+
+//   }, () => { })
+// }
 
 export const getRFQs = (onSuccess: (quo: Array<any>) => void, onError: (error?: string) => void) => {
   rfqRef.where('deleted', '==', false)

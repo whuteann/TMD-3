@@ -327,7 +327,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 								buttonText="Upload Invoice"
 								path={SPARES_PURCHASE_ORDERS}
 								autoSave={false}
-								setSelectedFile={(file) => { console.log(file); setInvUploaded(file); }}
+								setSelectedFile={(file) => {setInvUploaded(file); }}
 								setUploaded={setUploadedINV}
 							/>
 							<View style={tailwind("mb-4")} />
@@ -447,7 +447,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 								buttonText="Upload Invoice"
 								path={SPARES_PURCHASE_ORDERS}
 								autoSave={false}
-								setSelectedFile={(file) => { console.log(file); setInvUploaded(file); }}
+								setSelectedFile={(file) => { setInvUploaded(file); }}
 								setUploaded={setUploadedINV}
 							/>
 							<View style={tailwind("mb-4")} />
@@ -563,7 +563,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 								buttonText="Upload Invoice"
 								path={SPARES_PURCHASE_ORDERS}
 								autoSave={false}
-								setSelectedFile={(file) => { console.log(file); setInvUploaded(file); }}
+								setSelectedFile={(file) => {setInvUploaded(file); }}
 								setUploaded={setUploadedINV}
 							/>
 							<View style={tailwind("mb-4")} />

@@ -37,7 +37,6 @@ const PriceDisplay: React.FC<InfoProps> = ({
         ]
       }];
     arr = [...arr, ...newArr]
-    console.log(arr);
     arr.splice(0, 1);
 
 

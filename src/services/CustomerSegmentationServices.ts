@@ -11,7 +11,6 @@ export const createCustomerSegmentation = (data: any, user: User, onSuccess: () 
     .add({ ...data, created_at: current, deleted: false })
     .then(docRef => {
       addLog(CUSTOMER_SEGMENTATIONS, docRef.id, CREATE_ACTION, user!, () => {
-        console.log(`Customer segmentation ${docRef.id} created succesfully`);
         onSuccess();
       }, (error) => {
         onError(`Something went wrong in createCustomerSegmentation: ${error}`);
@@ -28,7 +27,6 @@ export const updateCustomerSegmentation = (id: string, data: any, user: User, on
     .update(data, { merge: true })
     .then(() => {
       addLog(CUSTOMER_SEGMENTATIONS, id, UPDATE_ACTION, user!, () => {
-        console.log(`Customer segmentation ${id} updated succesfully`);
         onSuccess();
       }, (error) => {
         onError(`Something went wrong in updateCustomerSegmentation: ${error}`);
@@ -45,7 +43,6 @@ export const deleteCustomerSegmentation = (id: string, user: User, onSuccess: ()
     .update({ deleted_at: current, deleted: true })
     .then(() => {
       addLog(CUSTOMER_SEGMENTATIONS, id, DELETE_ACTION, user!, () => {
-        console.log(`Customer segmentation ${id} deleted succesfully`);
         onSuccess();
       }, (error) => {
         onError(`Something went wrong in deleteCustomerSegmentation: ${error}`);

@@ -38,7 +38,7 @@ const Dashboard = ({ navigation, route }: DrawerNavigationProps<"Dashboard">) =>
         <HeaderDashboard
           left={{ onPress: () => navigation.openDrawer() }}
           navigation={navigation}
-          middle={{ onPress: () => console.log("middle") }}
+          middle={{ onPress: () =>{} }}
         />
       }
       isFullScreen={true}>

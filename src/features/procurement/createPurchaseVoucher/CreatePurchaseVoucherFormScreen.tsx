@@ -149,7 +149,6 @@ const CreatePurchaseVoucherFormScreen = ({ navigation, route }: RootNavigationPr
             UploadFile(PURCHASE_VOUCHERS, values.proforma_invoice_file.file, values.proforma_invoice_file.filename, values.proforma_invoice_file.uri, () => { })
               .then(
                 filename_storage_output => {
-                  console.log("here reached");
                   let data = {
                     ...values,
                     secondary_id: displayID,

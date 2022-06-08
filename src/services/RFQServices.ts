@@ -23,7 +23,6 @@ export const createRFQ = async (data: any, user: any, onSuccess: () => void, onE
       .then(
         (docRef) => {
           addLog(RFQS, docRef.id, CREATE_ACTION, user!, () => {
-            console.log(`RFQ ${docRef.id} created succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in createRFQ: ${error}`);
@@ -51,7 +50,6 @@ export const updateRFQ = (id: string, existingCode: string, data: any, user: any
       .then(
         (docRef) => {
           addLog(RFQS, id, log_action, user!, () => {
-            console.log(`RFQ ${id} updated succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in updateRFQ: ${error}`);
@@ -79,7 +77,6 @@ export const updateRFQ = (id: string, existingCode: string, data: any, user: any
       .then(
         (docRef) => {
           addLog(RFQS, id, log_action, user!, () => {
-            console.log(`RFQ ${id} updated succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in updateRFQ: ${error}`);

@@ -152,7 +152,6 @@ const CreatePurchaseOrderFormScreen = ({ navigation, route }: RootNavigationProp
       break;
   }
 
-  console.log(replace_string, data.delivery_mode);
 
   displayID = data.secondary_id.replace(to_replace_string, replace_string);
 
@@ -164,7 +163,6 @@ const CreatePurchaseOrderFormScreen = ({ navigation, route }: RootNavigationProp
       <Formik
         initialValues={initialValues}
         onSubmit={(values) => {
-          console.log(values);
           setLoading(true);
           let bunker_selected = bunkers[bunkerList.indexOf(values.vessel_name)]
           let bunker_data = {

@@ -32,7 +32,6 @@ export const createSparesPurchaseVoucher = (data: any, user: any, onSuccess: (id
   getSparesPurchaseOrderData(
     data.spares_purchase_order_id,
     (poData) => {
-      console.log(poData);
       let purchaseVoucherID: string;
       //if have spare_purchase_vouchers
       if (poData.spares_purchase_vouchers) {
@@ -85,7 +84,6 @@ export const confirmSparesPurchaseVoucher = (poID: string, pvID: string, pvSecon
   getSparesPurchaseOrderData(
     poID,
     (poData) => {
-      console.log(poData);
       if (poData.spares_purchase_vouchers) {
 
         let newArr: Array<{ id: string, secondary_id: string }> = poData.spares_purchase_vouchers;
@@ -133,7 +131,7 @@ export const updateSparesPurchaseVoucher = (docID: string | undefined, data: Obj
     .then(
       () => {
         addLog(SPARES_PURCHASE_VOUCHERS, docID!, log_action, user!, () => {
-          console.log(`Updated purhase order ${docID} successfully`);
+
           onSuccess();
         }, (error) => {
           onError(`Something went wrong in updateSparesPurchaseVoucher: ${error}`);
@@ -154,7 +152,7 @@ export const approveSparesPurchaseVoucher = (docID: string, user: any, onSuccess
     .then(
       () => {
         addLog(SPARES_PURCHASE_VOUCHERS, docID!, APPROVE_ACTION, user!, () => {
-          console.log(`Approve purhase voucher ${docID} successfully`);
+
           onSuccess();
         }, (error) => {
           onError(`Something went wrong in approveSparesPurchaseVoucher: ${error}`);
@@ -174,7 +172,6 @@ export const rejectSparesPurchaseVoucher = (docID: string | undefined, rejectNot
     .then(
       () => {
         addLog(SPARES_PURCHASE_VOUCHERS, docID!, REJECT_ACTION, user!, () => {
-          console.log(`Rejected purhase order ${docID} successfully`);
           onSuccess();
         }, (error) => {
           onError(`Something went wrong in approveSparesPurchaseVoucher: ${error}`);

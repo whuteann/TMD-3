@@ -135,7 +135,6 @@ const SupplierListScreen = ({ navigation }: RootNavigationProps<"SupplierList">)
             }
             const importSuppliersFunc = functions.httpsCallable('importSuppliers');
             importSuppliersFunc(data).then(res => {
-              console.log(res.data);
               revalidateCollection(SUPPLIERS);
               setModalVisible(true);
             }).catch(err => {

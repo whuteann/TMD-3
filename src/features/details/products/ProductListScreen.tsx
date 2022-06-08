@@ -93,7 +93,6 @@ const ProductListScreen = ({ navigation }: RootNavigationProps<"ProductList">) =
             }
             const importProductsFunc = functions.httpsCallable('importProducts');
             importProductsFunc(data).then(res => {
-              console.log(res.data);
               revalidateCollection(PRODUCTS);
               setModalVisible(true);
             }).catch(err => {

@@ -89,7 +89,6 @@ const CreateSparesPurchaseOrderFormScreen2 = ({ navigation, route }: RootNavigat
       <Formik
         initialValues={initialValues}
         onSubmit={(values) => {
-          console.log(values);
           setLoading(true);
           let bunker_selected = bunkers[bunkerList.indexOf(values.vessel_name)]
           let bunker_data = {
@@ -113,8 +112,6 @@ const CreateSparesPurchaseOrderFormScreen2 = ({ navigation, route }: RootNavigat
             email: selected_contact_person.email,
             phone_number: selected_contact_person.phone_number
           }
-
-          console.log({ ...values, contact_person: contact_person_data, vessel_name: bunker_data });
 
           updateSparesPurchaseOrder(docID, { ...values, contact_person: contact_person_data, vessel_name: bunker_data }, user!, UPDATE_ACTION, () => {
             navigation.navigate("CreateSparesPurchaseOrderSummary", { docID: data.id });

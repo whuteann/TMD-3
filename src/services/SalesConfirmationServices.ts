@@ -60,7 +60,6 @@ export const createSalesConfirmation = (quotationID: string, quotation: any, pro
     .then(
       (docRef) => {
         addLog(SALES_CONFIRMATIONS, docRef.id, CREATE_ACTION, user!, () => {
-          console.log(`Created sales confirmation ${docRef.id} successfully`);
           onSuccess(docRef.id);
         }, (error) => {
           onError(`Something went wrong in createSalesConfirmation ${error}`);
@@ -126,7 +125,6 @@ export const recreateSalesConfirmation = (docID: string | undefined, quotation: 
       () => {
         addLog(SALES_CONFIRMATIONS, docID!, UPDATE_ACTION, user!, () => {
           onSuccess();
-          console.log("Updated sales confirmation successfully");
         }, (error) => {
           onError(`Something went wrong in recreateSalesConfirmation: ${error}`);
         });
@@ -145,7 +143,6 @@ export const updateSalesConfirmation = (docID: string, data: Object, user: any, 
     .then(
       () => {
         addLog(SALES_CONFIRMATIONS, docID!, log_action, user!, () => {
-          console.log(`Updated sales confirmation ${docID} successfully`);
           onSuccess();
         }, (error) => {
           onError(`Something went wrong in updateSalesConfirmation ${error}`);

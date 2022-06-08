@@ -13,7 +13,6 @@ export const createPurchaseOrder = (docID: string, data: any, user: any, onSucce
     .then(
       (docRef) => {
         addLog(PURCHASE_ORDERS, docRef.id, CREATE_ACTION, user!, () => {
-          console.log(`Purchase order ${docRef.id} created succesfully`);
           onSuccess(docRef.id);
         }, (error) => {
           onError(`Something went wrong in createPurchaseOrder: ${error}`);
@@ -34,7 +33,6 @@ export const updatePurchaseOrder = (poID: string | undefined, data: Object, user
     .then(
       () => {
         addLog(PURCHASE_ORDERS, poID!, log_action, user!, () => {
-          console.log(`Updated purhase order ${poID} successfully`);
           onSuccess();
         }, (error) => {
           onError(`Something went wrong in updatePurchaseOrder: ${error}`);
@@ -55,7 +53,6 @@ export const approvePurchaseOrder = (docID: string, user: any, onSuccess: () => 
     })
     .then(() => {
       addLog(PURCHASE_ORDERS, docID!, APPROVE_ACTION, user!, () => {
-        console.log(`Approved purhase order ${docID} successfully`);
         onSuccess();
       }, (error) => {
         onError(`Something went wrong in approvePurchaseOrder: ${error}`);
@@ -74,7 +71,6 @@ export const rejectPurchaseOrder = (docID: string, reject_notes: string, user: a
     })
     .then(() => {
       addLog(PURCHASE_ORDERS, docID!, REJECT_ACTION, user!, () => {
-        console.log(`Rejected purhase order ${docID} successfully`);
         onSuccess();
       }, (error) => {
         onError(`Something went wrong in rejectPurchaseOrder: ${error}`);

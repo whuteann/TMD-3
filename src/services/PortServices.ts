@@ -24,7 +24,6 @@ export const createPort = async (data: any, user: any, onSuccess: () => void, on
       .then(
         (docRef) => {
           addLog(PORTS, docRef.id, CREATE_ACTION, user!, () => {
-            console.log(`Port ${docRef.id} created succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in createPort: ${error}`);
@@ -52,7 +51,6 @@ export const updatePort = (id: string, existingName: string, data: any, user: an
       .then(
         (docRef) => {
           addLog(PORTS, id, log_action, user!, () => {
-            console.log(`Port ${id} updated succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in updatePort: ${error}`);
@@ -79,7 +77,6 @@ export const updatePort = (id: string, existingName: string, data: any, user: an
       .then(
         (docRef) => {
           addLog(PORTS, id, log_action, user!, () => {
-            console.log(`Port ${id} updated succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in updatePort: ${error}`);

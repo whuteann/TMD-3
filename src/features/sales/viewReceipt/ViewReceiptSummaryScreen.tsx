@@ -33,7 +33,6 @@ const ViewReceiptSummaryScreen = ({ navigation, route }: RootNavigationProps<"Vi
   const onDownload = async () => {
     let image = await loadPDFLogo();
     let html = generateOfficialReceiptPDF(data, image);
-    console.log(data);
     await createAndDisplayPDF(html);
   }
 

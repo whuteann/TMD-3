@@ -24,7 +24,6 @@ export const createProduct = async (data: any, user: any, onSuccess: () => void,
       .then(
         (docRef) => {
           addLog(PRODUCTS, docRef.id, CREATE_ACTION, user!, () => {
-            console.log(`Product ${docRef.id} created succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in createProduct: ${error}`);
@@ -43,7 +42,6 @@ export const updateProduct = (id: string, existingSku: string, data: any, user: 
   const {
     sku
   } = data;
-  console.log(`hello`);
   if (existingSku == sku) {
     productRef.doc(id)
       .update({
@@ -52,7 +50,6 @@ export const updateProduct = (id: string, existingSku: string, data: any, user: 
       .then(
         (docRef) => {
           addLog(PRODUCTS, id, log_action, user!, () => {
-            console.log(`Product ${id} updated succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in updateProduct: ${error}`);
@@ -81,7 +78,6 @@ export const updateProduct = (id: string, existingSku: string, data: any, user: 
       .then(
         (docRef) => {
           addLog(PRODUCTS, id, log_action, user!, () => {
-            console.log(`Product ${id} updated succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in updateProduct: ${error}`);

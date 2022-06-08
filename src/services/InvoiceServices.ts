@@ -16,7 +16,6 @@ export const createInvoice = (jobID: string, newInvoice: any, user: any, onSucce
     .get()
     .then(
       (item) => {
-        console.log(item.docs[0].data().amount);
         let prevAmount = item.docs[0].data().amount;
         let newAmount = prevAmount + 1
         
@@ -30,7 +29,6 @@ export const createInvoice = (jobID: string, newInvoice: any, user: any, onSucce
           .then(
             (docRef) => {
               addLog(INVOICES, docRef.id, CREATE_ACTION, user!, () => {
-                console.log(`Created invoice ${docRef.id} succesfully`);
                 onSuccess(docRef.id, newID);
               }, (error) => {
                 onError(`Something went wrong in createInvoice: ${error}`);
@@ -52,7 +50,6 @@ export const updateInvoice = (docID: string, data: Object, user: any, log_action
     .then(
       () => {
         addLog(INVOICES, docID, log_action, user!, () => {
-          console.log(`Updated invoice ${docID} successfully`);
           onSuccess();
         }, (error) => {
           onError(`Something went wrong in createInvoice: ${error}`);
@@ -90,7 +87,6 @@ export const approveInvoice = (docID: string, user: any, onError: (error: any) =
     })
     .then(() => {
       addLog(INVOICES, docID, APPROVE_ACTION, user!, () => {
-        console.log(`Approved invoice ${docID} successfully`);
       }, (error) => {
         onError(`Something went wrong in approveInvoice: ${error}`);
       });
@@ -108,7 +104,6 @@ export const rejectInvoice = (docID: string, rejectNotes: string, user: any, onE
     })
     .then(() => {
       addLog(INVOICES, docID, REJECT_ACTION, user!, () => {
-        console.log(`Rejected invoice ${docID} successfully`);
       }, (error) => {
         onError(`Something went wrong in rejectInvoice: ${error}`);
       });

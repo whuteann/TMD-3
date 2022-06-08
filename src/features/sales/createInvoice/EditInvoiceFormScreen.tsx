@@ -88,7 +88,6 @@ const EditInvoiceFormScreen = ({ navigation, route }: RootNavigationProps<"EditI
         enableReinitialize={true}
         validationSchema={formSchema}
         onSubmit={(values) => {
-          console.log(values);
 
           let attention_pic_info: contactPerson = customerData.contact_persons[attentionPICList.indexOf(values.attention_pic)] || { name: "", email: "", phone_number: "" };
 

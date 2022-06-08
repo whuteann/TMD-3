@@ -90,7 +90,6 @@ const CreateProcurementFormScreen = ({ navigation }: RootNavigationProps<"Create
         initialValues={initialValues}
         onSubmit={
           (values) => {
-            console.log(values);
             let supplier_picked = suppliers[suppliersList.indexOf(values.supplier)]
             let product_picked = products[productsList.indexOf(values.product)]
 

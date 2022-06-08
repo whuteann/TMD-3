@@ -33,7 +33,7 @@ export const UploadFile = async (path: string, file: any, fileName: string, uri:
         console.log(error, "here");
       },
       () => {
-        console.log("hellooooo");
+
         nextAction(filename);
       })
   } else {
@@ -75,7 +75,6 @@ export const UploadeFileWithCompleteFilename = async (path: string, file: any, f
         onError(error);
       },
       () => {
-        console.log("done");
         nextAction();
       })
   }
@@ -98,7 +97,7 @@ export const UploadBatch = async (path: string, files: Array<{ file: File, filen
   })
 
   const resolve = await Promise.all(Uploads);
-  console.log(resolve);
+
 }
 
 export const deleteFile = (path: string, filename_storage: string, onSuccess: () => void) => {
@@ -106,7 +105,6 @@ export const deleteFile = (path: string, filename_storage: string, onSuccess: ()
     .child(`${path}/${filename_storage}`)
     .delete()
     .then(() => {
-      console.log("file deleted successfully")
       onSuccess();
     }).catch(error => console.log("error deleting file: ", error))
 
@@ -154,12 +152,10 @@ export const UploadFileAndroid = (file: { name: string, file: File, uri: string 
       response.blob().then(blob => {
 
         imageRef.put(blob).then(() => {
-          console.log("success?")
           storageRef
             .child(filename)
             .getDownloadURL()
             .then(url => {
-              console.log(url);
               resolve({ filename: file.name, filename_storage: `${file.name}.${currentTime}`, url: url });
             });
         }).catch(() => {

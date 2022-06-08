@@ -137,7 +137,6 @@ const CustomerListScreen = ({ navigation }: RootNavigationProps<"CustomerList">)
             importCustomersFunc(data).then(res => {
               setModalVisible(true);
               revalidateCollection(CUSTOMERS);
-              console.log(res.data);
             }).catch(err => {
               setHasError(true);
               console.log(err);

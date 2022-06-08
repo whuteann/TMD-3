@@ -36,8 +36,6 @@ const ViewInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"Vi
 	}, [data?.status])
 
 	let bunkers = data?.bunker_barges;
-
-	console.log(data, bunkers);
 	
 	if (!data || !bunkers) return <LoadingData message="This document might not exist" />;
 

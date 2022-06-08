@@ -23,7 +23,6 @@ export const createShipSpare = async (data: any, user: any, onSuccess: () => voi
       .then(
         (docRef) => {
           addLog(SHIP_SPARES, docRef.id, CREATE_ACTION, user!, () => {
-            console.log(`Ship spares ${docRef.id} created succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in createShipSpares: ${error}`);
@@ -44,16 +43,13 @@ export const updateShipSpare = (id: string, existingCode: string, data: any, use
   } = data;
 
   if (existingCode == product_code) {
-    console.log(id);
     shipSpareRef.doc(id)
       .update({
         ...data
       })
       .then(
         (docRef) => {
-          console.log("helloe");
           addLog(SHIP_SPARES, id, log_action, user!, () => {
-            console.log(`Ship spares ${id} updated succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in updateShipSpares: ${error}`);
@@ -80,7 +76,6 @@ export const updateShipSpare = (id: string, existingCode: string, data: any, use
       .then(
         (docRef) => {
           addLog(SHIP_SPARES, id, log_action, user!, () => {
-            console.log(`Ship spares ${id} updated succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in updateShipSpares: ${error}`);

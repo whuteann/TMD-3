@@ -90,7 +90,6 @@ const ProceedSalesConfirmationScreen = ({ navigation, route }: RootNavigationPro
 		)
 	))
 
-	console.log(data.sales_confirmation_id, "suspicious");
 
 	const proceedSales = () => {
 		let pickedPort = data.ports[pickedIndex || 0];
@@ -102,7 +101,6 @@ const ProceedSalesConfirmationScreen = ({ navigation, route }: RootNavigationPro
 			setLoading(false);
 		} else {
 			if (data.sales_confirmation_id, data.sales_confirmation_id) {
-				console.log("recreating sales confirmation...");
 				recreateSalesConfirmation(
 					data.sales_confirmation_id,
 					poNumber
@@ -118,7 +116,6 @@ const ProceedSalesConfirmationScreen = ({ navigation, route }: RootNavigationPro
 						setLoading(false);
 					});
 			} else {
-				console.log("creating sales confirmation...", data.sales_confirmation_id);
 				createSalesConfirmation(
 					docID,
 					{ ...data, purchase_order_no: poNumber, port: pickedPort.port, delivery_location: pickedPort.delivery_location, delivery_mode: pickedDeliveryMode },

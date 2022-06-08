@@ -23,7 +23,6 @@ export const createBunker = async (data: any, user: any, onSuccess: () => void, 
       .then(
         (docRef) => {
           addLog(BUNKERS, docRef.id, CREATE_ACTION, user!, () => {
-            console.log(`Bunker ${docRef.id} created succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in createBunker: ${error}`);
@@ -54,7 +53,6 @@ export const updateBunker = (id: string, existingOfficialNumber: string, data: a
       .then(
         (docRef) => {
           addLog(BUNKERS, id, log_action, user!, () => {
-            console.log(`Bunker ${id} updated succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in updateBunker: ${error}`);
@@ -81,7 +79,6 @@ export const updateBunker = (id: string, existingOfficialNumber: string, data: a
       .then(
         (docRef) => {
           addLog(BUNKERS, id, log_action, user!, () => {
-            console.log(`Bunker ${id} updated succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in updateBunker: ${error}`);

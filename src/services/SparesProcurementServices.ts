@@ -23,7 +23,6 @@ export const createSparesProcurement = (sparesProcurement: any, user: any, onSuc
           .then(
             (docRef) => {
               addLog(SPARES_PROCUREMENTS, docRef.id, CREATE_ACTION, user!, () => {
-                console.log(`Created spares procurement ${docRef.id} succesfully`);
                 onSuccess(docRef.id);
               }, (error) => {
                 onError(`Something went wrong in updateQuotation: ${error}`);
@@ -47,7 +46,6 @@ export const updateSparesProcurement = (docID: string, data: any, user: any, log
     .then(
       () => {
         addLog(SPARES_PROCUREMENTS, docID, log_action, user!, () => {
-          console.log(`Updated spares procurement ${docID} successfully`);
           onSuccess();
         }, (error) => {
           onError(`Something went wrong in updateQuotation: ${error}`);
@@ -69,7 +67,6 @@ export const approveSparesProcurement = (docID: string, user: any, onSuccess: ()
     .then(
       () => {
         addLog(SPARES_PROCUREMENTS, docID, APPROVE_ACTION, user!, () => {
-          console.log(`Approved spares procurement ${docID} successfully`);
           onSuccess();
         }, (error) => {
           onError(`Something went wrong in updateQuotation: ${error}`);
@@ -91,7 +88,7 @@ export const rejectSparesProcurement = (docID: string, rejectNotes: string, user
     .then(
       () => {
         addLog(SPARES_PROCUREMENTS, docID, REJECT_ACTION, user!, () => {
-          console.log(`Rejected spares procurement ${docID} successfully`);
+
           onSuccess();
         }, (error) => {
           onError(`Something went wrong in updateQuotation: ${error}`);

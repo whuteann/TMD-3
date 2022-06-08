@@ -29,8 +29,6 @@ const UploadFileButton: React.FC<ButtonProps> = (({
 
   const doSomethingWithFile = async () => {
     fetch(uri).then(res => {
-      console.log(res);
-
       if (Platform.OS == "web") {
         onSuccess(res.url);
       } else {
@@ -39,7 +37,6 @@ const UploadFileButton: React.FC<ButtonProps> = (({
           reader.readAsDataURL(blob);
           reader.onloadend = function () {
             var base64data = reader.result;
-            console.log(base64data);
 
             onSuccess(`${base64data}`)
           }
@@ -59,7 +56,6 @@ const UploadFileButton: React.FC<ButtonProps> = (({
         copyToCacheDirectory: false,
       }).then((value) => {
         if (value["type"] == "success") {
-          console.log(value);
           setText(`${value['name']}`);
           setUri(`${value['uri']}`);
           setModalOpen(true);

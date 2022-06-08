@@ -23,7 +23,6 @@ export const createProcurement = (procurement: any, user: any, onSuccess: ({ new
           .then(
             (docRef) => {
               addLog(PROCUREMENTS, docRef.id, CREATE_ACTION, user!, () => {
-                console.log(`Created procurement ${docRef.id} succesfully`);
                 onSuccess({ newID: docRef.id, displayID: newID })
               }, (error) => {
                 onError(`Something went wrong in createProcurement: ${error}`);
@@ -45,7 +44,6 @@ export const updateProcurement = (docID: string, data: Object, user: any, onSucc
     .then(
       () => {
         addLog(PROCUREMENTS, docID, UPDATE_ACTION, user!, () => {
-          console.log(`Updated procurement ${docID} successfully`);
           onSuccess();
         }, (error) => {
           onError(`Something went wrong in updateProcurement: ${error}`);

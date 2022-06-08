@@ -30,7 +30,7 @@ const NotificationCard: React.FC<CardProps> = ({
     }
     operation();
   }
-  console.log(created_at.toDate());
+
 
   return (
     <TouchableOpacity style={tailwind("p-5")} onPress={onPress}>

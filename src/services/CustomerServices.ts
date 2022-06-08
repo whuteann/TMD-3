@@ -29,7 +29,6 @@ export const createCustomer = async (data: any, user: User, onSuccess: () => voi
       })
       .then((docRef) => {
         addLog(CUSTOMERS, docRef.id, CREATE_ACTION, user!, () => {
-          console.log(`Bunker ${docRef.id} created succesfully`);
           onSuccess();
         }, (error) => {
           onError(`Something went wrong in createBunker: ${error}`);
@@ -55,7 +54,6 @@ export const updateCustomer = (id: string, existingName: string, data: any, user
       .then(
         (docRef) => {
           addLog(CUSTOMERS, id, log_action, user!, () => {
-            console.log(`Customer ${id} updated succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in updateCustomer: ${error}`);
@@ -82,7 +80,6 @@ export const updateCustomer = (id: string, existingName: string, data: any, user
       .then(
         (docRef) => {
           addLog(CUSTOMERS, id, log_action, user!, () => {
-            console.log(`Customer ${id} updated succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in updateCustomer: ${error}`);

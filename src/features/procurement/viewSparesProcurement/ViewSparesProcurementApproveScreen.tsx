@@ -58,7 +58,6 @@ const ViewSparesProcurementApproveScreen = ({ navigation, route }: RootNavigatio
 			visible={modalOpen}
 			setModalClose={() => { setModalOpen(false) }}
 			nextAction={() => {
-				console.log(pickedIndex);
 				let pickedSupplier = data.suppliers[pickedIndex || 0];
 				updateSparesProcurement(data.id, { suppliers: [pickedSupplier] }, user!, UPDATE_ACTION, () => {
 					data.suppliers.map((item) => {

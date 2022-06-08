@@ -27,7 +27,7 @@ export const createReceipt = (data: Receipt | any, user: any, onSuccess: (id) =>
             (docRef) => {
 
               addLog(RECEIPTS, docRef.id, CREATE_ACTION, user!, () => {
-                console.log(`Created receipt ${docRef.id} successfully`);
+
                 onSuccess(docRef.id);
               }, (error) => {
                 onError(`Something went wrong in createInvoice: ${error}`);
@@ -48,7 +48,6 @@ export const createReceipt = (data: Receipt | any, user: any, onSuccess: (id) =>
           .then(
             (docRef) => {
               addLog(RECEIPTS, docRef.id, CREATE_ACTION, user!, () => {
-                console.log(`Created receipt ${docRef.id} successfully`);
                 onSuccess(docRef.id);
               }, (error) => {
                 onError(`Something went wrong in createInvoice: ${error}`);
@@ -72,11 +71,7 @@ export const updateReceipt = (reID: string, data: Object, user: any, log_action:
     .set(data, { merge: true })
     .then(
       () => {
-        console.log(`Updated receipt ${reID} successfully`);
-        onSuccess();
-
         addLog(RECEIPTS, reID, log_action, user!, () => {
-          console.log(`Updated receipt ${reID} successfully`);
           onSuccess();
         }, (error) => {
           onError(`Something went wrong in updateInvoice: ${error}`);
@@ -96,7 +91,6 @@ export const confirmReceipt = (invID: string, receiptID: string, receiptSecondar
     (invData) => {
 
       if (invData.receipts) {
-        console.log(invData.receipts, "existing");
 
         let newArr: Array<{ id: string, secondary_id: string }> = invData.receipts;
         const searchIndex = newArr.findIndex((receipt) => receipt.id == receiptID);
@@ -106,7 +100,6 @@ export const confirmReceipt = (invID: string, receiptID: string, receiptSecondar
 
           updateInvoice(invID, { receipts: newArr }, user!, UPDATE_ACTION, () => {
             updateReceipt(receiptID, { display_id: receiptSecondaryID, revised_code: revisedCode }, user!, SUBMIT_ACTION, () => {
-              console.log(`Updated receipt ${receiptID} successfully`);
               onSuccess();
             }, () => {
             })
@@ -114,12 +107,10 @@ export const confirmReceipt = (invID: string, receiptID: string, receiptSecondar
           });
 
         } else {
-          console.log("in the array");
           newArr[searchIndex].secondary_id = receiptSecondaryID
 
           updateInvoice(invID, { receipts: newArr }, user!, UPDATE_ACTION, () => {
             updateReceipt(receiptID, { display_id: receiptSecondaryID, revised_code: revisedCode }, user!, SUBMIT_ACTION, () => {
-              console.log(`Updated receipt ${receiptID} successfully`);
               onSuccess();
             }, () => {
             })
@@ -128,10 +119,8 @@ export const confirmReceipt = (invID: string, receiptID: string, receiptSecondar
           });
         }
       } else {
-        console.log(invData.receipt, "no existing");
         updateInvoice(invID, { receipts: [{ id: receiptID, secondary_id: receiptSecondaryID, }] }, user!, UPDATE_ACTION, () => {
           updateReceipt(receiptID, { display_id: receiptSecondaryID, revised_code: revisedCode }, user!, SUBMIT_ACTION, () => {
-            console.log(`Updated receipt ${receiptID} successfully`);
             onSuccess();
           }, () => {
           })

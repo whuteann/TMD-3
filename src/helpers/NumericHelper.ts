@@ -1,5 +1,4 @@
 export const numberToTextGenerator = (number: number) => {
-  console.log("number: ", number)
   var no = number;
   var string: string = "";
   var length = no.toString().length;
@@ -53,7 +52,6 @@ export const numberToTextGenerator = (number: number) => {
   newStr = newStr.replace(/ten seven/gi, 'SEVENTEEN ');
   newStr = newStr.replace(/ten eight/gi, 'EIGHTEEN ');
   newStr = newStr.replace(/ten nine/gi, 'NINTEEN ');
-  console.log("text: ", newStr)
   return newStr;
 }
 

@@ -87,7 +87,6 @@ export const deleteUser = (id: string, user: any, onSuccess: () => void, onError
 
   deleteUser(data)
     .then((result) => {
-      console.log(user);
       addLog(USERS, id, DELETE_ACTION, user!, () => {
         onSuccess();
       }, (err) => {

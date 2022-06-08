@@ -23,7 +23,6 @@ export const createBank = async (data: any, user: any, onSuccess: () => void, on
       .then(
         (docRef) => {
           addLog(BANKS, docRef.id, CREATE_ACTION, user!, () => {
-            console.log(`Bank ${docRef.id} created succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in createBank ${error}`);
@@ -51,7 +50,6 @@ export const updateBank = (id: string, existingAccountNo: string, data: any, use
       .then(
         (docRef) => {
           addLog(BANKS, id, log_action, user!, () => {
-            console.log(`Bank ${id} created succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in createBank ${error}`);
@@ -79,7 +77,6 @@ export const updateBank = (id: string, existingAccountNo: string, data: any, use
       .then(
         (docRef) => {
           addLog(BANKS, id, log_action, user!, () => {
-            console.log(`Bank ${id} created succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in createBank ${error}`);

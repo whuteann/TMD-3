@@ -68,7 +68,6 @@ const ProceedSalesConfirmationFinalScreen = ({ navigation, route }: RootNavigati
 	const products = data?.products || [];
 
 	const completeProceedSales = (values) => {
-		console.log(values);
 		updateSalesConfirmation(docID, { ...values, status: CONFIRMED }, user!, SUBMIT_ACTION, () => {
 			createJobConfirmation({ ...data, ...values }, user!, (val) => {
 				const { id, displayID } = val;
@@ -203,7 +202,6 @@ const ProceedSalesConfirmationFinalScreen = ({ navigation, route }: RootNavigati
 				}}
 				onSubmit={
 					(values) => {
-						console.log(values);
 						setSubmitValues(values);
 						setModalOpen(true);
 					}}

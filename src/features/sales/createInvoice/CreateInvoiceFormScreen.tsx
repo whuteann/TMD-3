@@ -111,7 +111,6 @@ const CreateInvoiceFormScreen = ({ navigation, route }: RootNavigationProps<"Cre
         enableReinitialize={true}
         validationSchema={formSchema}
         onSubmit={(values) => {
-          console.log(values);
 
           let customer_info: Customer = {
             secondary_id: customer?.secondary_id || "",
@@ -131,7 +130,6 @@ const CreateInvoiceFormScreen = ({ navigation, route }: RootNavigationProps<"Cre
 
           let attention_pic_info: contactPerson = customer_info.contact_persons[attentionPICList.indexOf(values.attention_pic)] || { name: "", email: "", phone_number: "" };
 
-          console.log({ ...values, customer: customer_info, ...initialValues, attention_pic: attention_pic_info });
 
           setLoading(true);
 

@@ -105,7 +105,6 @@ const UploadButton: React.FC<ButtonProps> = (({
         .child(`${path}/${filename_storage}`)
         .delete()
         .then(() => {
-          console.log("file deleted successfully")
         }).catch(error => console.log("error deleting file: ", error))
     }
     setFile(undefined);
@@ -124,7 +123,6 @@ const UploadButton: React.FC<ButtonProps> = (({
         copyToCacheDirectory: false,
       }).then((value) => {
         if (value["type"] == "success") {
-          console.log(value);
 
           setFile(value);
           setText(`${value['name']}`);

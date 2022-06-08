@@ -62,14 +62,12 @@ export const createJobConfirmation = (salesConfirmation: SalesConfirmation, user
     sales_id: salesConfirmation.sales_id
   }
 
-  console.log(newJobConfirmation);
 
   jobConfirmationRef
     .add(newJobConfirmation)
     .then(
       (docRef) => {
         addLog(JOB_CONFIRMATIONS, docRef.id, CREATE_ACTION, user!, () => {
-          console.log(`Created job confirmation ${docRef.id} successfully`);
           onSuccess({ id: docRef.id, displayID: jobID });
         }, (error) => {
           onError(`Something went wrong in recreateSalesConfirmation ${error}`);
@@ -89,7 +87,6 @@ export const updateJobConfirmation = (jobID: string | undefined, data: Object, u
     .then(
       () => {
         addLog(JOB_CONFIRMATIONS, jobID!, UPDATE_ACTION, user!, () => {
-          console.log(`Updated job confirmation ${jobID} successfully`);
           onSuccess();
         }, (error) => {
           onError(`Something went wrong in recreateSalesConfirmation ${error}`);

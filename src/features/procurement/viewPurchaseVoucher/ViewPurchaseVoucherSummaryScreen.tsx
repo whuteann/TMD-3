@@ -32,7 +32,6 @@ const ViewPurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavigationP
 	const linkTo = useLinkTo();
 	const user = useSelector(UserSelector);
 
-	console.log(status);
 	const { data } = useDocument<PurchaseVoucher>(`${PURCHASE_VOUCHERS}/${docID}`, {
 		ignoreFirestoreDocumentSnapshotField: false,
 	})

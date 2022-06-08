@@ -33,7 +33,6 @@ const ViewTabReceipt: React.FC<inputProps> = ({
   const onDownload = async () => {
     let image = await loadPDFLogo();
     let html = generateOfficialReceiptPDF(data, image);
-    console.log(data);
     await createAndDisplayPDF(html);
   }
 

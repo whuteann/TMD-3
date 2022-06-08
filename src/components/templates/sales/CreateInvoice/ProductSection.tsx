@@ -41,7 +41,6 @@ const ProductSection: React.FC<sectionProps> = ({
         newList[index].BDN_quantity.unit = value;
         break;
       case "value price":
-        console.log(value, "equal");
         newList[index].price.value = value;
         newList[index].MOPS = true;
         break;

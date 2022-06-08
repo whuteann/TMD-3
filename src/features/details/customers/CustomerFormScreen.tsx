@@ -125,8 +125,6 @@ const CustomerFormScreen = ({ navigation, route }: RootNavigationProps<"CreateCu
     });
   }
 
-  console.log(customer?.segmentation);
-
   return (
     <Body header={<HeaderStack title={"Customer Details"} navigateProp={navigation} />} style={tailwind("mt-6")}>
       <Header

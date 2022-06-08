@@ -93,7 +93,6 @@ const PortListScreen = ({ navigation }: RootNavigationProps<"PortList">) => {
             }
             const importLocationsFunc = functions.httpsCallable('importLocations');
             importLocationsFunc(data).then(res => {
-              console.log(res.data);
               setModalVisible(true);
               revalidateCollection(PORTS);
             }).catch(err => {

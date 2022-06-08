@@ -13,7 +13,7 @@ export const createPurchaseVoucher = (data: any, user: any, onSuccess: (id) => v
   getPurchaseOrderData(
     data.purchase_order_id,
     (poData) => {
-      console.log(poData);
+
       let purchaseVoucherID: string;
       //if have purchase_vouchers
       if (poData.purchase_vouchers) {
@@ -66,7 +66,7 @@ export const confirmPurchaseVoucher = (poID: string, pvID: string, pvSecondaryID
   getPurchaseOrderData(
     poID,
     (poData) => {
-      console.log(poData);
+
       if (poData.purchase_vouchers) {
 
         let newArr: Array<{ id: string, secondary_id: string }> = poData.purchase_vouchers;

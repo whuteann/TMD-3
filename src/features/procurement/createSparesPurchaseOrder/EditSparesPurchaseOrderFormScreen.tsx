@@ -94,7 +94,6 @@ const EditSparesPurchaseOrderFormScreen = ({ navigation, route }: RootNavigation
       <Formik
         initialValues={initialValues}
         onSubmit={(values) => {
-          console.log(values);
           setLoading(true);
           updateSparesPurchaseOrder(data.id, { ...values, status: DRAFT, created_by: user }, user!, UPDATE_ACTION, () => {
             updateSparesProcurement(data.spares_procurement_id, { spares_purchase_order_id: data.id, spares_purchase_order_secondary_id: data.secondary_id, status: PENDING }, user!, UPDATE_ACTION, () => {

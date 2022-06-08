@@ -31,9 +31,7 @@ const Drawer = ({ navigation }: DrawerNavigationProps<"Dashboard">) => {
   const handleSignOut = async () => {
     await removePushNotification(user?.id!, token!, () => {
       auth.signOut().then(() => {
-        console.log("Signed out successfully");
       }).catch((error) => {
-        console.log("Whoopsie, something happened")
       });
     }, () => { });
   }

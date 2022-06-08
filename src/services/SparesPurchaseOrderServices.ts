@@ -11,9 +11,7 @@ export const createSparesPurchaseOrder = (docID: string, data: any, user: any, o
     .add({ ...{ secondary_id: docID, created_at: current_time, created_by: user }, ...data })
     .then(
       (docRef) => {
-        console.log("here");
         addLog(SPARES_PURCHASE_ORDERS, docRef.id, CREATE_ACTION, user!, () => {
-          console.log(`Purchase order ${docRef.id} created succesfully`);
           onSuccess(docRef.id);
         }, (error) => {
           onError(`Something went wrong in createSparesPurchaseOrder: ${error}`);
@@ -34,7 +32,6 @@ export const updateSparesPurchaseOrder = (poID: string | undefined, data: Object
     .then(
       () => {
         addLog(SPARES_PURCHASE_ORDERS, poID!, log_action, user!, () => {
-          console.log(`Updated spares purhase order ${poID} successfully`);
           onSuccess();
         }, (error) => {
           onError(`Something went wrong in createSparesPurchaseOrder: ${error}`);
@@ -55,7 +52,6 @@ export const approveSparesPurchaseOrder = (docID: string, user: any, onSuccess: 
     })
     .then(() => {
       addLog(SPARES_PURCHASE_ORDERS, docID, APPROVE_ACTION, user!, () => {
-        console.log(`Spares purhase order ${docID} approved succesfully`);
         onSuccess()
       }, (error) => {
         onError(`Something went wrong in createSparesPurchaseOrder: ${error}`);
@@ -76,7 +72,6 @@ export const rejectSparesPurchaseOrder = (docID: string, rejectNotes: string, us
     })
     .then(() => {
       addLog(SPARES_PURCHASE_ORDERS, docID, REJECT_ACTION, user!, () => {
-        console.log(`Spares purhase order ${docID} rejected succesfully`);
         onSuccess()
       }, (error) => {
         onError(`Something went wrong in createSparesPurchaseOrder: ${error}`);
@@ -94,8 +89,6 @@ export const verifySparesPurchaseOrder = (docID: string, user: any, onSuccess: (
     })
     .then(() => {
       addLog(SPARES_PURCHASE_ORDERS, docID, VERIFY_ACTION, user!, () => {
-        //put the email code here maybe
-        console.log(`Spares purhase order ${docID} verified succesfully`);
         onSuccess()
       }, (error) => {
         onError(`Something went wrong in createSparesPurchaseOrder: ${error}`);
