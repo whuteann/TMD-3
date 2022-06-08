@@ -1,11 +1,10 @@
 {
   "expo": {
-    "name": "TMD",
+    "name": "Tumpuan Megah Development",
     "slug": "TMD",
     "version": "0.0.5",
     "owner": "studio20",
     "orientation": "portrait",
-    "sdkVersion": "43.0.0",
     "icon": "./assets/images/icon.png",
     "notification": {
       "icon": "./assets/images/icon.png"
@@ -26,6 +25,12 @@
             "./local/assets/notification-sound-other.wav"
           ]
         }
+      ],
+      [
+        "expo-document-picker",
+        {
+          "appleTeamId": "Z79WHRXDPX"
+        }
       ]
     ],
     "updates": {
@@ -36,7 +41,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.tth.tmd",
+      "bundleIdentifier": "com.tthub.tmd",
       "buildNumber": "1"
     },
     "extra": {

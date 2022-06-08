@@ -53,7 +53,6 @@ const sendBatchPushNotifications = async (roles: Array<string>, message: string)
     message: message
   }
   sendPushNotificationsFunc(data).then(val => {
-    console.log(val)
   }).catch(err => {
     console.log(err)
   });
@@ -102,7 +101,6 @@ const addNotifications = async (roles: Array<string>, message: string, data: any
 }
 
 export const sendNotifications = async (roles: Array<string>, message: string, data: any | { screen: string, docID: string }) => {
-  console.log("sending notifications...");
   await sendBatchPushNotifications(roles, message);
   await addNotifications(roles, message, data);
 }
