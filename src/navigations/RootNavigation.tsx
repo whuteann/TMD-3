@@ -5,15 +5,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainNavigation from "./MainNavigation";
 import { RootRoutes } from "./NavigationProps/NavigationProps";
 import { linking } from "./Links";
-import LoginPage from "../features/auth/LoginScreen";
 import LoadingData from "../components/atoms/loading/loadingData";
 import { AUTH_LOADING, AUTH_LOGGED_IN } from "../constants/Auth";
-import { Linking, Platform, View } from "react-native";
+import { Linking, Platform } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUserContext } from "../providers/UserProvider";
 import AuthNavigation from "./AuthNavigation";
-import tailwindConfig from "../../tailwind.config";
-import { useTailwind } from "tailwind-rn/dist";
 
 const Stack = createNativeStackNavigator();
 

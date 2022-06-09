@@ -52,11 +52,12 @@ const LoginPage = ({ navigation }: AuthNavigationProps<"Login">) => {
 
 	const onSubmit = async (values) => {
 		setLoading(true);
+		dispatch(setToken("Sheesh!"));
 
 		login(values.email, values.password, (user) => {
 			setLoading(false);
 
-			if (Platform.OS !== "web") {
+			if (Platform.OS == "android" || Platform.OS == "ios") {
 				registerForPushNotification(user.id).then(token => {
 					dispatch(setToken(token));
 				}).catch(err => console.log(err));

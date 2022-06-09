@@ -7,22 +7,22 @@ import DrawerContent from "../../components/templates/drawer/DrawerContent"
 import DashboardDesktopExtra from '../../components/templates/dashboard/DashboardDesktopExtras';
 import TextLabel from '../../components/atoms/typography/TextLabel';
 import { useSelector } from 'react-redux';
-import { UserSelector } from '../../redux/reducers/Auth';
+import { TokenSelector, UserSelector } from '../../redux/reducers/Auth';
 import Body from '../../components/atoms/display/Body';
 import HeaderDashboard from '../../components/templates/dashboard/HeaderDashboard';
 import sales from '../../Lists/MenuSectionList/Sales';
 import procurements from '../../Lists/MenuSectionList/Procurements';
 import NotificationButton from '../../components/templates/dashboard/notification/NotificationButton';
-import RegularButton from '../../components/atoms/buttons/RegularButton';
-import { sendNotifications } from '../../services/NotificationServices';
-import { SUPER_ADMIN_ROLE } from '../../types/Common';
 
 const Dashboard = ({ navigation, route }: DrawerNavigationProps<"Dashboard">) => {
   const tailwind = useTailwind();
 
   const user = useSelector(UserSelector);
+  const token: string | null = useSelector(TokenSelector);
+
   const permissions = user?.permission;
   const name = user?.name;
+  
 
   const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width)
 
@@ -53,7 +53,7 @@ const Dashboard = ({ navigation, route }: DrawerNavigationProps<"Dashboard">) =>
 
           <View style={tailwind("flex-row justify-between")} >
             <View style={tailwind("flex-wrap w-full")}>
-              <TextLabel content={`Good day, ${name}!`} style={tailwind("text-30px font-bold")} />
+              <TextLabel content={`Good day, ${token} <- this the token!`} style={tailwind("text-30px font-bold")} />
               {/* <TextLabel content="You created 0 quotations" /> */}
             </View>
             {

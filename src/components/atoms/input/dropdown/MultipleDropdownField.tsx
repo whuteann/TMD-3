@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { View } from 'react-native';
 import { useTailwind } from 'tailwind-rn/dist';
 import TextLabel from '../../typography/TextLabel';
-import DropDownPicker, { ValueType } from 'react-native-dropdown-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 interface inputProps {
   placeholder: string,
@@ -33,7 +33,7 @@ const MultipleDropdownField: React.FC<inputProps> = ({
 }) => {
   const tailwind = useTailwind();
   const [open, setOpen] = useState(false);
-  const [dropdownValue, setDropdownValue] = useState<Array<ValueType> | null>(value);
+  const [dropdownValue, setDropdownValue] = useState<Array<string | number | boolean> | null>(value);
   const [dropdownItems, setDropdownItems] = useState([
     { label: 'Apple', value: 'apple' },
     { label: 'Banana', value: 'banana' }

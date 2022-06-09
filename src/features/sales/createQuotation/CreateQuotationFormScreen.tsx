@@ -216,7 +216,7 @@ const CreateQuotationFormScreen = ({ navigation }: RootNavigationProps<"CreateQu
               items={customerInfo?.nameList ? customerInfo?.nameList : ["", ""]}
               onChangeValue={(val) => {
                 setFieldValue("customer", val);
-                setAddress(customers[customerInfo.nameList.indexOf(val)].address);
+                setAddress(val == "" ? "-" : customers[customerInfo.nameList.indexOf(val)].address);
               }}
               required={true}
               hasError={errors.customer && touched.customer ? true : false}

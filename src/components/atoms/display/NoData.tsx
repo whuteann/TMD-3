@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
-import { Platform } from 'react-native';
-import { View, TextInput } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import React from 'react';
+import { View } from 'react-native';
 import { useTailwind } from 'tailwind-rn/dist';
 import TextLabel from '../typography/TextLabel';
 

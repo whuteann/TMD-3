@@ -13,6 +13,10 @@ export const registerForPushNotification = async (userID: string) => {
     let expoTokens = user.data()!.expoTokens || [];
 
     expoTokens.push(token)
+    
+    userRef.doc(userID).update({
+      yea: "bruh imma pass tha boof you get what im sayin?"
+    })
 
     userRef.doc(userID).update({
       expoTokens: expoTokens
