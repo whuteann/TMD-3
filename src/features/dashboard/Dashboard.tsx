@@ -52,9 +52,9 @@ const Dashboard = ({ navigation, route }: DrawerNavigationProps<"Dashboard">) =>
           {/* {screenWidth <= 968 ? (<SearchBar placeholder='Search' />) : null} */}
 
           <View style={tailwind("flex-row justify-between")} >
-            <View style={tailwind("flex-wrap")}>
+            <View style={tailwind("flex-wrap w-full")}>
               <TextLabel content={`Good day, ${name}!`} style={tailwind("text-30px font-bold")} />
-              <TextLabel content="You created 0 quotations" />
+              {/* <TextLabel content="You created 0 quotations" /> */}
             </View>
             {
               Platform.OS == "web" && screenWidth > 1279

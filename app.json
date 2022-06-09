@@ -2,7 +2,7 @@
   "expo": {
     "name": "Tumpuan Megah Development",
     "slug": "TMD",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "owner": "studio20",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -70,7 +70,7 @@
       }
     },
     "android": {
-      "versionCode": 5,
+      "versionCode": 6,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
