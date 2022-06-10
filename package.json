@@ -81,7 +81,8 @@
     "react-redux": "^7.2.6",
     "tailwind-rn": "^4.0.0",
     "validate.js": "^0.13.1",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "expo-application": "~4.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

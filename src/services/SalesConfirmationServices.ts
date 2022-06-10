@@ -1,7 +1,7 @@
 import { salesConfirmationRef } from "../functions/Firebase";
 import { SalesConfirmation } from "../types/SalesConfirmation";
 import { Product } from "../types/Product";
-import { QUOTATION_CODE, SALES_CODE } from "../types/Common";
+import { DATE, QUOTATION_CODE, SALES_CODE } from "../types/Common";
 import { addLog } from "./LogServices";
 import { SALES_CONFIRMATIONS } from "../constants/Firebase";
 import { Action, CREATE_ACTION, UPDATE_ACTION } from "../constants/Action";
@@ -12,7 +12,7 @@ const replace_string = SALES_CODE;
 const current_time = new Date();
 
 export const createSalesConfirmation = (quotationID: string, quotation: any, products: Array<{ product: Product, unit: string, quantity: string, price: { value: string, unit: string } }>, user: any, onSuccess: (id: string) => void, onError: (error: any) => void) => {
-  let salesID = quotation.secondary_id.replace(to_replace_string, replace_string);
+  let salesID =  `${SALES_CODE}${DATE}${quotation.document_code}`;
   const current_date = `${new Date().getDate().toString()}/${(new Date().getMonth() + 1).toString()}/${new Date().getFullYear().toString()}`;
   delete quotation['products'];
 

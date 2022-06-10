@@ -3,20 +3,20 @@ import { getExpoPushTokenAsync } from "expo-notifications";
 import { NOTIFICATIONS, USERS } from "../constants/Firebase";
 import { functions, userRef } from "../functions/Firebase";
 import { Notification } from "../types/Notification";
-
+import {applicationId} from "expo-application";
 
 export const registerForPushNotification = async (userID: string) => {
 
-  let token = (await getExpoPushTokenAsync()).data;
+  let token = (await getExpoPushTokenAsync({
+    experienceId: '@studio20/TMD',
+    development: false,
+    applicationId: applicationId || undefined
+  })).data;
 
   userRef.doc(userID).get().then(user => {
     let expoTokens = user.data()!.expoTokens || [];
 
     expoTokens.push(token)
-    
-    userRef.doc(userID).update({
-      yea: "bruh imma pass tha boof you get what im sayin?"
-    })
 
     userRef.doc(userID).update({
       expoTokens: expoTokens
@@ -44,7 +44,11 @@ export const removePushNotification = (userID: string, token: string, onSuccess:
 
 export const getToken = async () => {
   let token;
-  token = (await getExpoPushTokenAsync()).data;
+  token = (await getExpoPushTokenAsync({
+    experienceId: '@studio20/TMD',
+    development: false,
+    applicationId: applicationId || undefined
+  })).data;
   return token;
 }
 

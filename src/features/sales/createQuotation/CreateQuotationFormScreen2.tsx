@@ -24,7 +24,7 @@ import TimePickerField from "../../../components/atoms/input/datetimepickers/Tim
 import ViewPageHeaderText from "../../../components/molecules/display/ViewPageHeaderText";
 import { Bunker } from "../../../types/Bunker";
 
-import { DRAFT, REJECTED } from "../../../types/Common";
+import { DRAFT, REJECTED, REVISED_CODE } from "../../../types/Common";
 import Unauthorized from "../../../components/atoms/unauthorized/Unauthorized";
 import { getBunkerNameList } from "../../../helpers/BunkerHelper";
 import { useSelector } from "react-redux";
@@ -38,6 +38,7 @@ import { CurrenciesList } from "../../../constants/Currency";
 
 const formSchema = Yup.object().shape({
   currency_rate: Yup.string().required("Required"),
+  secondary_id: Yup.string().required("Required"),
   payment_term: Yup.string().required("Required"),
   validity_date: Yup.string().required("Required"),
   validity_time: Yup.string().required("Required"),
@@ -122,6 +123,7 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
       setLoading(true);
       setErrorBunker(false);
       let bunker_data: Array<Bunker> = [];
+      const display_id = `${values.secondary_id}${data.revised_code !== undefined && data.revised_code > 0 ? REVISED_CODE(data.revised_code) : ""}`
 
       values.bunker_barges.map(item => {
         let bunker_selected = bunkers[bunkerList.indexOf(item)];
@@ -144,12 +146,13 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
         )
       })
 
-
+      
 
       updateQuotation(
         docID,
         {
           ...values,
+          display_id: display_id,
           bunker_barges: bunker_data
         },
         user!,
@@ -174,12 +177,13 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
   return (
     <Body header={<HeaderStack title={"Create Quotation"} navigateProp={navigation} />} style={tailwind("pt-10")}>
       {modal}
-      <ViewPageHeaderText doc="Quotation" id={`${data.display_id}`} />
+      {/* <ViewPageHeaderText doc="Quotation" id={`${data.display_id}`} /> */}
 
       <Formik
         initialValues={{
           //page 1
           quotation_date: data.quotation_date,
+          secondary_id: data.secondary_id,
           products: data?.__snapshot?.data().products || [{ name: "Fuel", quantity: "", unit: LITRES, prices: [{ value: "", unit: LITRE }] }],
           bunker_barges: data.bunker_barges?.map(item => { return item.name }) || [""],
 
@@ -198,6 +202,15 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
       >
         {({ errors, touched, values, setFieldValue, handleSubmit }) => (
           <View>
+
+            <FormTextInputField label="Quotation No."
+              value={values.secondary_id}
+              required={true}
+              onChangeValue={(val) => { setFieldValue("secondary_id", val) }}
+              shadow={true}
+              hasError={errors.secondary_id && touched.secondary_id ? true : false}
+              errorMessage={errors.secondary_id}
+            />
 
             <FormTextInputField label="Quotation Date"
               value={values.quotation_date}

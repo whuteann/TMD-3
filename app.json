@@ -37,7 +37,10 @@
   "ios": {
     "supportsTablet": true,
     "bundleIdentifier": "com.tthub.tmd",
-    "buildNumber": "1.6"
+    "buildNumber": "2.0",
+    "infoPlist": {
+      "NSUserNotificationAlertStyle": "banner"
+    }
   },
   "extra": {
     "firebase": {

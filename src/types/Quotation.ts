@@ -64,5 +64,6 @@ export type Quotation = {
   deleted_at?: Date,
   created_by: User
 
+  document_code?: number,
   sales_id: string,
 }

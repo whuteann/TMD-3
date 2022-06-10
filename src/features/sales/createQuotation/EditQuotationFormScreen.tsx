@@ -34,9 +34,11 @@ import LocationsField from '../../../components/templates/sales/CreateQuotation/
 import TextLabel from '../../../components/atoms/typography/TextLabel';
 import { updateSales } from '../../../services/SalesServices';
 import ModeOfDeliveryField from '../../../components/templates/sales/CreateQuotation/ModeOfDeliveryField';
+import FormDateInputField from '../../../components/molecules/input/FormDateInputField';
 
 const formSchema = Yup.object().shape({
   customer: Yup.string().required("Required"),
+  quotation_date: Yup.string().required("Required"),
   ports: Yup.array().of(
     Yup.object().shape({
       port: Yup.string().required("Required"),
@@ -230,10 +232,13 @@ const EditQuotationFormScreen = ({ navigation, route }: RootNavigationProps<"Edi
       >
         {({ errors, touched, values, setFieldValue, handleSubmit }) => (
           <View>
-            <FormTextInputField
-              label="Quotation Date"
+            <FormDateInputField
+              required={true}
+              label='Quotation Date'
               value={values.quotation_date}
-              editable={false}
+              onChangeValue={text => setFieldValue("quotation_date", text)}
+              hasError={errors.quotation_date && touched.quotation_date ? true : false}
+              errorMessage={errors.quotation_date}
             />
 
             <View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
