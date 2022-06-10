@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View } from "react-native";
 import { useTailwind } from "tailwind-rn/dist";
 import DropdownField from "../../atoms/input/dropdown/DropdownField";

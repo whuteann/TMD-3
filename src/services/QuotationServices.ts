@@ -19,7 +19,16 @@ export const createQuotation = (quotation: any, user: any, onSuccess: (newID) =>
         incrementRef.doc(`${item.docs[0].id}`).update({ amount: newAmount });
 
         quotationRef
-          .add({ ...quotation, ...{ secondary_id: newID, display_id: newID, created_at: current_time, deleted: false, created_by: user } })
+          .add({
+            ...quotation, ...{
+              secondary_id: newID,
+              display_id: newID,
+              created_at: current_time,
+              document_code: newAmount,
+              deleted: false,
+              created_by: user
+            }
+          })
           .then(
             (docRef) => {
               addLog(QUOTATIONS, docRef.id, CREATE_ACTION, user!, () => {

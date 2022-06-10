@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { TrashIcon } from '../../../../../assets/svg/SVG';
 import InfoDisplay from '../../../atoms/display/InfoDisplay';
 import { useTailwind } from 'tailwind-rn/dist';
-import { FlatList, View } from 'react-native';
+import { FlatList, TouchableOpacity, View } from 'react-native';
 
 interface InfoProps {
   product: string,

@@ -6,7 +6,7 @@ import Body from '../../../components/atoms/display/Body';
 import HeaderStack from '../../../components/atoms/display/HeaderStack';
 import FormDropdownInputField from '../../../components/molecules/input/FormDropdownInputField';
 import { useTailwind } from 'tailwind-rn/dist';
-import {  SectionList, TouchableOpacity, View } from 'react-native';
+import { SectionList, TouchableOpacity, View } from 'react-native';
 import TextLabel from '../../../components/atoms/typography/TextLabel';
 import { SearchIcon, XSimpleIcon } from '../../../../assets/svg/SVG';
 import { useDispatch } from 'react-redux';
@@ -70,8 +70,8 @@ const ViewAllInvoiceScreen = ({ navigation }: RootNavigationProps<"ViewAllInvoic
 					cacheable: true,
 					hitsPerPage: LIMIT
 				});
-		
-				
+
+
 				if (result.page + 1 > result.nbPages) {
 					setCursor(undefined);
 				} else {
@@ -171,7 +171,7 @@ const ViewAllInvoiceScreen = ({ navigation }: RootNavigationProps<"ViewAllInvoic
 
 	return (
 		<Body
-			header={<HeaderStack title={`View All Invoices`} navigateProp={navigation} navigateToDashboard={true}/>}
+			header={<HeaderStack title={`View All Invoices`} navigateProp={navigation} navigateToDashboard={true} />}
 			style={tailwind("mt-5")}
 			onRefresh={onRefresh}
 			fixedScroll={false}>
@@ -225,18 +225,18 @@ const ViewAllInvoiceScreen = ({ navigation }: RootNavigationProps<"ViewAllInvoic
 					sections={filteredInvoices}
 					onEndReachedThreshold={0.8}
 					onEndReached={onPaginate}
-					keyExtractor={(item: any) => item.id}
+					keyExtractor={(item: any, index: any) => `${item.id}.${index}`}
 					renderItem={({ item }: { item: any, index: number }) => {
 						return <ViewTabInvoice
-						id={item.id}
-						display_id={item.display_id}
-						org={item.customer_name}
-						name={item.created_by ? item.created_by.name : ""}
-						date={item.invoice_date}
-						status={item.status}
-						navigation={navigation}
-						data={item}
-					/>
+							id={item.id}
+							display_id={item.display_id}
+							org={item.customer_name}
+							name={item.created_by ? item.created_by.name : ""}
+							date={item.invoice_date}
+							status={item.status}
+							navigation={navigation}
+							data={item}
+						/>
 					}}
 					renderSectionHeader={({ section }) => (
 						<Header

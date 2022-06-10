@@ -7,7 +7,6 @@ import { JOB_CONFIRMATIONS } from "../constants/Firebase";
 import { CREATE_ACTION, UPDATE_ACTION } from "../constants/Action";
 
 const to_replace_string = SALES_CODE;
-const replace_string = JOB_CONFIRMATION_CODE
 const current_time = new Date();
 
 const generateJobID = (salesID: string, customerName: string) => {

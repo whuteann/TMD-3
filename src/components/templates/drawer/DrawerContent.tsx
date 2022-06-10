@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTailwind } from "tailwind-rn";
 import { DrawerNavigationProps } from "../../../navigations/NavigationProps/NavigationProps";
 import { Dimensions, TouchableOpacity, View } from "react-native";
-import { LogoAndTextIcon, LogoutIcon, SettingsEyeIcon } from "../../../../assets/svg/SVG";
+import { LogoAndTextIcon, LogoutIcon } from "../../../../assets/svg/SVG";
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import { useSelector } from "react-redux";
 import { User } from "../../../types/User";
@@ -68,14 +68,7 @@ const Drawer = ({ navigation }: DrawerNavigationProps<"Dashboard">) => {
           <View style={tailwind("mb-3")}>
             <TextLabel content="Apps" color="text-gray-primary" style={tailwind("font-bold")} />
           </View>
-
-          {/* <FlatList
-            keyExtractor={(item: any, index: number) => index.toString()}
-            data={apps(undefined)}
-            renderItem={({ item }: { item: any }) => (
-              <DrawerItem key={item.text} {...item} onPress={()=>{item.onPress(navigation)}} />
-            )}
-          /> */}
+          
 
           <TouchableOpacity onPress={() => { handleSignOut() }}>
             <View style={tailwind("flex-row items-center mb-2")}>

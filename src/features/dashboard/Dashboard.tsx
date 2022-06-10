@@ -13,16 +13,16 @@ import HeaderDashboard from '../../components/templates/dashboard/HeaderDashboar
 import sales from '../../Lists/MenuSectionList/Sales';
 import procurements from '../../Lists/MenuSectionList/Procurements';
 import NotificationButton from '../../components/templates/dashboard/notification/NotificationButton';
-import RegularButton from '../../components/atoms/buttons/RegularButton';
-import { sendNotifications } from '../../services/NotificationServices';
-import { SUPER_ADMIN_ROLE } from '../../types/Common';
+
 
 const Dashboard = ({ navigation, route }: DrawerNavigationProps<"Dashboard">) => {
   const tailwind = useTailwind();
 
   const user = useSelector(UserSelector);
+
   const permissions = user?.permission;
   const name = user?.name;
+
 
   const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width)
 
@@ -30,6 +30,7 @@ const Dashboard = ({ navigation, route }: DrawerNavigationProps<"Dashboard">) =>
     if (user?.contacts?.length == 0 || user?.contacts?.[0].number == "" || user?.contacts == undefined) {
       navigation.navigate("Profile", { docID: user?.id });
     };
+
   }, []);
 
   return (
@@ -38,7 +39,7 @@ const Dashboard = ({ navigation, route }: DrawerNavigationProps<"Dashboard">) =>
         <HeaderDashboard
           left={{ onPress: () => navigation.openDrawer() }}
           navigation={navigation}
-          middle={{ onPress: () =>{} }}
+          middle={{ onPress: () => { } }}
         />
       }
       isFullScreen={true}>
@@ -52,9 +53,9 @@ const Dashboard = ({ navigation, route }: DrawerNavigationProps<"Dashboard">) =>
           {/* {screenWidth <= 968 ? (<SearchBar placeholder='Search' />) : null} */}
 
           <View style={tailwind("flex-row justify-between")} >
-            <View style={tailwind("flex-wrap")}>
-              <TextLabel content={`Good day, ${name}!`} style={tailwind("text-30px font-bold")} />
-              <TextLabel content="You created 0 quotations" />
+            <View style={tailwind("flex-wrap w-full")}>
+              <TextLabel content={`Good day, ${name}`} style={tailwind("text-30px font-bold")} />
+              {/* <TextLabel content="You created 0 quotations" /> */}
             </View>
             {
               Platform.OS == "web" && screenWidth > 1279
@@ -64,6 +65,7 @@ const Dashboard = ({ navigation, route }: DrawerNavigationProps<"Dashboard">) =>
                 <></>
             }
           </View>
+
           {/* <View style={tailwind("flex-col sm:flex-row md:flex-row lg:flex-row justify-between")} >
             {pending ? (
               <BigMenuTab title="Reminder" icon={<ReminderListIcon height={60} width={60} />} onPress={() => { }}
