@@ -151,7 +151,9 @@ const ExportModal = (props: ExportModalProps) => {
                     <></>
                 }
               </View>
-              <RegularButton text={"Export"} operation={() => { onExport() }} />
+              <View>
+                <RegularButton text={"Export"} operation={() => { onExport() }} />
+              </View>
             </View>
 
           </View>
