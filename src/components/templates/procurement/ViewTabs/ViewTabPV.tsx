@@ -39,7 +39,7 @@ const ViewTabPV: React.FC<inputProps> = ({
   let route = "ViewPurchaseVoucherSummary";
   let path = () => { setDropdown(!dropdown) };
 
-  if ( status == REJECTED) {
+  if (status == REJECTED) {
     dropdowns = (
       <View>
         <ViewTabDropdown icon={<PreviewIcon height={25} width={25} />} text="Preview Purchase Voucher" setDropdown={path} navigation={() => { navigation.navigate(route, { docID: nav_id }) }} />
@@ -51,12 +51,12 @@ const ViewTabPV: React.FC<inputProps> = ({
       <View>
         <ViewTabDropdown icon={<PreviewIcon height={25} width={25} />} text="Preview Purchase Voucher" setDropdown={path} navigation={() => { navigation.navigate(route, { docID: nav_id }) }} />
         {
-					user?.id == data.created_by.id
-						?
-						<ViewTabDropdown icon={<CreateIcon height={25} width={25} />} text="Edit Purchase Voucher" setDropdown={path} navigation={() => { navigation.navigate("EditPurchaseVoucherForm", { docID: nav_id }) }} />
-						:
-						<></>
-				}
+          user?.id == data.created_by.id
+            ?
+            <ViewTabDropdown icon={<CreateIcon height={25} width={25} />} text="Edit Purchase Voucher" setDropdown={path} navigation={() => { navigation.navigate("EditPurchaseVoucherForm", { docID: nav_id }) }} />
+            :
+            <></>
+        }
       </View>
     )
   } else {
@@ -73,10 +73,10 @@ const ViewTabPV: React.FC<inputProps> = ({
       <View style={[tailwind("box-card-shadow rounded-lg p-2 bg-white mt-2 mb-5")]}>
 
         <View style={tailwind("flex-row pr-3")}>
-          <View>
+          <View style={tailwind("flex w-[90%]")}>
             <TextLabel content={`${date}`} style={tailwind("italic text-12px text-gray-400")} />
             <View style={tailwind("flex-row items-center")}>
-              <View>
+              <View style={tailwind("flex-wrap w-full")}>
                 <TextLabel content={id || ""} style={tailwind("text-xl font-bold text-18px")} />
               </View>
             </View>

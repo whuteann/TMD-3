@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTailwind } from 'tailwind-rn';
 import { DrawerNavigationProps } from '../../navigations/NavigationProps/NavigationProps';
 import { Dimensions, Platform, View } from 'react-native';
@@ -13,24 +13,44 @@ import HeaderDashboard from '../../components/templates/dashboard/HeaderDashboar
 import sales from '../../Lists/MenuSectionList/Sales';
 import procurements from '../../Lists/MenuSectionList/Procurements';
 import NotificationButton from '../../components/templates/dashboard/notification/NotificationButton';
+import { addNotificationReceivedListener, addNotificationResponseReceivedListener, removeNotificationSubscription } from 'expo-notifications';
+import { NOTIFICATIONS, USERS } from '../../constants/Firebase';
+import { revalidateCollection, useDocument } from '@nandorojo/swr-firestore';
+import { User } from '../../types/User';
 
 
 const Dashboard = ({ navigation, route }: DrawerNavigationProps<"Dashboard">) => {
   const tailwind = useTailwind();
-
   const user = useSelector(UserSelector);
-
   const permissions = user?.permission;
   const name = user?.name;
-
+  const notificationListener = useRef<any>();
+  const responseListener = useRef<any>();
 
   const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width)
+
+  const { data: userData } = useDocument<User>(`${USERS}/${user?.id}`, {
+    ignoreFirestoreDocumentSnapshotField: true,
+    revalidateOnFocus: true,
+  })
 
   useEffect(() => {
     if (user?.contacts?.length == 0 || user?.contacts?.[0].number == "" || user?.contacts == undefined) {
       navigation.navigate("Profile", { docID: user?.id });
     };
+  }, []);
 
+  useEffect(() => {
+    notificationListener.current = addNotificationReceivedListener(() => {
+      revalidateCollection(`${USERS}/${user?.id}/${NOTIFICATIONS}`);
+    });
+    responseListener.current = addNotificationResponseReceivedListener(() => {
+      revalidateCollection(`${USERS}/${user?.id}/${NOTIFICATIONS}`);
+    })
+    return () => {
+      removeNotificationSubscription(notificationListener.current);
+      removeNotificationSubscription(responseListener.current);
+    };
   }, []);
 
   return (
@@ -55,7 +75,7 @@ const Dashboard = ({ navigation, route }: DrawerNavigationProps<"Dashboard">) =>
           <View style={tailwind("flex-row justify-between")} >
             <View style={tailwind("flex-wrap w-full")}>
               <TextLabel content={`Good day, ${name}`} style={tailwind("text-30px font-bold")} />
-              {/* <TextLabel content="You created 0 quotations" /> */}
+              <TextLabel content={`You created ${userData?.quotation_count ? userData?.quotation_count : 0} quotations`} />
             </View>
             {
               Platform.OS == "web" && screenWidth > 1279
@@ -65,7 +85,6 @@ const Dashboard = ({ navigation, route }: DrawerNavigationProps<"Dashboard">) =>
                 <></>
             }
           </View>
-
           {/* <View style={tailwind("flex-col sm:flex-row md:flex-row lg:flex-row justify-between")} >
             {pending ? (
               <BigMenuTab title="Reminder" icon={<ReminderListIcon height={60} width={60} />} onPress={() => { }}

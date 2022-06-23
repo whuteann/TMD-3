@@ -1,6 +1,6 @@
 import algoliasearch from 'algoliasearch';
 import Constants from 'expo-constants';
-import { BUNKERS, CUSTOMERS, INVOICES, JOB_CONFIRMATIONS, PROCUREMENTS, PURCHASE_ORDERS, PURCHASE_VOUCHERS, QUOTATIONS, RECEIPTS, SALES_CONFIRMATIONS, SPARES_PROCUREMENTS, SPARES_PURCHASE_ORDERS, SPARES_PURCHASE_VOUCHERS, SUPPLIERS, USERS } from '../constants/Firebase';
+import { BUNKERS, CUSTOMERS, INVOICES, JOB_CONFIRMATIONS, PROCUREMENTS, PURCHASE_ORDERS, PURCHASE_VOUCHERS, QUOTATIONS, RECEIPTS, SALES, SALES_CONFIRMATIONS, SPARES_PROCUREMENTS, SPARES_PURCHASE_ORDERS, SPARES_PURCHASE_VOUCHERS, SUPPLIERS, USERS } from '../constants/Firebase';
 
 export type AlgoliaKey = {
   id: string,
@@ -30,6 +30,7 @@ export const purchaseVoucherIndexRef = client.initIndex(PURCHASE_VOUCHERS);
 export const sparesProcurementIndexRef = client.initIndex(SPARES_PROCUREMENTS);
 export const sparesPurchaseOrderIndexRef = client.initIndex(SPARES_PURCHASE_ORDERS);
 export const sparesPurchaseVoucherIndexRef = client.initIndex(SPARES_PURCHASE_VOUCHERS);
+export const salesSummaryIndexRef = client.initIndex(SALES);
 
 export const userIndexRef = client.initIndex(USERS);
 export const customerIndexRef = client.initIndex(CUSTOMERS);

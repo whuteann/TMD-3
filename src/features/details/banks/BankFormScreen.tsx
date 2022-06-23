@@ -93,7 +93,7 @@ const BankFormScreen = ({ navigation, route }: RootNavigationProps<"CreateBank" 
   return (
     <Body header={<HeaderStack title={"Bank Details"} navigateProp={navigation} />} style={tailwind("mt-6")}>
       <Header
-        title={`${docID ? 'Create Bank' : 'Edit Bank'}`}
+        title={`${docID ? 'Edit Bank' : 'Create Bank'}`}
         alignment='text-left'
         color='text-black' />
 

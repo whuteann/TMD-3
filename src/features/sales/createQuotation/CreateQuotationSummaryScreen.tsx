@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { RootNavigationProps } from '../../../navigations/NavigationProps/NavigationProps';
 import InfoDisplay from '../../../components/atoms/display/InfoDisplay';
 import PriceDisplay from '../../../components/templates/sales/ViewQuotation/PriceDisplay';
-import { revalidateCollection, useDocument } from '@nandorojo/swr-firestore';
+import { revalidateCollection, revalidateDocument, useDocument } from '@nandorojo/swr-firestore';
 import LoadingData from '../../../components/atoms/loading/loadingData';
 import { Quotation } from '../../../types/Quotation';
 import { updateQuotation } from '../../../services/QuotationServices';
@@ -12,7 +12,7 @@ import HeaderStack from '../../../components/atoms/display/HeaderStack';
 import { View } from 'react-native';
 import RegularButton from '../../../components/atoms/buttons/RegularButton';
 import ViewPageHeaderText from '../../../components/molecules/display/ViewPageHeaderText';
-import { SALES, QUOTATIONS } from '../../../constants/Firebase';
+import { SALES, QUOTATIONS, USERS } from '../../../constants/Firebase';
 import { generateProductDisplay } from '../../../helpers/QuotationHelper';
 import { DRAFT, HEAD_OF_MARKETING_ROLE, IN_REVIEW, MARKETING_EXECUTIVE_ROLE, REJECTED, REVISED_CODE, SUPER_ADMIN_ROLE } from '../../../types/Common';
 import Unauthorized from '../../../components/atoms/unauthorized/Unauthorized';
@@ -22,6 +22,7 @@ import { SUBMIT_ACTION } from '../../../constants/Action';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { convertCurrency } from '../../../constants/Currency';
 import { sendNotifications } from '../../../services/NotificationServices';
+import { addQuotationCount } from '../../../services/UserServices';
 
 
 const CreateQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"CreateQuotationSummary">) => {
@@ -154,6 +155,11 @@ const CreateQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps
 											`New quotation ${data.secondary_id} submitted by ${user?.name}. `,
 										{ screen: "ViewQuotationSummary", docID: data.id });
 
+									if (revisedCode == 0) {
+										addQuotationCount(user?.id!);
+										revalidateDocument(`${USERS}/${user?.id}`);
+									}
+
 									setLoading(false);
 									revalidateCollection(QUOTATIONS);
 									revalidateCollection(SALES);
@@ -165,6 +171,7 @@ const CreateQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps
 						}
 						loading={loading} />
 				</View>
+
 				<RegularButton text="Cancel" type="secondary" operation={() => { navigation.navigate("ViewAllQuotation") }} />
 			</View>
 		</Body>

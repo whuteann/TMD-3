@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
-import { Platform, TouchableOpacity, View } from 'react-native';
-import { ArrowDownIcon, ArrowRightIcon, CreateIcon, DownloadIcon, FolderIcon, PreviewIcon, ProceedIcon, TrashIcon } from '../../../../../assets/svg/SVG';
-import { deleteQuotation } from '../../../../services/QuotationServices';
+import { TouchableOpacity, View } from 'react-native';
+import { ArrowRightIcon } from '../../../../../assets/svg/SVG';
 import { useTailwind } from 'tailwind-rn/dist';
 import TextLabel from '../../../atoms/typography/TextLabel';
-import ViewTabDropdown from '../../../molecules/buttons/ViewTabDropdown';
 import { createAndDisplayPDF, loadPDFLogo } from '../../../../functions/PDFv2Functions';
 import { generatePDFQuotation } from '../../pdf/generateQuotationPDF';
-import { useLinkTo } from '@react-navigation/native';
-import { revalidateCollection } from '@nandorojo/swr-firestore';
-import { QUOTATIONS } from '../../../../constants/Firebase';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../../redux/reducers/Auth';
-import { APPROVED, ARCHIVED, CONFIRMED, DRAFT, IN_REVIEW, REJECTED } from '../../../../types/Common';
 
 interface inputProps {
   nav_id: string | undefined,

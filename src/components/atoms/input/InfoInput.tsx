@@ -1,4 +1,4 @@
-import React from 'react'; import { View } from 'react-native';
+import React from 'react'; import { Platform, View } from 'react-native';
 import { useTailwind } from 'tailwind-rn/dist';
 import TextLabel from '../typography/TextLabel';
 import TextInputField from './text/TextInputField';
@@ -25,7 +25,7 @@ const InfoInput: React.FC<InfoProps> = ({
       <TextInputField
         placeholder=''
         value={value}
-        style={tailwind("h-6")}
+        style={tailwind(`${Platform.OS == "web" ? "h-6" : ""}`)}
         onChangeText={onChangeText}
         hasError={hasError}
         errorMessage={errorMessage}

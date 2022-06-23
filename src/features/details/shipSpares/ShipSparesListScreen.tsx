@@ -76,7 +76,7 @@ const ShipSpareListScreen = ({ navigation }: RootNavigationProps<"ShipSpareList"
       onRefresh={onRefresh}>
 
       <View style={tailwind('mb-3')}>
-        <PlusButton text="Add New Ship Spare" operation={() => { navigation.navigate("CreateShipSpare") }} />
+        <PlusButton text={`Add New Ship Spare`} operation={() => { navigation.navigate("CreateShipSpare") }} />
       </View>
 
       <View style={ tailwind('w-full mt-3') }>

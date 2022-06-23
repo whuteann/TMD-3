@@ -96,7 +96,7 @@ const ShipSpareFormScreen = ({ navigation, route }: RootNavigationProps<"CreateS
   return (
     <Body header={<HeaderStack title={"Ship Spare Details"} navigateProp={navigation} />} style={tailwind("mt-6")}>
       <Header
-        title='Add Ship Spare'
+        title={`${docID ? "Edit" : "Add"} Ship Spare`}
         alignment='text-left'
         color='text-black' />
 

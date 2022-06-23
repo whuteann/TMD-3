@@ -1,118 +1,223 @@
-import React, { useState } from 'react';
-import { FlatList, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SectionList, TouchableOpacity, View } from 'react-native';
 import { useTailwind } from 'tailwind-rn/dist';
 import { RootNavigationProps } from '../../../navigations/NavigationProps/NavigationProps';
-
 import Body from '../../../components/atoms/display/Body';
 import HeaderStack from '../../../components/atoms/display/HeaderStack';
 import FormDropdownInputField from '../../../components/molecules/input/FormDropdownInputField';
 import TextLabel from '../../../components/atoms/typography/TextLabel';
-import { SearchIcon } from '../../../../assets/svg/SVG';
+import { SearchIcon, XSimpleIcon } from '../../../../assets/svg/SVG';
 import { useDispatch } from 'react-redux';
 import { setRefresh } from '../../../redux/reducers/Refresh';
-import { useCollection } from '@nandorojo/swr-firestore';
-import MonthTabView from '../../../components/molecules/display/MonthTabView';
-import TextInputField from '../../../components/atoms/input/text/TextInputField';
-import ViewTabSales from '../../../components/templates/job/ViewTabs/ViewTabSales';
+import * as AlgoliaHelper from "../../../helpers/AlgoliaHelper";
+import NoData from '../../../components/atoms/display/NoData';
+import SearchBar from '../../../components/atoms/input/searchbar/SearchBar';
+import { getListStyle } from '../../../constants/Style';
+import { cloneDeep } from 'lodash';
+import moment from 'moment';
+import Header from '../../../components/atoms/typography/Header';
+import { APPROVED, ARCHIVED, CONFIRMED, DRAFT, IN_REVIEW, REJECTED } from '../../../types/Common';
 import { Sales } from '../../../types/Sales';
-import { QUOTATIONS, SALES } from '../../../constants/Firebase';
+import ViewTabSales from '../../../components/templates/job/ViewTabs/ViewTabSales';
 import AddButtonText from '../../../components/atoms/buttons/AddButtonText';
 import ExportModal from '../../../components/templates/job/ExportModal';
-import { Quotation } from '../../../types/Quotation';
 
-const SalesListScreen = ({ navigation }: RootNavigationProps<"Sales">) => {
-	const tailwind = useTailwind();
-	const [searchToggle, setSearchToggle] = useState(false);
-	const [filterBy, setFilterBy] = useState("");
+const SalesListScreen = ({ navigation }: RootNavigationProps<"SaleList">) => {
+
+	const [filterBy, setFilterBy] = useState<string>("");
+	const [filteredSalesSummary, setFilteredSalesSummary] = useState<[]>([]);
 	const [modalOpen, setModalOpen] = useState(false);
-	const LIMIT = 20;
+	const [cursor, setCursor] = useState<number | undefined>(undefined);
+	const [isPaginating, setIsPaginating] = useState<boolean>(false);
+	const [searchToggle, setSearchToggle] = useState(false);
+	const [search, setSearch] = useState<string>('');
+
+	const tailwind = useTailwind();
 	const dispatch = useDispatch();
+	const LIMIT = 20;
 
-	// const { data: invoices } = useCollection<Quotation>(QUOTATIONS, {
-	// 	where: ["status", "==", "Archived"],
-	// 	ignoreFirestoreDocumentSnapshotField: false,
-	// }, {
-	// 	refreshInterval: 0,
-	// 	revalidateOnFocus: false,
-	// 	refreshWhenHidden: false,
-	// 	refreshWhenOffline: false,
-	// })
+	useEffect(() => {
+		getData()
+	}, [search]);
 
-	const { data, mutate } = useCollection<Sales>(SALES, {
-		ignoreFirestoreDocumentSnapshotField: false,
-		limit: LIMIT,
-		orderBy: ["created_at", "desc"],
-	}, {
-		refreshInterval: 0,
-		revalidateOnFocus: false,
-		refreshWhenHidden: false,
-		refreshWhenOffline: false,
-	})
+	const getData = async () => {
+		try {
+			const result = await AlgoliaHelper.salesSummaryIndexRef.search<Sales>(search, {
+				cacheable: true,
+				hitsPerPage: LIMIT
+			});
 
+
+			if (result.page + 1 > result.nbPages) {
+				setCursor(undefined);
+			} else {
+				setCursor(result.page + 1);
+			}
+
+			const salesSummariesGroup: any = [];
+
+			for (const hit of result.hits) {
+				const salesSummary = {
+					id: hit.objectID,
+					...hit
+				} as Sales;
+
+				let added = false;
+
+				for (let i = 0; i < salesSummariesGroup.length; i++) {
+					let salesSummaryGroup = salesSummariesGroup[i];
+
+					if (salesSummaryGroup.title == moment(salesSummary.created_at).format('MMMM YYYY')) {
+						added = true;
+						salesSummaryGroup.data.push(salesSummary);
+					}
+				}
+
+				if (!added) {
+					salesSummariesGroup.push({
+						title: moment(salesSummary.created_at).format('MMMM YYYY'),
+						data: [
+							salesSummary
+						]
+					})
+				}
+			}
+			setFilteredSalesSummary(salesSummariesGroup);
+
+		} catch {
+
+		}
+	}
+
+	// update list
 	const onRefresh = async () => {
 		dispatch(setRefresh(true));
-		await mutate();
+		await getData();
 		dispatch(setRefresh(false));
 	}
 
-	const renderItem = (item: any) => {
-		return <ViewTabSales nav_id={item.id} org={item.customer.name} name={item.customer.contact_persons[0].name} navigation={navigation} date={item.created_date} />;
-	}
+	const onPaginate = async () => {
+		if (isPaginating || !cursor) return;
+		setIsPaginating(true);
 
-	const content = () => {
-		return (
-			<View>
-				<MonthTabView month="January"
-					items={
-						<FlatList
-							style={{ paddingLeft: 3, paddingRight: 3, paddingBottom: 3 }}
-							contentContainerStyle={{ paddingLeft: 3, paddingRight: 3, paddingBottom: 3 }}
-							scrollEnabled={true}
-							showsVerticalScrollIndicator={false}
-							data={data}
-							keyExtractor={(item: any) => item.id}
-							renderItem={({ item }: { item: any, index: number }) => renderItem(item)}
-						/>
-					}
-				/>
-			</View>
-		)
-	}
+		const result = await AlgoliaHelper.salesSummaryIndexRef.search<Sales>(search, {
+			filters: "deleted:false",
+			page: cursor,
+			hitsPerPage: LIMIT
+		});
+
+		if (result.page + 1 > result.nbPages) {
+			setCursor(undefined);
+		} else {
+			setCursor(result.page + 1);
+		}
+
+		let salesSummariesGroup: any = cloneDeep(filteredSalesSummary);
+
+		for (const hit of result.hits) {
+			const salesSummary = {
+				id: hit.objectID,
+				...hit
+			} as Sales;
+
+			let added = false;
+
+			for (let i = 0; i < salesSummariesGroup.length; i++) {
+				let salesSummaryGroup = salesSummariesGroup[i];
+
+				if (salesSummaryGroup.title == moment(salesSummary.created_at).format('MMMM YYYY')) {
+					added = true;
+					salesSummaryGroup.data.push(salesSummary);
+				}
+			}
+
+			if (!added) {
+				salesSummariesGroup.push({
+					title: moment(salesSummary.created_at).format('MMMM YYYY'),
+					data: [
+						salesSummary
+					]
+				})
+			}
+		}
+
+		setFilteredSalesSummary(salesSummariesGroup);
+		setIsPaginating(false);
+	};
 
 	return (
-		<Body header={<HeaderStack title={`Job Status`} navigateProp={navigation} />} style={tailwind("mt-5")} onRefresh={onRefresh} >
-			<View style={tailwind("mb-5")}>
-				<FormDropdownInputField
-					label="Filter by"
-					value={filterBy}
-					items={["Procurement"]}
-					onChangeValue={(val) => { setFilterBy(val) }}
-					placeholder='All'
-				/>
+		<Body
+			header={<HeaderStack title={`View All Sales Summary`} navigateProp={navigation} navigateToDashboard={true} />}
+			style={tailwind("mt-5")}
+			onRefresh={onRefresh}
+			fixedScroll={false}>
+			<View style={tailwind("mt-5")}>
+				<AddButtonText text='Export Excel' onPress={() => { setModalOpen(true) }} />
 			</View>
-
-			<AddButtonText text='Export Excel' onPress={() => { setModalOpen(true) }} />
-			<View style={tailwind("mb-6")} />
 
 			<ExportModal visible={modalOpen} onClose={() => { setModalOpen(false) }}  />
 
-			<View style={tailwind("flex-row items-center")}>
-				{searchToggle ? (
-					<View style={tailwind("w-7/12")}>
-						<TextInputField placeholder="Search..." value="" onChangeText={() => { }} />
-					</View>
-				)
-					: (<TextLabel content={`All Jobs`} style={tailwind("font-bold")} />)}
+			<View style={tailwind('flex-row items-center justify-center items-center')}>
+				{
+					searchToggle
+						?
+						(
+							<View style={tailwind('w-11/12')}>
+								<SearchBar
+									placeholder='Search'
+									value={search}
+									onChangeText={(value) => { setSearch(value) }} />
+							</View>
+						)
+						: (<TextLabel content={`All Sales Summary`} style={tailwind("font-bold")} />)
+				}
 
 
-				<View style={tailwind("flex-col items-end flex-grow ")}>
+				<View>
 					<TouchableOpacity onPress={() => setSearchToggle(!searchToggle)}>
-						<SearchIcon width={25} height={25} />
+						{
+							!searchToggle	
+								?
+								<SearchIcon width={25} height={25} />
+								:
+								<View style={tailwind('mx-2 mb-3')}>
+									<XSimpleIcon width={25} height={25} />
+								</View>
+						}
 					</TouchableOpacity>
 				</View>
 			</View>
 
-			{content()}
+			<View>
+				<SectionList
+					style={{ paddingLeft: 3, paddingRight: 3, paddingBottom: 3 }}
+					contentContainerStyle={getListStyle()}
+					scrollEnabled={true}
+					showsVerticalScrollIndicator={false}
+					sections={filteredSalesSummary}
+					onEndReachedThreshold={0.8}
+					onEndReached={onPaginate}
+					keyExtractor={(item: any) => item.id}
+					renderItem={({ item }: { item: any, index: number }) => {
+						return <ViewTabSales
+							nav_id={item.id}
+							org={item.customer.name}
+							name={item.customer.contact_persons[0].name}
+							navigation={navigation}
+							date={item.created_date}
+						/>
+					}}
+					renderSectionHeader={({ section }) => (
+						<View style={tailwind("mb-3")}>
+							<Header
+								title={section['title']}
+								color='text-black'
+								alignment='text-left' />
+						</View>
+					)}
+					ListEmptyComponent={<NoData />}
+				/>
+			</View>
 
 		</Body>
 	)

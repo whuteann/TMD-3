@@ -13,7 +13,7 @@ import * as Yup from 'yup';
 import StatusModal from '../../../components/atoms/modal/StatusModal';
 import TextLabel from '../../../components/atoms/typography/TextLabel';
 import { revalidateCollection, useDocument } from '@nandorojo/swr-firestore';
-import { CUSTOMERS, PORTS } from '../../../constants/Firebase';
+import { PORTS } from '../../../constants/Firebase';
 import { Port } from '../../../types/Port';
 import NewLocation from '../../../components/templates/details/ports/form/NewLocation';
 import { createPort, deletePort, updatePort } from '../../../services/PortServices';
@@ -153,10 +153,21 @@ const PortFormScreen = ({ navigation, route }: RootNavigationProps<"CreatePort" 
                 text="Cancel"
                 operation={() => { navigation.navigate("PortList") }} />
 
-              <RegularButton
-                text="Add"
-                operation={() => { handleSubmit() }}
-                loading={loading && !isDelete} />
+              {
+                docID
+                  ?
+                  <RegularButton
+                    text="Update"
+                    operation={() => { handleSubmit() }}
+                    loading={loading && !isDelete} />
+                  :
+                  <RegularButton
+                    text="Add"
+                    operation={() => { handleSubmit() }}
+                    loading={loading && !isDelete} />
+              }
+
+
 
               {
                 docID

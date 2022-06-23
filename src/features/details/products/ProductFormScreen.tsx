@@ -93,7 +93,7 @@ const ProductFormScreen = ({ navigation, route }: RootNavigationProps<"CreatePro
   return (
     <Body header={<HeaderStack title={"Product Details"} navigateProp={navigation} />} style={tailwind("mt-6")}>
       <Header 
-        title={ `${ docID ? 'Create Product' : 'Edit Product' }` } 
+        title={ `${ docID ? 'Edit Product' : 'Create Product' }` } 
         alignment='text-left'
         color='text-black' />
 

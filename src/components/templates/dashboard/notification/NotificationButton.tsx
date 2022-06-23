@@ -30,7 +30,11 @@ const getReadNotifications = async (userID: string,) => {
         list.push(notification.data());
       });
 
-      return list;
+      const sortedList = list.sort((a, b) => {
+        return b.created_at - a.created_at;
+    });
+    
+      return sortedList;
     })
 
   return notifications;
@@ -63,6 +67,8 @@ const NotificationButton: React.FC<ButtonProps> = ({
     getReadNotifications(user?.id!).then(notifications => {
       setNotifications_read(notifications);
     })
+
+    revalidateCollection(`${USERS}/${user?.id}/${NOTIFICATIONS}`);
   }, [visible])
 
 

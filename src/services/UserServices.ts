@@ -124,3 +124,14 @@ export const resendVerification = (user: User, onSuccess: () => void, onError: (
       onError(err.message);
     });
 }
+
+export const addQuotationCount = (id: string) => {
+  userRef.doc(id).get().then(user => {
+
+    if (user.data()?.quotation_count) {
+      userRef.doc(id).update({ quotation_count: user.data()?.quotation_count + 1 })
+    } else {
+      userRef.doc(id).update({ quotation_count: 1 })
+    }
+  })
+}

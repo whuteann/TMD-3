@@ -1,26 +1,23 @@
-import { functions, rfqRef } from "../functions/Firebase";
-import { Quotation } from "../types/Quotation";
-import { RFQ } from "../types/RFQ";
+import { functions, invoiceRef, rfqRef } from "../functions/Firebase";
 
 export const generateSalesSummaryExcel = async (month: number, year: number, email: string, onSuccess: () => void, onError: (err: string) => void) => {
 
   const generateSalesExcelFunc = functions.httpsCallable('generateSalesSummaryExcel');
 
   const data = {
+    email: email,
     month: month,
-    year: year,
-    email: email
+    year: year
   }
 
   generateSalesExcelFunc(data)
     .then((result) => {
-
+      console.log(result.data);
       onSuccess();
     })
     .catch((err) => {
       onError(err.message);
     });
-
 }
 
 export const generateArchivedQuotationExcel = async (month: number, year: number, email: string, onSuccess: () => void, onError: (err: string) => void) => {

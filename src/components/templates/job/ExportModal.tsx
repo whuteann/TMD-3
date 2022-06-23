@@ -8,6 +8,7 @@ import { UserSelector } from "../../../redux/reducers/Auth";
 import { generateSalesSummaryExcel } from "../../../services/ExcelServices";
 import RegularButton from "../../atoms/buttons/RegularButton";
 import DropdownField from "../../atoms/input/dropdown/DropdownField";
+import StatusModal from "../../atoms/modal/StatusModal";
 import TextLabel from "../../atoms/typography/TextLabel";
 import FormDouble from "../../molecules/alignment/FormDouble";
 
@@ -29,6 +30,7 @@ const ExportModal = (props: ExportModalProps) => {
   const [yearList, setYearList] = useState<Array<string>>([]);
   const [error, setError] = useState(false);
   const user = useSelector(UserSelector);
+  const [confirmModal, setConfirmModal] = useState(false);
 
   useEffect(() => {
     let years: Array<string> = [];
@@ -91,7 +93,7 @@ const ExportModal = (props: ExportModalProps) => {
         monthNum,
         Number(year),
         user?.email!, () => {
-
+          setConfirmModal(true);
         }, () => {
 
         });
@@ -114,7 +116,7 @@ const ExportModal = (props: ExportModalProps) => {
         }}
       >
         <View style={styles.centeredView}>
-          <View style={[styles.modalView, tailwind(`${Platform.OS == "web" ? "w-[25%]" : "w-[80%]"}  p-5 bg-gray-secondary`)]}>
+          <View style={[styles.modalView, tailwind(`p-5 bg-gray-secondary`)]}>
 
             <View style={tailwind("w-[90%]")}>
               <View style={tailwind("w-full items-end mb-5")}>
@@ -155,6 +157,7 @@ const ExportModal = (props: ExportModalProps) => {
           </View>
         </View>
       </Modal>
+      <StatusModal visible={confirmModal} message={`Excel generated and sent ${user?.email}`} onClose={() => setConfirmModal(false)}></StatusModal>
     </View>
   );
 }

@@ -27,12 +27,16 @@ const BankCard: React.FC<inputProps> = ({
             <TextLabel content='Account Information:' style={tailwind('font-bold')} />
 
             <View style={tailwind('flex flex-row')}>
-              <TextLabel content='Bank Account No' />
+              <View style={tailwind("w-[45%]")}>
+                <TextLabel content='Bank Account No' />
+              </View>
               <TextLabel content={`: ${accNo}`} />
             </View>
 
             <View style={tailwind('flex flex-row')}>
-              <TextLabel content='Swift Code' />
+              <View style={tailwind("w-[45%]")}>
+                <TextLabel content='Swift Code' />
+              </View>
               <TextLabel content={`: ${swiftCode}`} />
             </View>
           </View>

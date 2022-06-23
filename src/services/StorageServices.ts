@@ -85,6 +85,7 @@ export const UploadBatch = async (path: string, files: Array<{ file: File, filen
 
   const Uploads = files.map(async (item) => {
     const { file, filename_storage, uri } = item;
+
     return await UploadeFileWithCompleteFilename(
       path,
       file,
@@ -96,8 +97,7 @@ export const UploadBatch = async (path: string, files: Array<{ file: File, filen
     )
   })
 
-  const resolve = await Promise.all(Uploads);
-
+  const resolve = await Promise.all(Uploads).catch(err => console.log(err));
 }
 
 export const deleteFile = (path: string, filename_storage: string, onSuccess: () => void) => {
@@ -170,6 +170,53 @@ export const UploadFileAndroid = (file: { name: string, file: File, uri: string 
     }).catch(err => {
       console.log("error 3");
       console.log(err.name);
+
+      reject(err.message)
+    })
+
+  })
+}
+
+export const UploadFileAndroidCompleteFilename = async (path: string, file: any, fullFilename, uri: string) => {
+
+
+  return new Promise(async (resolve, reject) => {
+
+    let current = new Date;
+    let currentTime = current.toUTCString();
+    let filename = `${path}/${fullFilename}`;
+    let imageRef = storageRef.child(filename)
+
+    var request = new Request(`${uri}`);
+
+
+    fetch(request, {
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Accept': 'application/pdf'
+      }
+    }).then(response => {
+      response.blob().then(blob => {
+
+        imageRef.put(blob).then(() => {
+          storageRef
+            .child(filename)
+            .getDownloadURL()
+            .then(url => {
+              resolve({ filename: file.name, filename_storage: `${file.name}.${currentTime}`, url: url });
+            });
+        }).catch(() => {
+          console.log("error 1");
+          reject("Network Failed")
+        })
+      }).catch(err => {
+        console.log("error 2");
+        reject(err.message);
+      })
+
+    }).catch(err => {
+      console.log("error 3");
+      console.log(err);
 
       reject(err.message)
     })

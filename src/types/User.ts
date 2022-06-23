@@ -9,5 +9,6 @@ export type User = {
 	role?: UserRole,
 	permission?: string[],
 	expoTokens?: string[],
-	joinedAt?: string
+	joinedAt?: string,
+	quotation_count?: number,
 }

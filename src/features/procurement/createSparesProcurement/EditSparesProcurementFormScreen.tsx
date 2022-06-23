@@ -32,6 +32,7 @@ import { getShipSparesDescription } from '../../../helpers/ShipSpareHelper';
 import AddShipSparesInput from '../../../components/templates/add/AddShipSparesInput';
 import ViewPageHeaderText from '../../../components/molecules/display/ViewPageHeaderText';
 import FormRangeDateInputField from '../../../components/molecules/input/FormRangeDateInputField';
+import TextLabel from '../../../components/atoms/typography/TextLabel';
 
 
 const formSchema = Yup.object().shape({
@@ -187,11 +188,10 @@ const EditSparesProcurementFormScreen = ({ navigation, route }: RootNavigationPr
               suppliersFiles.push({
                 file: values.suppliers[index].file,
                 filename_storage: `${item.filename}.${current}${index}`,
-                uri: values.suppliers[index].file
+                uri: values.suppliers[index].uri
               })
             }
           })
-
 
 
           UploadBatch(SPARES_PROCUREMENTS, suppliersFiles)
@@ -203,6 +203,7 @@ const EditSparesProcurementFormScreen = ({ navigation, route }: RootNavigationPr
                 console.log(error);
               });
             }).catch(err => {
+              setLoading(false);
               console.log("ERROR!")
               setError(err.message);
             })
@@ -314,6 +315,14 @@ const EditSparesProcurementFormScreen = ({ navigation, route }: RootNavigationPr
               hasError={errors.remarks && touched.remarks ? true : false}
               errorMessage={errors.remarks}
             />
+
+            {
+              error
+                ?
+                <TextLabel content={error ?? ''} color='text-red-500' />
+                :
+                <></>
+            }
 
             <RegularButton text="Submit" operation={() => { handleSubmit() }} loading={loading} />
           </View>

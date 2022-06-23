@@ -74,7 +74,7 @@ const ProceedSalesConfirmationFinalScreen = ({ navigation, route }: RootNavigati
 				sendNotifications(
 					[ACCOUNT_ASSISTANT_ROLE, OPERATION_TEAM_ROLE, SUPER_ADMIN_ROLE],
 					`New job confirmation ${displayID} submitted by ${user?.name}.`,
-					{ screen: "JobConfirmationSummary", id: id })
+					{ screen: "JobConfirmationSummary", docID: id })
 
 				updateSales(data.sales_id, { job_id: id }, user, () => {
 					updateQuotation(data.quotation_id,

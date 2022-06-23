@@ -30,7 +30,6 @@ export const createSupplier = async (data: any, user: any, onSuccess: () => void
       .then(
         (docRef) => {
           addLog(SUPPLIERS, docRef.id, CREATE_ACTION, user!, () => {
-            console.log(`Supplier ${docRef.id} created succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in createSupplier: ${error}`);
@@ -59,7 +58,6 @@ export const updateSupplier = (id: string, existingName: string, data: any, user
       .then(
         (docRef) => {
           addLog(SUPPLIERS, id, log_action, user!, () => {
-            console.log(`Supplier ${id} updated succesfully`);
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in updateSupplier: ${error}`);
@@ -167,7 +165,7 @@ export const updateSupplierContactList = (id: string, contactList: contactPerson
     });
 }
 
-export const deleteSupplier = (id: string, user:any, onSuccess: (message: string) => void, onError: (error: string) => void) => {
+export const  deleteSupplier = (id: string, user:any, onSuccess: (message: string) => void, onError: (error: string) => void) => {
   supplierRef.doc(id)
     .update({
       deleted: true,

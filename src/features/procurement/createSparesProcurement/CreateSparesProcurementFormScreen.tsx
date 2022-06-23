@@ -151,6 +151,7 @@ const CreateSparesProcurementFormScreen = ({ navigation }: RootNavigationProps<"
             })
           })
 
+
           UploadBatch(SPARES_PROCUREMENTS, suppliersFiles)
             .then((err) => {
               createSparesProcurement({ ...values, suppliers: suppliersPickedList, product: product_data }, user!, (id) => {

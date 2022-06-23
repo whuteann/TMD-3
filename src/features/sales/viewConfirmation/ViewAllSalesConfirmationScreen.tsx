@@ -22,6 +22,8 @@ import { SalesConfirmation } from '../../../types/SalesConfirmation';
 import SearchBar from '../../../components/atoms/input/searchbar/SearchBar';
 import { cloneDeep } from 'lodash';
 import * as AlgoliaHelper from "../../../helpers/AlgoliaHelper";
+import FormDropdownInputField from '../../../components/molecules/input/FormDropdownInputField';
+import { CONFIRMED, NOT_CONFIRMED } from '../../../types/Common';
 
 export const ViewTabSalesConfirmation = ({ item, navigation }) => {
 	const tailwind = useTailwind();
@@ -30,11 +32,11 @@ export const ViewTabSalesConfirmation = ({ item, navigation }) => {
 			<View style={[tailwind("box-card-shadow rounded-lg p-2 bg-white mt-2 mb-5")]}>
 
 				<View style={tailwind("flex-row pr-3")}>
-					<View>
-						<TextLabel content={item.confirmed_date} style={tailwind("italic text-12px text-gray-400")} />
+					<View style={tailwind("flex w-[90%]")}>
+						<TextLabel content={`${item.confirmed_date}`} style={tailwind("italic text-12px text-gray-400")} />
 						<View style={tailwind("flex-row items-center")}>
-							<View>
-								<TextLabel content={`${item.secondary_id}`} style={tailwind("text-xl font-bold text-18px")} />
+							<View style={tailwind("flex-wrap w-full")}>
+								<TextLabel content={item.secondary_id || ""} style={tailwind("text-xl font-bold text-18px")} />
 							</View>
 						</View>
 					</View>
@@ -61,7 +63,10 @@ const ViewAllSalesConfirmationScreen = ({ navigation }: RootNavigationProps<"Vie
 
 
 	const [filteredsalesConfirmations, setFilteredsalesConfirmations] = useState<[]>([]);
-
+	
+	const [filterBy, setFilterBy] = useState<string>("");
+	const [filterString, setFilterString] = useState('');
+	
 	const [cursor, setCursor] = useState<number | undefined>(undefined);
 	const [isPaginating, setIsPaginating] = useState<boolean>(false);
 	const [searchToggle, setSearchToggle] = useState(false);
@@ -72,51 +77,73 @@ const ViewAllSalesConfirmationScreen = ({ navigation }: RootNavigationProps<"Vie
 	const LIMIT = 20;
 
 	useEffect(() => {
+		if (filterBy == "") {
+			let filters = '';
+
+			[CONFIRMED, NOT_CONFIRMED].map((status, index) => {
+				if (index == 0) {
+					filters = `status:'${status}'`;
+				} else {
+					filters = filters + ` OR status:'${status}'`;
+				}
+			});
+			setFilterString(filters);
+		} else {
+			setFilterString(`status:'${filterBy}'`);
+		}
+	}, [filterBy])
+
+	useEffect(() => {
+		getData();
+	}, [filterString]);
+
+	useEffect(() => {
 		getData()
 	}, [search]);
 
 	const getData = async () => {
 		try {
-				const result = await AlgoliaHelper.salesConfirmationIndexRef.search<SalesConfirmation>(search, {
-					cacheable: true,
-					hitsPerPage: LIMIT
-				});
+			const result = await AlgoliaHelper.salesConfirmationIndexRef.search<SalesConfirmation>(search, {
+				filters: filterString,
+				cacheable: true,
+				hitsPerPage: LIMIT
+			});
 
-				if (result.page + 1 > result.nbPages) {
-					setCursor(undefined);
-				} else {
-					setCursor(result.page + 1);
-				}
+			if (result.page + 1 > result.nbPages) {
+				setCursor(undefined);
+			} else {
+				setCursor(result.page + 1);
+			}
 
-				const salesConfirmationsGroup: any = [];
+			const salesConfirmationsGroup: any = [];
 
-				for (const hit of result.hits) {
-					const salesConfirmation = {
-						id: hit.objectID,
-						...hit
-					} as SalesConfirmation;
+			for (const hit of result.hits) {
+				const salesConfirmation = {
+					id: hit.objectID,
+					...hit
+				} as SalesConfirmation;
 
-					let added = false;
+				let added = false;
 
-					for (let i = 0; i < salesConfirmationsGroup.length; i++) {
-						let salesConfirmationGroup = salesConfirmationsGroup[i];
+				for (let i = 0; i < salesConfirmationsGroup.length; i++) {
+					let salesConfirmationGroup = salesConfirmationsGroup[i];
 
-						if (salesConfirmationGroup.title == moment(salesConfirmation.created_at).format('MMMM YYYY')) {
-							added = true;
-							salesConfirmationGroup.data.push(salesConfirmation);
-						}
-					}
-
-					if (!added) {
-						salesConfirmationsGroup.push({
-							title: moment(salesConfirmation.created_at).format('MMMM YYYY'),
-							data: [
-								salesConfirmation
-							]
-						})
+					if (salesConfirmationGroup.title == moment(salesConfirmation.created_at).format('MMMM YYYY')) {
+						added = true;
+						salesConfirmationGroup.data.push(salesConfirmation);
 					}
 				}
-				setFilteredsalesConfirmations(salesConfirmationsGroup);
+
+				if (!added) {
+					salesConfirmationsGroup.push({
+						title: moment(salesConfirmation.created_at).format('MMMM YYYY'),
+						data: [
+							salesConfirmation
+						]
+					})
+				}
+			}
+			setFilteredsalesConfirmations(salesConfirmationsGroup);
 		} catch {
 
 		}
@@ -134,6 +161,7 @@ const ViewAllSalesConfirmationScreen = ({ navigation }: RootNavigationProps<"Vie
 		setIsPaginating(true);
 
 		const result = await AlgoliaHelper.salesConfirmationIndexRef.search<SalesConfirmation>(search, {
+			filters: filterString,
 			page: cursor,
 			hitsPerPage: LIMIT
 		});
@@ -150,7 +178,7 @@ const ViewAllSalesConfirmationScreen = ({ navigation }: RootNavigationProps<"Vie
 			const salesConfirmation = {
 				id: hit.objectID,
 				...hit
-			} as SalesConfirmation;
+			} as SalesConfirmation;	
 
 			let added = false;
 
@@ -179,11 +207,19 @@ const ViewAllSalesConfirmationScreen = ({ navigation }: RootNavigationProps<"Vie
 
 	return (
 		<Body
-			header={<HeaderStack title={`View All Sales Confirmations`} navigateProp={navigation} navigateToDashboard={true}/>}
+			header={<HeaderStack title={`View All Sales Confirmations`} navigateProp={navigation} navigateToDashboard={true} />}
 			style={tailwind("mt-5")}
 			onRefresh={onRefresh}
 			fixedScroll={false}>
-
+			<View style={tailwind("mb-5")}>
+				<FormDropdownInputField
+					label="Filter by"
+					value={filterBy}
+					items={[CONFIRMED, NOT_CONFIRMED]}
+					onChangeValue={(val) => { setFilterBy(val) }}
+					placeholder='All'
+				/>
+			</View>
 			<View style={tailwind('flex-row items-center justify-center items-center')}>
 				{
 					searchToggle

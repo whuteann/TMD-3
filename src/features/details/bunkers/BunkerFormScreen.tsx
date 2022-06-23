@@ -15,7 +15,7 @@ import Header from '../../../components/atoms/typography/Header';
 import * as Yup from 'yup';
 import StatusModal from '../../../components/atoms/modal/StatusModal';
 import LoadingData from '../../../components/atoms/loading/loadingData';
-import { createBunker, updateBunker } from '../../../services/BunkerServices';
+import { createBunker, deleteBunker, updateBunker } from '../../../services/BunkerServices';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
 import { UPDATE_ACTION } from '../../../constants/Action';
@@ -78,19 +78,19 @@ const BunkerFormScreen = ({ navigation, route }: RootNavigationProps<"CreateBunk
     navigation.navigate("BunkerBargeList");
   }
 
-  //   const handleDelete = () => {
-  //     setDelete(true);
-  //     setLoading(true);
+  const handleDelete = () => {
+    setDelete(true);
+    setLoading(true);
 
-  //     return deleteBunker(docID, () => {
-  //       setLoading(false);
-  //       setModalVisible(true);
-  //       revalidateCollection(BUNKERS);
-  //     }, (error) => {
-  //       setLoading(false);
-  //       setError(error);
-  //     });
-  //   }
+    return deleteBunker(docID, user, () => {
+      setLoading(false);
+      setModalVisible(true);
+      revalidateCollection(BUNKERS);
+    }, (error) => {
+      setLoading(false);
+      setError(error);
+    });
+  }
 
   if (!bunker) {
     return <LoadingData></LoadingData>
@@ -99,7 +99,7 @@ const BunkerFormScreen = ({ navigation, route }: RootNavigationProps<"CreateBunk
   return (
     <Body header={<HeaderStack title={"Bunker Barge Details"} navigateProp={navigation} />} style={tailwind("mt-6")}>
       <Header
-        title='Add Bunker Barge'
+        title={`${docID ? "Edit" : "Add"} Bunker Barge`}
         alignment='text-left'
         color='text-black' />
 
@@ -222,7 +222,7 @@ const BunkerFormScreen = ({ navigation, route }: RootNavigationProps<"CreateBunk
                   text="Delete"
                   type='secondary'
                   operation={() => {
-                    //  handleDelete()
+                     handleDelete()
                   }}
                   loading={loading && isDelete} />
                 :

@@ -37,7 +37,7 @@
   "ios": {
     "supportsTablet": true,
     "bundleIdentifier": "com.tthub.tmd",
-    "buildNumber": "2.0",
+    "buildNumber": "2.1",
     "infoPlist": {
       "NSUserNotificationAlertStyle": "banner"
     }
@@ -68,7 +68,7 @@
     }
   },
   "android": {
-    "versionCode": 5,
+    "versionCode": 8,
     "googleServicesFile": "./google-services.json",
     "adaptiveIcon": {
       "foregroundImage": "./assets/images/icon.png",
