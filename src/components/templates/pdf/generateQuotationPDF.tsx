@@ -29,7 +29,7 @@ export function generatePDFQuotation(data: Quotation, image) {
           <div style="${pickBetween("width: 38%; font-size: 13px; line-height: 5px;", "width: 38%;", "width: 38%;")} ">- Price ${index + 1}</div>
           <div style="width: 10px;">:</div>
           <div style="width: 62%; ${pickBetween("font-size: 13px;", "", "")}">
-            ${convertCurrency(data.currency_rate)} ${item.value} per ${item.unit} ${item.remarks ? `(${item.remarks})` : ""}
+            ${convertCurrency(data.currency_rate)} ${item.value} per ${item.unit} ${item.remarks ? `${item.remarks}` : ""}
           </div>
         </div>
       `
