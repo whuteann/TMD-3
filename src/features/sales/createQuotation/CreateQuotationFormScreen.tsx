@@ -65,7 +65,7 @@ const formSchema = Yup.object().shape({
 
   delivery_date: Yup.object().shape({
     startDate: Yup.string().required("Required"),
-    endDate: Yup.string().required("Required")
+    endDate: Yup.string()
   }),
   delivery_modes: Yup.array().of(Yup.string().required("Required")),
   receiving_vessel_name: Yup.string().required("Required")
@@ -108,13 +108,15 @@ const CreateQuotationFormScreen = ({ navigation }: RootNavigationProps<"CreateQu
 
   const onSubmit = async (values) => {
     setLoading(true);
-    const unique = Array.from(new Set(values.ports.map(item => item.port)));
+    console.error(values.ports);
+    const unique = Array.from(new Set(values.ports.map(item => item.delivery_location)));
     const unique_delivery_mode = Array.from(new Set(values.delivery_modes.map(item => item)));
 
     if (values.ports.length == unique.length && values.delivery_modes.length == unique_delivery_mode.length) {
       setErrorLocations(false);
       setErrorDeliveryMode(false);
       let customer = customers[customerInfo.nameList.indexOf(values.customer)];
+
       let data = {
         ...values,
         ...{
@@ -148,7 +150,7 @@ const CreateQuotationFormScreen = ({ navigation }: RootNavigationProps<"CreateQu
 
 
       }, (error) => {
-        console.log(error);
+        console.error(error);
       })
 
     } else {
@@ -182,7 +184,7 @@ const CreateQuotationFormScreen = ({ navigation }: RootNavigationProps<"CreateQu
             },
             quantity: "",
             unit: LITRES,
-            prices: [{ value: "", unit: LITRE }]
+            prices: [{ value: "", unit: LITRE, remarks: "" }]
           }],
           ports: [{ port: "", delivery_location: "" }],
           delivery_date: { startDate: "", endDate: "" },
@@ -253,7 +255,7 @@ const CreateQuotationFormScreen = ({ navigation }: RootNavigationProps<"CreateQu
                       </View>
                     ))) : null}
                   <View style={[tailwind("mb-5")]}>
-                    <AddNewButton text="Add Another Product & Unit" onPress={() => push({ quantity: "", unit: LITRES, prices: [{ value: "", unit: LITRE }] })} />
+                    <AddNewButton text="Add Another Product & Unit" onPress={() => push({ quantity: "", unit: LITRES, prices: [{ value: "", unit: LITRE, remarks: "" }] })} />
                   </View>
                 </View>
               )}
@@ -286,7 +288,7 @@ const CreateQuotationFormScreen = ({ navigation }: RootNavigationProps<"CreateQu
             {
               errorLocations
                 ?
-                <TextLabel content={"Port selected cannot be duplicated"} color='text-red-500' />
+                <TextLabel content={"Delivery location selected cannot be duplicated"} color='text-red-500' />
                 :
                 <></>
             }
@@ -296,8 +298,8 @@ const CreateQuotationFormScreen = ({ navigation }: RootNavigationProps<"CreateQu
               value={values.delivery_date}
               onChangeValue={text => setFieldValue("delivery_date", text)}
               required={true}
-              hasError={(errors.delivery_date?.startDate && touched.delivery_date?.startDate) || (errors.delivery_date?.endDate && touched.delivery_date?.endDate) ? true : false}
-              errorMessage={errors.delivery_date?.startDate || errors.delivery_date?.endDate}
+              hasError={(errors.delivery_date?.startDate && touched.delivery_date?.startDate) ? true : false}
+              errorMessage={errors.delivery_date?.startDate}
             />
 
             <FieldArray name="delivery_modes">
@@ -353,6 +355,8 @@ const CreateQuotationFormScreen = ({ navigation }: RootNavigationProps<"CreateQu
               operation={() => { handleSubmit(); setErrorLocations(false); setErrorDeliveryMode(false); }}
               loading={loading}
             />
+
+
           </View>
         )}
       </Formik>

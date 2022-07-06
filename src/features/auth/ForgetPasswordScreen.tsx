@@ -33,7 +33,7 @@ const ForgetPasswordScreen = ({ navigation }: AuthNavigationProps<"ForgetPasswor
         setModalVisible(true);
       })
       .catch((error) => {
-        console.log(error.code);
+        console.error(error.code);
         if (error.code == "auth/user-not-found") {
           setError("User does not exist");
         }

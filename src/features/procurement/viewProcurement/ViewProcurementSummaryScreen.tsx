@@ -38,7 +38,19 @@ const ViewProcurementSummaryScreen = ({ navigation, route }: RootNavigationProps
 
 				<View style={tailwind("h-[400px]")}>
 					<InfoDisplay placeholder="Procurement Date" info={data.procurement_date || "-"} />
-					<InfoDisplay placeholder="Proposed Date" info={data.proposed_date ? `${data.proposed_date.startDate} to ${data.proposed_date.endDate}`: "-"} />
+
+					<InfoDisplay placeholder={`Proposed Date`} info={
+						data.proposed_date?.startDate
+							?
+							data.proposed_date.endDate
+								?
+								`${data.proposed_date?.startDate} to ${data.proposed_date?.endDate}`
+								:
+								`${data.proposed_date.startDate}`
+							:
+							"-"}
+					/>
+					
 					<InfoDisplay placeholder="Supplier" info={data.supplier.name || "-"} />
 					<InfoDisplay placeholder="Product" info={data.product.name || "-"} />
 					<InfoDisplay placeholder="Quantity" info={addCommaNumber(data.quantity, "-")} />
@@ -47,7 +59,7 @@ const ViewProcurementSummaryScreen = ({ navigation, route }: RootNavigationProps
 					<InfoDisplay placeholder="Unit Price" info={`${convertCurrency(data.currency_rate)} ${data.unit_price}` || "-"} />
 					<InfoDisplay placeholder="Payment Term" info={data.payment_term || "-"} />
 					<InfoDisplay placeholder="Mode of Delivery" info={data.delivery_mode || "-"} />
-				<InfoDisplay placeholder="Total Amount" info={` ${data.total_amount}` || "-"} />
+					<InfoDisplay placeholder="Total Amount" info={` ${data.total_amount}` || "-"} />
 
 					{
 						data.status == SUBMITTED || data.status == PENDING

@@ -76,7 +76,19 @@ const ViewPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationPro
 				<InfoDisplay placeholder="Port" info={data.port || "-"} />
 				<InfoDisplay placeholder="Delivery Location" info={data.delivery_location || "-"} />
 				<InfoDisplay placeholder="Contact Person" info={data.contact_person ? data.contact_person.name : "-"} />
-				<InfoDisplay placeholder="ETA/ Delivery Date" info={data.ETA_delivery_date ? `${data.ETA_delivery_date.startDate} to ${data.ETA_delivery_date.endDate}` : "-"} />
+
+				<InfoDisplay placeholder={`ETA/ Delivery Date`} info={
+					data.ETA_delivery_date?.startDate
+						?
+						data.ETA_delivery_date.endDate
+							?
+							`${data.ETA_delivery_date?.startDate} to ${data.ETA_delivery_date?.endDate}`
+							:
+							`${data.ETA_delivery_date.startDate}`
+						:
+						"-"}
+				/>
+
 				<InfoDisplay placeholder="Remarks" info={data.remarks || "-"} />
 				{
 					data.purchase_vouchers
@@ -84,7 +96,7 @@ const ViewPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationPro
 						<View>
 							{
 								data.purchase_vouchers.map((item, index) => {
-								return <InfoDisplayLink key={item.id} placeholder={`Purchase Voucher ${index + 1}`} info={item.secondary_id} linkOnPress={() => { navigation.navigate("ViewPurchaseVoucherSummary", { docID: item.id }) }} />
+									return <InfoDisplayLink key={item.id} placeholder={`Purchase Voucher ${index + 1}`} info={item.secondary_id} linkOnPress={() => { navigation.navigate("ViewPurchaseVoucherSummary", { docID: item.id }) }} />
 								})
 							}
 						</View>

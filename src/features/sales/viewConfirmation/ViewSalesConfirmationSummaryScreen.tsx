@@ -66,7 +66,18 @@ const ViewSalesConfirmationSummaryScreen = ({ navigation, route }: RootNavigatio
 				<InfoDisplay placeholder={`Port`} info={sales.port || "-"} />
 				<InfoDisplay placeholder={`Delivery Location`} info={sales.delivery_location || "-"} />
 				<InfoDisplay placeholder={`Mode of Delivery`} info={sales.delivery_mode || "-"} />
-				<InfoDisplay placeholder={`Delivery Date`} info={`${sales.delivery_date?.startDate ? `${sales.delivery_date?.startDate} to ${sales.delivery_date?.endDate}` : "-"}`} />
+
+				<InfoDisplay placeholder={`Delivery Date`} info={
+					sales.delivery_date?.startDate
+						?
+						sales.delivery_date.endDate
+							?
+							`${sales.delivery_date?.startDate} to ${sales.delivery_date?.endDate}`
+							:
+							`${sales.delivery_date.startDate}`
+						:
+						"-"}
+				/>
 				<InfoDisplay placeholder={`Currency rate`} info={sales.currency_rate || "-"} />
 
 				{
@@ -75,13 +86,16 @@ const ViewSalesConfirmationSummaryScreen = ({ navigation, route }: RootNavigatio
 							<View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 							<InfoDisplay placeholder={`Product ${index + 1}`} info={item.product.name} bold={true} />
 							<InfoDisplay placeholder={`Unit of measurement`} info={item.unit} />
-							<InfoDisplay placeholder={`Price`} info={`${convertCurrency(sales.currency_rate)}${addCommaNumber(item.price.value, "0")} per ${item.price.unit}`} />
+							<InfoDisplay
+								placeholder={`Price`}
+								info={`${convertCurrency(sales.currency_rate)}${addCommaNumber(item.price.value, "0")} per ${item.price.unit}`}
+								secondLine={item.price.remarks} />
 						</View>
 					))
 				}
 				<View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 
-				<InfoDisplay placeholder={`Barging Fee`} info={`${sales.barging_fee ?`${convertCurrency(sales.currency_rate!)}${addCommaNumber(sales.barging_fee, "-")}${sales.barging_remark ? `/${sales.barging_remark}` : ""}` : `-`}`} />
+				<InfoDisplay placeholder={`Barging Fee`} info={`${sales.barging_fee ? `${convertCurrency(sales.currency_rate!)}${addCommaNumber(sales.barging_fee, "-")}${sales.barging_remark ? `/${sales.barging_remark}` : ""}` : `-`}`} />
 				<InfoDisplay placeholder={`Conversion Factor`} info={sales.conversion_factor || "-"} />
 				<InfoDisplay placeholder={`Payment Term`} info={sales.payment_term || "-"} />
 				<InfoDisplay placeholder={`Validity`} info={`Date: ${sales.validity_date == "--Select Date--" ? "-" : sales.validity_date}, Time: ${sales.validity_time}`} />

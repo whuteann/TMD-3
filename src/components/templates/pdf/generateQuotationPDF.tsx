@@ -12,7 +12,7 @@ export function generatePDFQuotation(data: Quotation, image) {
   var deliveryModeList = "";
 
   data.bunker_barges!.map((item, index) => {
-    bunkersList = index == 0 ? `${item.name}` : `${item.name}, ${bunkersList}`
+    bunkersList = index == 0 ? `${item.name} or substitute` : `${item.name}, ${bunkersList}`
   });
 
   data.delivery_modes!.map((item, index) => {
@@ -29,7 +29,7 @@ export function generatePDFQuotation(data: Quotation, image) {
           <div style="${pickBetween("width: 38%; font-size: 13px; line-height: 5px;", "width: 38%;", "width: 38%;")} ">- Price ${index + 1}</div>
           <div style="width: 10px;">:</div>
           <div style="width: 62%; ${pickBetween("font-size: 13px;", "", "")}">
-            ${convertCurrency(data.currency_rate)} ${item.value} per ${item.unit}
+            ${convertCurrency(data.currency_rate)} ${item.value} per ${item.unit} ${item.remarks ? `(${item.remarks})` : ""}
           </div>
         </div>
       `
@@ -39,11 +39,11 @@ export function generatePDFQuotation(data: Quotation, image) {
       ${(index == 0) ? `<div style="margin-top: 20px;"></div>` : ""}
       ${productsList}
       <div style="display: flex; flex-direction: row; margin-top: 7px;">
-          <div><b>Product </b></div>
-          <div>: </div>
-          <div>
+        <div style="${pickBetween("width: 38%; font-size: 13px; line-height: 5px;", "width: 38%;", "width: 38%;")} ">- Product</div>
+        <div style="width: 10px;">:</div>
+        <div style="width: 62%; ${pickBetween("font-size: 13px;", "", "")}">
             ${item.product.name}
-          </div>
+        </div>
       </div>
 
       <div style="display: flex; flex-direction: row; margin-top: 7px;">
@@ -63,12 +63,13 @@ export function generatePDFQuotation(data: Quotation, image) {
     portsList = `
     ${portsList}
     <div style="display: flex; flex-direction: row; margin-top: 7px;">
-        <div><b>Port ${index + 1}</b></div>
-        <div>:</div>
-        <div>
-          ${item.port}
-        </div>
+      <div style="${pickBetween("width: 38%; font-size: 13px; line-height: 5px;", "width: 38%;", "width: 38%;")} ">- Port</div>
+      <div style="width: 10px;">:</div>
+      <div style="width: 62%; ${pickBetween("font-size: 13px;", "", "")}">
+        ${item.port}
+      </div>
     </div>
+
     <div style="display: flex; flex-direction: row; margin-top: 7px;">
       <div style="${pickBetween("width: 38%; font-size: 13px; line-height: 5px;", "width: 38%;", "width: 38%;")} ">- Delivery Location</div>
       <div style="width: 10px;">:</div>
@@ -211,7 +212,7 @@ export function generatePDFQuotation(data: Quotation, image) {
         </div>
         <div style="display: flex; flex-direction: row; ${pickBetween("line-height: 10px; margin-top: 15px;", "margin-top: 20px;", "margin-top: 20px;")}">
           <div style="width: 9px;">-</div>
-          <div style="width: 100%; ${pickBetween("font-size: 8px;", "", "")}">Spacer barge, mooring boat, tug boat, pilotage and fender (if any) to be for buyer arrangement and cost. </div>
+          <div style="width: 100%; ${pickBetween("font-size: 8px;", "", "")}">Spacer barge, mooring boat, tug boat, pilotage and fender (if any) to be for "Buyer" or "Supplier" arrangement and cost. </div>
         </div>
         <div style="display: flex; flex-direction: row; ${pickBetween("line-height: 10px;", "", "")}">
           <div style="width: 9px;">-</div>

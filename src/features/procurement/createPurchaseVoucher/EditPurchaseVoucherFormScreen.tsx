@@ -169,12 +169,12 @@ const EditPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigationProp
                         setFileUpdated(false);
                         setLoading(false);
                       }, (error) => {
-                        console.log(error);
+                        console.error(error);
                       });
                   }).catch(err => {
                     setLoading(false);
                     setError(err.message);
-                    console.log(err.message);
+                    console.error(err.message);
                   })
             } else {
               let data = {
@@ -196,7 +196,7 @@ const EditPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigationProp
                   navigation.navigate("CreatePurchaseVoucherSummary", { docID: docID });
                   setLoading(false);
                 }, (error) => {
-                  console.log(error);
+                  console.error(error);
                 });
             }
 

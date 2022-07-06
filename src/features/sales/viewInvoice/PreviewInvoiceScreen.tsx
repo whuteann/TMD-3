@@ -82,7 +82,7 @@ const PreviewInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<
               <InfoDisplay placeholder={`Product ${index + 1}`} info={item.product.name} />
               <InfoDisplay placeholder="BDN Quantity" info={`${addCommaNumber(item.BDN_quantity.quantity, "0")} ${item.BDN_quantity.unit}`} />
               <InfoDisplay placeholder="Unit of Measurement" info={`${addCommaNumber(item.quantity, "0")} ${item.unit}`} />
-              <InfoDisplay placeholder="Price 1" info={`${addCommaNumber(item.price.value, "0")} ${item.price.unit}${item.MOPS ? ` - MOPS price`: ""}`} />
+              <InfoDisplay placeholder="Price 1" info={`${addCommaNumber(item.price.value, "0")} ${item.price.unit}${item.MOPS ? ` - MOPS price` : ""}`} />
               <InfoDisplay placeholder="Subtotal" info={addCommaNumber(item.subtotal, "0")} />
             </View>
           ))
@@ -98,7 +98,19 @@ const PreviewInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<
 
         <InfoDisplay placeholder="Sale Ref" info={data.quotation_secondary_id} />
         <InfoDisplay placeholder="Delivery Location" info={data.delivery_location || "-"} />
-        <InfoDisplay placeholder="Delivery Date" info={`${data.delivery_date?.startDate ? `${data.delivery_date?.startDate} to ${data.delivery_date?.endDate}` : "-"}`} />
+
+        <InfoDisplay placeholder={`Delivery Date`} info={
+          data.delivery_date?.startDate
+            ?
+            data.delivery_date.endDate
+              ?
+              `${data.delivery_date?.startDate} to ${data.delivery_date?.endDate}`
+              :
+              `${data.delivery_date.startDate}`
+            :
+            "-"}
+        />
+        
         <InfoDisplay placeholder="Mode of Delivery" info={data.delivery_mode} />
 
         <View style={tailwind("mt-5")} />

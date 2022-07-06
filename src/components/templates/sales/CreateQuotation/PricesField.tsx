@@ -12,6 +12,7 @@ import FormLabel from '../../../molecules/typography/FormLabel';
 type price = {
   value: any,
   unit: string,
+  remarks: string
 }
 
 interface inputProps {
@@ -28,8 +29,8 @@ const PricesField: React.FC<inputProps> = ({
   const [localList, setLocalList] = useState<Array<price>>(prices);
   const [triggerUpdate, setTriggerUpdate] = useState(false);
   const [priceErrors, setPriceErrors] = useState([{ value: "", unit: "" }]);
-
-  const updateValue = (field: "unit" | "value", val: string, index: number) => {
+  
+  const updateValue = (field: "unit" | "value" | "remarks", val: string, index: number) => {
     let newList = localList;
     switch (field) {
       case "value":
@@ -37,6 +38,9 @@ const PricesField: React.FC<inputProps> = ({
         break;
       case "unit":
         newList[index].unit = val;
+        break;
+      case "remarks":
+        newList[index].remarks = val;
         break;
     }
     setLocalList([...newList])
@@ -101,7 +105,13 @@ const PricesField: React.FC<inputProps> = ({
                       />
                     </View>
                   </View>
-
+                  <TextInputField
+                    placeholder={"Remarks..."}
+                    value={localList[index].remarks}
+                    editable={true}
+                    shadow={true}
+                    onChangeText={(val) => { updateValue("remarks", val, index) }}
+                  />
                 </View>
 
               </View>
@@ -109,7 +119,7 @@ const PricesField: React.FC<inputProps> = ({
             : null
           }
           <View style={[tailwind("mb-5 mt-2")]} >
-            <AddNewButton text="Add Another Price Per Unit" onPress={() => { prices.push({ value: "", unit: LITRE }); setTriggerUpdate(!triggerUpdate) }} />
+            <AddNewButton text="Add Another Price Per Unit" onPress={() => { prices.push({ value: "", unit: LITRE, remarks: "" }); setTriggerUpdate(!triggerUpdate) }} />
           </View>
         </View>
       </View>

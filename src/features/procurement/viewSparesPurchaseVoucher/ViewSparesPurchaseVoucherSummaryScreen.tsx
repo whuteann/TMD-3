@@ -80,7 +80,7 @@ const ViewSparesPurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavig
 					<InfoDisplay placeholder="Type of Supply" info={data.type_of_supply} />
 					<InfoDisplay placeholder="Delivery Location" info={data.delivery_location} />
 					<InfoDisplay placeholder="Contact Person" info={data.contact_person.name} />
-					<InfoDisplay placeholder="ETA/ Delivery Date" info={data.ETA_delivery_date} />
+					<InfoDisplay placeholder="ETA/ Delivery Date" info={data.ETA_delivery_date || "-"} />
 					<InfoDisplay placeholder="Remarks" info={data.remarks || "-"} />
 				</View>
 

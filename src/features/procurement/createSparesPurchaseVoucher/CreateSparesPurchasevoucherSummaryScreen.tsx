@@ -76,7 +76,7 @@ const CreateSparesPurchaseVoucherSummaryScreen = ({ navigation, route }: RootNav
 						{ screen: "ViewSparesPurchaseVoucherSummary", docID: data.id });
 
 				}, () => {
-					console.log("error");
+					console.error("error");
 				});
 			}}
 			cancelAction={() => { navigation.navigate("Dashboard"); }}

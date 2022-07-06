@@ -33,13 +33,13 @@ export const generateJobConfirmationAAPDF = (data: JobConfirmation) => {
               <div style="display: flex; flex-direction: row; margin-top: 10px;">
                 <div style="${pickBetween("", "width: 320px;", "width: 380px;")} font-size: 18px;">PRICE</div>
                 <div style="width: 10px; font-size: 18px;">:</div>
-                <div style="width: 400px; font-size: 18px; line-height: 25px;">${convertCurrency(data.currency_rate)} ${product.price.value} / ${product.price.unit}</div>
+                <div style="width: 400px; font-size: 18px; line-height: 25px;">${convertCurrency(data.currency_rate)} ${product.price.value} / ${product.price.unit} ${product.price.remarks}</div>
               </div>
               `;
   })
 
   data.bunker_barges.map((item, index) => {
-    bunkersList = index == 0 ? `${item.name}` : `${item.name}, ${bunkersList}`
+    bunkersList = index == 0 ? `${item.name} or substitute` : `${item.name}, ${bunkersList}`
   });
 
   htmlContent = `
@@ -141,7 +141,7 @@ export const generateJobConfirmationAAPDF = (data: JobConfirmation) => {
         <div style="display: flex; flex-direction: row; margin-top: 10px;">
           <div style="${pickBetween("", "width: 320px;", "width: 380px;")} font-size: 18px;">DELIVERY DATE & TIME</div>
           <div style="width: 10px; font-size: 18px;">:</div>
-          <div style="width: 400px; font-size: 18px; line-height: 25px;">${data?.delivery_date?.startDate} to ${data?.delivery_date?.endDate}</div>
+          <div style="width: 400px; font-size: 18px; line-height: 25px;">${data?.delivery_date?.startDate} ${data?.delivery_date?.endDate ? `to ${data?.delivery_date?.endDate}` : ""}</div>
         </div>
 
         <div style="display: flex; flex-direction: row; margin-top: 10px;">

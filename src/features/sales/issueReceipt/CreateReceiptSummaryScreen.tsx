@@ -59,7 +59,7 @@ const CreateReceiptSummaryScreen = ({ navigation, route }: RootNavigationProps<"
       visible={modalOpen}
       setModalClose={() => { setModalOpen(false) }}
       nextAction={() => {
-        confirmReceipt(`${data.invoice_id}`, data.id, `${displayID}`, revisedCode, user!, () => { navigation.navigate("Dashboard"); revalidateCollection(RECEIPTS); }, (error) => { console.log(error); });
+        confirmReceipt(`${data.invoice_id}`, data.id, `${displayID}`, revisedCode, user!, () => { navigation.navigate("Dashboard"); revalidateCollection(RECEIPTS); }, (error) => { console.error(error); });
       }}
       cancelAction={() => { }}
       downloadButton={true}

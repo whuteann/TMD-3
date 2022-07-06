@@ -159,7 +159,7 @@ const CreateInvoiceFormScreen2 = ({ navigation, route }: RootNavigationProps<"Cr
               setLoading(false);
               revalidateDocument(`${INVOICES}/${docID}`);
             }, (error) => {
-              console.log(error);
+              console.error(error);
             });
         }}
       >

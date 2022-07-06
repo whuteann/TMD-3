@@ -139,7 +139,7 @@ const CustomerListScreen = ({ navigation }: RootNavigationProps<"CustomerList">)
               revalidateCollection(CUSTOMERS);
             }).catch(err => {
               setHasError(true);
-              console.log(err);
+              console.error(err);
             });
           }}
         />

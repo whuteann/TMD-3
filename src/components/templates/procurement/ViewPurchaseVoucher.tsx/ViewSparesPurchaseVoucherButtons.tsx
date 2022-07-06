@@ -65,10 +65,10 @@ const ViewSparesPurchaseVoucherButtons: React.FC<Props> = ({
 								`Purchase voucher ${displayID} has been approved by ${user?.name}.`,
 								{ screen: "ViewSparesPurchaseVoucherSummary", docID: navID });
 						}, (error) => {
-							console.log(error);
+							console.error(error);
 						});
 					}, (error) => {
-						console.log(error);
+						console.error(error);
 					})
 					break;
 				case "reject":
@@ -82,7 +82,7 @@ const ViewSparesPurchaseVoucherButtons: React.FC<Props> = ({
 							`Purchase voucher ${displayID} has been rejected by ${user?.name}.`,
 							{ screen: "ViewSparesPurchaseVoucherSummary", docID: navID });
 					}, (error) => {
-						console.log(error);
+						console.error(error);
 					})
 					break;
 			}

@@ -16,7 +16,7 @@ export type JobConfirmation = {
   invoice_id?: string,
   confirmed_date: string,
   customer?: Customer,
-  products: Array<{ product: Product, unit: string, quantity: string, price: { value: string, unit: string } }>,
+  products: Array<{ product: Product, unit: string, quantity: string, price: { value: string, unit: string, remarks: string } }>,
   barging_fee: string,
   barging_remark: string,
 

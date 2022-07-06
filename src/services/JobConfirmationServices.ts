@@ -19,7 +19,7 @@ const generateJobID = (salesID: string, customerName: string) => {
     })
     .join("");
 
-  let jobID = `${JOB_CONFIRMATION_CODE} / ${customer_code} / ${code} / ${(current_time.getMonth() + 1) > 9 ? `${current_time.getMonth() + 1}` : `0${current_time.getMonth() + 1}`}${DATE.slice(2)}`
+  let jobID = `${JOB_CONFIRMATION_CODE} / ${customer_code} / ${code} / ${(current_time.getMonth() + 1) > 9 ? `${current_time.getMonth() + 1}` : `0${current_time.getMonth() + 1}`}${`${current_time.getFullYear()}`.slice(2)}`
 
   return jobID;
 }

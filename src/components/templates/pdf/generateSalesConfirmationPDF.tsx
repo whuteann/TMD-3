@@ -1,4 +1,5 @@
 import { convertCurrency } from "../../../constants/Currency";
+import { convertUnitShortHand } from "../../../constants/Units";
 import { pickBetween } from "../../../helpers/GenericHelper";
 import { SalesConfirmation } from "../../../types/SalesConfirmation";
 import { CSSStyles } from "./CSS"
@@ -10,11 +11,16 @@ export const generateSalesConfirmationPDF = (data: SalesConfirmation, image) => 
   // Pull data here
   var productsList = "";
   var bunkersList = "";
+  var unit = "";
+  var unitList: Array<string> = [];
+
   data.bunker_barges.map((item, index) => {
     bunkersList = index == 0 ? `${item.name}` : `${item.name}, ${bunkersList}`
   });
 
   data.products.map((product, index) => {
+    unitList.push(product.price.unit);
+
     productsList = `
       ${productsList}
       <div style="display: flex; flex-direction: row;">
@@ -23,6 +29,16 @@ export const generateSalesConfirmationPDF = (data: SalesConfirmation, image) => 
         <div style="width: 25%; ${pickBetween("font-size: 12px", "", "")}">${product.price.unit}</div>
         <div style="width: 25%; ${pickBetween("font-size: 12px", "", "")}">${product.price.value}</div>
       </div>
+      ${product.price.remarks
+        ?
+        `
+        <div style="display: flex; flex-direction: row;">
+          <div style="width: 25%; font-weight: bold; ${pickBetween("font-size: 12px", "", "")}">${product.price.remarks}</div>
+        </div>
+        `
+        :
+        ""
+      }
     `
     if (index == (data.products.length - 1)) {
       if (data.barging_fee) {
@@ -39,6 +55,19 @@ export const generateSalesConfirmationPDF = (data: SalesConfirmation, image) => 
     }
   })
 
+  let check_same: Boolean = true;
+
+  unitList.map((item, index) => {
+    if(item != unitList[0]){
+      check_same = false;
+    }
+  })
+
+  if (check_same) {
+    unit = `${convertUnitShortHand(unitList[0])}`
+  } else {
+    unit = "UNIT";
+  }
 
   htmlContent = `
     <!DOCTYPE html>
@@ -137,18 +166,18 @@ export const generateSalesConfirmationPDF = (data: SalesConfirmation, image) => 
               <div style="display: flex; flex-direction: row">
                 <div style=" width: 30%; ${pickBetween("font-size: 12px", "", "")}"><b>ETA/Delivery date</b> </div>
                 <div style="width: 9px; ${pickBetween("font-size: 12px", "", "")}">:</div>
-                <div style="${pickBetween("font-size: 12px; width: 55%; line-height: 13px;", "width: 60%;", "width: 60%;")}">${data.delivery_date?.startDate} to ${data.delivery_date?.endDate}</div>
+                <div style="${pickBetween("font-size: 12px; width: 55%; line-height: 13px;", "width: 60%;", "width: 60%;")}">${data.delivery_date?.startDate} ${data.delivery_date?.endDate ? `to ${data.delivery_date?.endDate}` : ""}</div>
               </div>
               <div style="display: flex; flex-direction: row">
                 <div style=" width: 30%; ${pickBetween("font-size: 12px", "", "")}><b>Vessel Name</b> </div>
                 <div style=" width: 30%; ${pickBetween("font-size: 12px", "", "")}><b>Vessel Name</b> </div>
                 <div style="width: 9px; ${pickBetween("font-size: 12px", "", "")}">:</div>
-                <div style="${pickBetween("font-size: 12px; width: 55%; line-height: 13px;", "width: 60%;", "width: 60%;")}">${bunkersList}</div>
+                <div style="${pickBetween("font-size: 12px; width: 55%; line-height: 13px;", "width: 60%;", "width: 60%;")}">${data.receiving_vessel_name}</div>
               </div>
               <div style="display: flex; flex-direction: row">
                 <div style=" width: 30%; ${pickBetween("font-size: 12px", "", "")}"><b>Place of Supply</b> </div>
                 <div style="width: 9px; ${pickBetween("font-size: 12px", "", "")}">:</div>
-                <div style="${pickBetween("font-size: 12px; width: 55%; line-height: 13px;", "width: 60%;", "width: 60%;")}">${data.port}</div>
+                <div style="${pickBetween("font-size: 12px; width: 55%; line-height: 13px;", "width: 60%;", "width: 60%;")}">${data.port}, ${data.delivery_location}</div>
               </div>
             </div>
 
@@ -167,7 +196,7 @@ export const generateSalesConfirmationPDF = (data: SalesConfirmation, image) => 
                 <div style="width: 25%; ${pickBetween("font-size: 12px", "", "")}"><b>Unit Price</b></div>
               </div>
               <div style="display: flex; flex-duration: row">
-                <div style="margin-left: 75%; ${pickBetween("font-size: 12px", "", "")}">${convertCurrency(data.currency_rate)} (${data.currency_rate})/LTR</div>
+                <div style="margin-left: 75%; ${pickBetween("font-size: 12px", "", "")}">${convertCurrency(data.currency_rate)} (${data.currency_rate})/${unit}</div>
               </div>
               <div style="border: 1px solid #000000; margin-top: 5px; margin-bottom: 5px;"></div>
                 ${productsList}

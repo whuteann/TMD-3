@@ -30,7 +30,7 @@ export const UploadFile = async (path: string, file: any, fileName: string, uri:
     imageRef.put(file).on(
       "state_changed",
       error => {
-        console.log(error, "here");
+        console.error(error, "here");
       },
       () => {
 
@@ -43,7 +43,7 @@ export const UploadFile = async (path: string, file: any, fileName: string, uri:
     imageRef.put(blob).on(
       "state_changed",
       error => {
-        console.log(error, "here");
+        console.error(error, "here");
       },
       () => {
         nextAction(filename);
@@ -97,7 +97,7 @@ export const UploadBatch = async (path: string, files: Array<{ file: File, filen
     )
   })
 
-  const resolve = await Promise.all(Uploads).catch(err => console.log(err));
+  const resolve = await Promise.all(Uploads).catch(err => console.error(err));
 }
 
 export const deleteFile = (path: string, filename_storage: string, onSuccess: () => void) => {
@@ -106,7 +106,7 @@ export const deleteFile = (path: string, filename_storage: string, onSuccess: ()
     .delete()
     .then(() => {
       onSuccess();
-    }).catch(error => console.log("error deleting file: ", error))
+    }).catch(error => console.error("error deleting file: ", error))
 
 }
 
@@ -159,17 +159,17 @@ export const UploadFileAndroid = (file: { name: string, file: File, uri: string 
               resolve({ filename: file.name, filename_storage: `${file.name}.${currentTime}`, url: url });
             });
         }).catch(() => {
-          console.log("error 1");
+          console.error("error 1");
           reject("Network Failed")
         })
       }).catch(err => {
-        console.log("error 2");
+        console.error("error 2");
         reject(err.message);
       })
 
     }).catch(err => {
-      console.log("error 3");
-      console.log(err.name);
+      console.error("error 3");
+      console.error(err.name);
 
       reject(err.message)
     })
@@ -206,17 +206,17 @@ export const UploadFileAndroidCompleteFilename = async (path: string, file: any,
               resolve({ filename: file.name, filename_storage: `${file.name}.${currentTime}`, url: url });
             });
         }).catch(() => {
-          console.log("error 1");
+          console.error("error 1");
           reject("Network Failed")
         })
       }).catch(err => {
-        console.log("error 2");
+        console.error("error 2");
         reject(err.message);
       })
 
     }).catch(err => {
-      console.log("error 3");
-      console.log(err);
+      console.error("error 3");
+      console.error(err);
 
       reject(err.message)
     })

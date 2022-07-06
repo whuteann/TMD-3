@@ -14,7 +14,7 @@ import RegularButton from '../../../components/atoms/buttons/RegularButton';
 import ViewPageHeaderText from '../../../components/molecules/display/ViewPageHeaderText';
 import { SALES, QUOTATIONS, USERS } from '../../../constants/Firebase';
 import { generateProductDisplay } from '../../../helpers/QuotationHelper';
-import { DRAFT, HEAD_OF_MARKETING_ROLE, IN_REVIEW, MARKETING_EXECUTIVE_ROLE, REJECTED, REVISED_CODE, SUPER_ADMIN_ROLE } from '../../../types/Common';
+import { DRAFT, HEAD_OF_MARKETING_ROLE, IN_REVIEW, REVISED_CODE, SUPER_ADMIN_ROLE } from '../../../types/Common';
 import Unauthorized from '../../../components/atoms/unauthorized/Unauthorized';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
@@ -30,7 +30,7 @@ const CreateQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps
 
 	const [loading, setLoading] = useState(false);
 	const docID = route.params.docID;
-	const allowedStatuses = [DRAFT, REJECTED];
+	const allowedStatuses = [DRAFT];
 	const user = useSelector(UserSelector);
 	let displayID = "";
 	let revisedCode: number;
@@ -50,7 +50,7 @@ const CreateQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps
 		return <Unauthorized />;
 	}
 
-	const productsDisplayList: Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string }> }> = generateProductDisplay(data.products);
+	const productsDisplayList: Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string, remarks:string }> }> = generateProductDisplay(data.products);
 
 	revisedCode = data.revised_code !== undefined ? Number(data.revised_code) + 1 : 0
 	displayID = `${data.secondary_id}${data.revised_code !== undefined ? REVISED_CODE(revisedCode) : ""}`;
@@ -78,7 +78,18 @@ const CreateQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps
 				}
 				<View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 
-				<InfoDisplay placeholder={`Delivery Date`} info={`${data.delivery_date?.startDate ? `${data.delivery_date?.startDate} to ${data.delivery_date?.endDate}` : "-"}`} />
+				<InfoDisplay placeholder={`Delivery Date`} info={
+					data.delivery_date?.startDate
+						?
+						data.delivery_date.endDate
+							?
+							`${data.delivery_date?.startDate} to ${data.delivery_date?.endDate}`
+							:
+							`${data.delivery_date.startDate}`
+						:
+						"-"}
+				/>
+
 				{
 					delivery_modes.map((item, index) => {
 						return (
@@ -164,7 +175,7 @@ const CreateQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps
 									revalidateCollection(QUOTATIONS);
 									revalidateCollection(SALES);
 								}, (error) => {
-									console.log(error)
+									console.error(error)
 								});
 
 							}

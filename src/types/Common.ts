@@ -60,6 +60,6 @@ export const SPARES_PURCHASE_ORDER_CODE = "SHIPPO-TMD";
 export const REVISED_CODE = (count: number) => { return `-R${count}` }
 
 const current_time = new Date();
-export const DATE = `${current_time.getFullYear()}`
+export const DATE = `${current_time.getFullYear()}${(current_time.getMonth()+1) < 10 ? `0${current_time.getMonth()+1}` : `${current_time.getMonth()+1}`}`
 
 

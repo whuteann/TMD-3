@@ -70,7 +70,17 @@ const SalesSummaryScreen = ({ navigation, route }: RootNavigationProps<"SalesSum
       }
 
 
-      <InfoDisplay placeholder="Delivery Date" info={`${quotation.delivery_date?.startDate} to ${quotation.delivery_date?.endDate}`} />
+      <InfoDisplay placeholder={`Delivery Date`} info={
+        quotation.delivery_date?.startDate
+          ?
+          quotation.delivery_date.endDate
+            ?
+            `${quotation.delivery_date?.startDate} to ${quotation.delivery_date?.endDate}`
+            :
+            `${quotation.delivery_date.startDate}`
+          :
+          "-"}
+      />
       {
         sales_confirmation.delivery_mode
           ?
@@ -85,7 +95,7 @@ const SalesSummaryScreen = ({ navigation, route }: RootNavigationProps<"SalesSum
           })
 
       }
-  
+
       <InfoDisplay placeholder="Currency Rate" info={quotation.currency_rate || "-"} />
       <View style={tailwind("mb-6")} />
 

@@ -9,7 +9,7 @@ import Body from '../../../components/atoms/display/Body';
 import HeaderStack from '../../../components/atoms/display/HeaderStack';
 import { useTailwind } from 'tailwind-rn/dist';
 import ViewPageHeaderText from '../../../components/molecules/display/ViewPageHeaderText';
-import { revalidateCollection,  useDocument } from '@nandorojo/swr-firestore';
+import { revalidateCollection, useDocument } from '@nandorojo/swr-firestore';
 import { SparesProcurement } from '../../../types/SparesProcurement';
 import { SPARES_PROCUREMENTS } from '../../../constants/Firebase';
 import LoadingData from '../../../components/atoms/loading/loadingData';
@@ -74,7 +74,7 @@ const CreateSparesProcurementSummaryScreen = ({ navigation, route }: RootNavigat
 						{ screen: "ViewSparesProcurementSummary", docID: docID });
 
 				}, (error) => {
-					console.log(error);
+					console.error(error);
 				})
 			}}
 			cancelAction={() => { }}
@@ -89,7 +89,18 @@ const CreateSparesProcurementSummaryScreen = ({ navigation, route }: RootNavigat
 
 
 				<InfoDisplay placeholder={`Procurement Date`} info={`${data.procurement_date}`} />
-				<InfoDisplay placeholder={`Propose Date`} info={`${data.proposed_date.startDate} to ${data.proposed_date.endDate}`} />
+
+				<InfoDisplay placeholder={`Proposed Date`} info={
+					data.proposed_date?.startDate
+						?
+						data.proposed_date.endDate
+							?
+							`${data.proposed_date?.startDate} to ${data.proposed_date?.endDate}`
+							:
+							`${data.proposed_date.startDate}`
+						:
+						"-"}
+				/>
 
 				{
 					data.suppliers.map((item, index) => (

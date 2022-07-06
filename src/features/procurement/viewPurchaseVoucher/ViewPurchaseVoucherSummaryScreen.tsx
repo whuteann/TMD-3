@@ -84,7 +84,19 @@ const ViewPurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavigationP
 					<InfoDisplay placeholder="Port" info={data.port} />
 					<InfoDisplay placeholder="Delivery Location" info={data.delivery_location} />
 					<InfoDisplay placeholder="Contact Person" info={data.contact_person.name} />
-					<InfoDisplay placeholder="ETA/ Delivery Date" info={data.ETA_delivery_date ? `${data.ETA_delivery_date.startDate} to ${data.ETA_delivery_date.endDate}` : "-"} />
+
+					<InfoDisplay placeholder={`ETA/ Delivery Date`} info={
+						data.ETA_delivery_date?.startDate
+							?
+							data.ETA_delivery_date.endDate
+								?
+								`${data.ETA_delivery_date?.startDate} to ${data.ETA_delivery_date?.endDate}`
+								:
+								`${data.ETA_delivery_date.startDate}`
+							:
+							"-"}
+					/>
+
 					<InfoDisplay placeholder="Remarks" info={data.remarks || "-"} />
 				</View>
 
@@ -109,14 +121,14 @@ const ViewPurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavigationP
 								path={PURCHASE_VOUCHERS}
 								value={data.do_file}
 								filename_storage={data.filename_storage_do}
-								updateDoc={(filename, filename_storage) => { updatePurchaseVoucher(docID, { do_file: filename, filename_storage_do: filename_storage }, user!, UPDATE_ACTION, () => { revalidateDocument(`${PURCHASE_VOUCHERS}/${docID}`) }, (error) => { console.log(error); }) }}
+								updateDoc={(filename, filename_storage) => { updatePurchaseVoucher(docID, { do_file: filename, filename_storage_do: filename_storage }, user!, UPDATE_ACTION, () => { revalidateDocument(`${PURCHASE_VOUCHERS}/${docID}`) }, (error) => { console.error(error); }) }}
 							/>
 							<UploadButton
 								buttonText={"Upload Bunker Receiving Noted"}
 								path={PURCHASE_VOUCHERS}
 								value={data.brn_file}
 								filename_storage={data.filename_storage_brn}
-								updateDoc={(filename, filename_storage) => { updatePurchaseVoucher(docID, { brn_file: filename, filename_storage_brn: filename_storage }, user!, UPDATE_ACTION, () => { revalidateDocument(`${PURCHASE_VOUCHERS}/${docID}`) }, (error) => { console.log(error); }) }}
+								updateDoc={(filename, filename_storage) => { updatePurchaseVoucher(docID, { brn_file: filename, filename_storage_brn: filename_storage }, user!, UPDATE_ACTION, () => { revalidateDocument(`${PURCHASE_VOUCHERS}/${docID}`) }, (error) => { console.error(error); }) }}
 							/>
 						</View>
 						:

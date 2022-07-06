@@ -96,12 +96,12 @@ const CreateInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 
                 revalidateCollection(JOB_CONFIRMATIONS);
               }, (error) => {
-                console.log(error);
+                console.error(error);
               }
             )
 
           }, (error) => {
-            console.log(error);
+            console.error(error);
           });
       }}
       cancelAction={() => {
@@ -175,7 +175,19 @@ const CreateInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 
         <InfoDisplay placeholder="Sale Ref" info={data.quotation_secondary_id} />
         <InfoDisplay placeholder="Delivery Location" info={data.delivery_location || "-"} />
-        <InfoDisplay placeholder="Delivery Date" info={`${data.delivery_date?.startDate ? `${data.delivery_date?.startDate} to ${data.delivery_date?.endDate}` : "-"}`} />
+
+        <InfoDisplay placeholder={`Delivery Date`} info={
+          data.delivery_date?.startDate
+            ?
+            data.delivery_date.endDate
+              ?
+              `${data.delivery_date?.startDate} to ${data.delivery_date?.endDate}`
+              :
+              `${data.delivery_date.startDate}`
+            :
+            "-"}
+        />
+
         <InfoDisplay placeholder="Mode of Delivery" info={data.delivery_mode} />
 
         <View style={tailwind("mt-5")} />

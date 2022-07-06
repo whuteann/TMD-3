@@ -85,16 +85,16 @@ const ProceedSalesConfirmationFinalScreen = ({ navigation, route }: RootNavigati
 							revalidateCollection(SALES_CONFIRMATIONS);
 							linkTo("/dashboard");
 						}, (error) => {
-							console.log(error);
+							console.error(error);
 						});
 				}, (error) => {
-					console.log(error);
+					console.error(error);
 				})
 			}, (error) => {
-				console.log(error);
+				console.error(error);
 			});
 		}, (error) => {
-			console.log(error);
+			console.error(error);
 		});
 	}
 
@@ -145,7 +145,11 @@ const ProceedSalesConfirmationFinalScreen = ({ navigation, route }: RootNavigati
 
 							<InfoDisplay placeholder={`Product ${index + 1}`} info={item.product.name} bold={true} />
 							<InfoDisplay placeholder={`Unit of measurement`} info={`${addCommaNumber(item.quantity, "0")} ${item.unit}`} />
-							<InfoDisplay placeholder={`Price`} info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(item.price.value, "0")} per ${item.price.unit}`} />
+							<InfoDisplay
+								placeholder={`Price`}
+								info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(item.price.value, "0")} per ${item.price.unit}`}
+								secondLine={item.price.remarks}
+							/>
 						</View>
 					))
 				}
@@ -154,7 +158,19 @@ const ProceedSalesConfirmationFinalScreen = ({ navigation, route }: RootNavigati
 
 				<InfoDisplay placeholder={`Port`} info={data.port || "-"} />
 				<InfoDisplay placeholder={`Delivery Location`} info={data.delivery_location || "-"} />
-				<InfoDisplay placeholder={`Delivery Date`} info={`${data.delivery_date?.startDate ? `${data.delivery_date?.startDate} to ${data.delivery_date?.endDate}` : "-"}`} />
+
+				<InfoDisplay placeholder={`Delivery Date`} info={
+					data.delivery_date?.startDate
+						?
+						data.delivery_date.endDate
+							?
+							`${data.delivery_date?.startDate} to ${data.delivery_date?.endDate}`
+							:
+							`${data.delivery_date.startDate}`
+						:
+						"-"}
+				/>
+
 				<InfoDisplay placeholder={`Mode of Delivery`} info={data.delivery_mode || "-"} />
 				<InfoDisplay placeholder={`Currency  Rate`} info={data.currency_rate} />
 				<InfoDisplay placeholder={`Barging Fee`} info={`${data.barging_fee ? `${convertCurrency(data.currency_rate!)} ${addCommaNumber(data.barging_fee, "-")}${data.barging_remark ? `/${data.barging_remark}` : ""}` : `-`}`} />

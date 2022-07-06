@@ -42,7 +42,7 @@ export const submitProfile = (values, currentPassword, onSuccess: () => void, on
         () => {
           onSuccess()
         }
-      ).catch(error => console.log(error));
+      ).catch(error => console.error(error));
     }
   }
 }

@@ -20,7 +20,7 @@ import { Quotation } from '../../../types/Quotation';
 import { CUSTOMERS, PORTS, PRODUCTS, QUOTATIONS } from '../../../constants/Firebase';
 import { Product } from '../../../types/Product';
 import { Port } from '../../../types/Port';
-import { DRAFT, REJECTED } from '../../../types/Common';
+import { APPROVED, DRAFT, IN_REVIEW, REJECTED } from '../../../types/Common';
 import Unauthorized from '../../../components/atoms/unauthorized/Unauthorized';
 import { getCustomerNameAndContactPerson } from '../../../helpers/CustomerHelper';
 import { getPortNameAndDeliveryLocations } from '../../../helpers/PortHelper';
@@ -68,7 +68,7 @@ const formSchema = Yup.object().shape({
 
   delivery_date: Yup.object().shape({
     startDate: Yup.string().required("Required"),
-    endDate: Yup.string().required("Required")
+    endDate: Yup.string()
   }),
   delivery_modes: Yup.array().of(Yup.string().required("Required")),
   receiving_vessel_name: Yup.string().required("Required")
@@ -82,7 +82,7 @@ const EditQuotationFormScreen = ({ navigation, route }: RootNavigationProps<"Edi
   const user = useSelector(UserSelector);
   const [errorLocations, setErrorLocations] = useState(false);
   const [errorDeliveryMode, setErrorDeliveryMode] = useState(false);
-  const allowedStatuses = [DRAFT, REJECTED];
+  const allowedStatuses = [DRAFT, REJECTED, IN_REVIEW, APPROVED];
   const [address, setAddress] = useState<string>("");
   const { docID } = route.params;
   let displayID: string = "";
@@ -128,7 +128,7 @@ const EditQuotationFormScreen = ({ navigation, route }: RootNavigationProps<"Edi
   const onSubmit = async (values) => {
     setLoading(true);
     const sales_id = data.sales_id;
-    const unique = Array.from(new Set(values.ports.map(item => item.port)));
+    const unique = Array.from(new Set(values.ports.map(item => item.delivery_location)));
     const unique_delivery_mode = Array.from(new Set(values.delivery_modes.map(item => item)));
 
     if (values.ports.length == unique.length && values.delivery_modes.length == unique_delivery_mode.length) {
@@ -176,9 +176,9 @@ const EditQuotationFormScreen = ({ navigation, route }: RootNavigationProps<"Edi
             navigation.navigate("CreateQuotation2", { docID: docID, action: "edit" });
             setLoading(false);
           }, (error) => {
-            console.log(error);
+            console.error(error);
           })
-      }, (error) => { console.log(error) })
+      }, (error) => { console.error(error) })
     } else {
       setLoading(false);
       if (!(values.ports.length == unique.length)) {
@@ -192,7 +192,7 @@ const EditQuotationFormScreen = ({ navigation, route }: RootNavigationProps<"Edi
   }
 
   return (
-    <Body header={<HeaderStack title={"Create Quotation"} navigateProp={navigation} />} style={tailwind("mt-6")}>
+    <Body header={<HeaderStack title={"Edit Quotation"} navigateProp={navigation} />} style={tailwind("mt-6")}>
 
       <ViewPageHeaderText doc="Quotation" id={displayID} />
 
@@ -324,8 +324,8 @@ const EditQuotationFormScreen = ({ navigation, route }: RootNavigationProps<"Edi
               value={values.delivery_date}
               onChangeValue={text => setFieldValue("delivery_date", text)}
               required={true}
-              hasError={(errors.delivery_date?.startDate && touched.delivery_date?.startDate) || (errors.delivery_date?.endDate && touched.delivery_date?.endDate) ? true : false}
-              errorMessage={errors.delivery_date?.startDate || errors.delivery_date?.endDate}
+              hasError={(errors.delivery_date?.startDate && touched.delivery_date?.startDate) ? true : false}
+              errorMessage={errors.delivery_date?.startDate}
             />
 
             <FieldArray name="delivery_modes">

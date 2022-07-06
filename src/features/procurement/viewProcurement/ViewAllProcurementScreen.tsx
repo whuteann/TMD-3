@@ -231,7 +231,7 @@ const ViewAllProcurementSearchScreen = ({ navigation }: RootNavigationProps<"Vie
 						return <ViewTabProcurement
 							id={item.secondary_id}
 							nav_id={item.id}
-							org={item.supplier.name}
+							org={item.created_by.name}
 							date={item.procurement_date}
 							status={item.status}
 							navigation={navigation}

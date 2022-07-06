@@ -18,7 +18,7 @@ import { Product } from '../../../../types/Product';
 import { updateSalesConfirmation } from '../../../../services/SalesConfirmationServices';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../../redux/reducers/Auth';
-import { ARCHIVE_QUOTATION, REVIEW_QUOTATION } from '../../../../permissions/Permissions';
+import { ARCHIVE_QUOTATION, CREATE_QUOTATION, REVIEW_QUOTATION } from '../../../../permissions/Permissions';
 import { UPDATE_ACTION } from '../../../../constants/Action';
 import { APPROVED, ARCHIVED, DRAFT, HEAD_OF_MARKETING_ROLE, MARKETING_EXECUTIVE_ROLE, REJECTED, REJECTING, SUPER_ADMIN_ROLE } from '../../../../types/Common';
 import { updateJobConfirmation } from '../../../../services/JobConfirmationServices';
@@ -122,7 +122,7 @@ const ViewQuotationButtons: React.FC<Props> = ({
 
 									revalidateCollection(QUOTATIONS);
 								}, (error) => {
-									console.log(error);
+									console.error(error);
 								});
 							setStatus("Approved");
 							break;
@@ -141,7 +141,7 @@ const ViewQuotationButtons: React.FC<Props> = ({
 
 									revalidateCollection(QUOTATIONS);
 								}, (error) => {
-									console.log(error)
+									console.error(error)
 								});
 							setStatus("Rejected");
 							setRejectReason("1. Pricing Issue");
@@ -162,7 +162,7 @@ const ViewQuotationButtons: React.FC<Props> = ({
 
 									revalidateCollection(QUOTATIONS);
 								}, (error) => {
-									console.log(error);
+									console.error(error);
 								});
 
 							break;
@@ -199,9 +199,21 @@ const ViewQuotationButtons: React.FC<Props> = ({
 				</View>
 			);
 		} else {
-			buttons = <RegularButton text="Download" operation={() => { onDownload() }} />;
-		}
 
+			buttons = (
+				<View>
+					{
+						permissions?.includes(CREATE_QUOTATION)
+							?
+							<RegularButton text="Edit" operation={() => { navigation.navigate("EditQuotation", { docID: docID }) }} />
+							:
+							<></>
+					}
+					<RegularButton text="Download" operation={() => { onDownload() }} />
+				</View>
+			);
+
+		}
 	} else if (status == APPROVED) {
 
 		buttons = (
@@ -228,7 +240,7 @@ const ViewQuotationButtons: React.FC<Props> = ({
 								() => {
 									setFileUploaded(filename);
 								}, (error) => {
-									console.log(error);
+									console.error(error);
 								}
 							)
 						}}
@@ -250,7 +262,7 @@ const ViewQuotationButtons: React.FC<Props> = ({
 												navigation.navigate("ProceedSalesConfirmation", { docID: docID });
 												setLoading(false);
 											}, (error) => {
-												console.log(error);
+												console.error(error);
 											})
 										})
 									}
@@ -259,6 +271,13 @@ const ViewQuotationButtons: React.FC<Props> = ({
 							loading={loading}
 						/>
 					</View>
+					{
+						permissions?.includes(CREATE_QUOTATION)
+							?
+							<RegularButton text="Edit" operation={() => { navigation.navigate("EditQuotation", { docID: docID }) }} />
+							:
+							<></>
+					}
 					{
 						permissions?.includes(ARCHIVE_QUOTATION)
 							?
@@ -353,7 +372,7 @@ const ViewQuotationButtons: React.FC<Props> = ({
 									text="Re-upload Purchase Order"
 									type={"secondary"}
 									operation={() => {
-										updateQuotation(docID, { purchase_order_no: "" }, user!, UPDATE_ACTION, () => { }, (error) => { console.log(error); })
+										updateQuotation(docID, { purchase_order_no: "" }, user!, UPDATE_ACTION, () => { }, (error) => { console.error(error); })
 										setUploaded(false);
 									}}
 								/>
@@ -380,11 +399,11 @@ const ViewQuotationButtons: React.FC<Props> = ({
 												updateQuotation(docID, { purchase_order_file: filename, filename_storage: filename_storage_output }, user!, UPDATE_ACTION, () => {
 													updateSalesConfirmation(salesID, { purchase_order_file: filename, filename_storage: filename_storage_output }, user!, UPDATE_ACTION, () => {
 														updateJobConfirmation(jobConfirmationID, { purchase_order_file: filename, filename_storage_po: filename_storage_output }, user!, () => { }, (error) => {
-															console.log(error);
+															console.error(error);
 														})
-													}, (error) => { console.log(error); })
+													}, (error) => { console.error(error); })
 												}, (error) => {
-													console.log(error);
+													console.error(error);
 												})
 											}}
 										setUploaded={setConfirmedUploaded}
@@ -411,13 +430,13 @@ const ViewQuotationButtons: React.FC<Props> = ({
 																				setLoading(false);
 																				navigation.navigate("ViewAllQuotation")
 																			}, (error) => {
-																				console.log(error);
+																				console.error(error);
 																			})
 																		}, (error) => {
-																			console.log(error);
+																			console.error(error);
 																		})
 																	}, (error) => {
-																		console.log(error);
+																		console.error(error);
 																	}
 																	)
 																}

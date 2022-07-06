@@ -21,7 +21,6 @@ import * as Yup from 'yup';
 import { BUNKERS, QUOTATIONS } from "../../../constants/Firebase";
 import DatePickerField from "../../../components/atoms/input/datetimepickers/DatePickerField";
 import TimePickerField from "../../../components/atoms/input/datetimepickers/TimePickerField";
-import ViewPageHeaderText from "../../../components/molecules/display/ViewPageHeaderText";
 import { Bunker } from "../../../types/Bunker";
 
 import { DRAFT, REJECTED, REVISED_CODE } from "../../../types/Common";
@@ -51,6 +50,7 @@ const formSchema = Yup.object().shape({
         Yup.object().shape({
           value: Yup.string().required("Required").matches(/^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$/, "Please ensure the correct number format"),
           unit: Yup.string().required("Required"),
+          remarks: Yup.string()
         })
       )
     })
@@ -102,7 +102,7 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
       setModalClose={() => { setModalOpen(false) }}
       nextAction={() => {
         navigation.navigate("Dashboard");
-        updateQuotation(docID, submitValues, user!, UPDATE_ACTION, () => navigation.navigate("Dashboard"), (error) => console.log(error));
+        updateQuotation(docID, submitValues, user!, UPDATE_ACTION, () => navigation.navigate("Dashboard"), (error) => console.error(error));
       }}
       cancelAction={() => {
         if (action == "create") {
@@ -146,7 +146,7 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
         )
       })
 
-      
+
 
       updateQuotation(
         docID,
@@ -163,7 +163,7 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
           revalidateDocument(`${QUOTATIONS}/${docID}`);
 
         }, (errorMessage) => {
-          console.log(errorMessage)
+          console.error(errorMessage)
         }
       );
 
@@ -184,7 +184,7 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
           //page 1
           quotation_date: data.quotation_date,
           secondary_id: data.secondary_id,
-          products: data?.__snapshot?.data().products || [{ name: "Fuel", quantity: "", unit: LITRES, prices: [{ value: "", unit: LITRE }] }],
+          products: data.products || [{ name: "Fuel", quantity: "", unit: LITRES, prices: [{ value: "", unit: LITRE, remarks: "s" }] }],
           bunker_barges: data.bunker_barges?.map(item => { return item.name }) || [""],
 
           //page 2

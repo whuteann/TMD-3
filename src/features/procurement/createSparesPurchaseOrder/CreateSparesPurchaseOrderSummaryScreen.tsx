@@ -91,10 +91,10 @@ const CreateSparesPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavig
 							{ screen: "ViewSparesPurchaseOrderSummary", docID: data.id });
 
 					}, (error) => {
-						console.log(error);
+						console.error(error);
 					});
 				}, (error) => {
-					console.log(error);
+					console.error(error);
 				}
 				)
 			}}

@@ -74,10 +74,10 @@ const ViewSparesProcurementApproveScreen = ({ navigation, route }: RootNavigatio
 							{ screen: "ViewSparesProcurementSummary", docID: docID });
 
 					}, (error) => {
-						console.log(error);
+						console.error(error);
 					})
 				}, (error) => {
-					console.log(error);
+					console.error(error);
 				})
 			}
 			}
@@ -101,8 +101,19 @@ const ViewSparesProcurementApproveScreen = ({ navigation, route }: RootNavigatio
 			<View>
 				<ViewPageHeaderText doc="Spares Procurement" id={data.display_id} />
 				<InfoDisplay placeholder={`Procurement Date`} info={`${data.procurement_date}`} />
-				<InfoDisplay placeholder={`Propose Date`} info={`${data.proposed_date.startDate} to ${data.proposed_date.endDate}`} />
-
+				
+				<InfoDisplay placeholder={`Proposed Date`} info={
+						data.proposed_date?.startDate
+							?
+							data.proposed_date.endDate
+								?
+								`${data.proposed_date?.startDate} to ${data.proposed_date?.endDate}`
+								:
+								`${data.proposed_date.startDate}`
+							:
+							"-"}
+					/>
+				
 				<RadioButtonGroup displayItem={supplierDisplayItems} onPicked={(picked) => setPickedIndex(picked)} />
 
 				<View style={tailwind("mt-3")}>

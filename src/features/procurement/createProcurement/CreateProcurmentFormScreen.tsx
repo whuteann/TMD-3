@@ -37,7 +37,7 @@ const formSchema = Yup.object().shape({
   quantity: Yup.string().required("Required").matches(/^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$/, "Please ensure the correct number format"),
   proposed_date: Yup.object().shape({
     startDate: Yup.string().required("Required"),
-    endDate: Yup.string().required("Required")
+    endDate: Yup.string()
   }),
   currency_rate: Yup.string().required("Required"),
   unit_price: Yup.string().required("Required").matches(/^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$/, "Please ensure the correct number format"),
@@ -130,7 +130,7 @@ const CreateProcurementFormScreen = ({ navigation }: RootNavigationProps<"Create
                 { screen: "ViewProcurementSummary", docID: newID });
 
             }, (error) => {
-              console.log(error);
+              console.error(error);
             });
           }}
         validationSchema={formSchema}
@@ -209,7 +209,7 @@ const CreateProcurementFormScreen = ({ navigation }: RootNavigationProps<"Create
               onChangeValue={text => setFieldValue("proposed_date", text)}
               required={true}
               hasError={errors.proposed_date && touched.proposed_date ? true : false}
-              errorMessage={errors.proposed_date?.startDate || errors.proposed_date?.endDate}
+              errorMessage={errors.proposed_date?.startDate}
             />
 
             <FormDropdownInputField

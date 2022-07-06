@@ -112,7 +112,7 @@ const EditSparesPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigati
               setLoading(false);
             }, (error) => {
               setLoading(false);
-              console.log(error);
+              console.error(error);
             })
           }
         }

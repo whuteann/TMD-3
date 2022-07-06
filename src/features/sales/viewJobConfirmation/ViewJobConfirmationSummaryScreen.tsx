@@ -23,7 +23,7 @@ import { UserSelector } from '../../../redux/reducers/Auth';
 import { generateJobConfirmationOPPDF } from '../../../components/templates/pdf/generateJobConfirmationOPPDF';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { convertCurrency } from '../../../constants/Currency';
-import { ACCOUNT_ASSISTANT_ROLE, OPERATION_TEAM_ROLE } from '../../../types/Common';
+import { ACCOUNT_ASSISTANT_ROLE, HEAD_OF_MARKETING_ROLE, MARKETING_EXECUTIVE_ROLE, OPERATION_TEAM_ROLE } from '../../../types/Common';
 
 const ViewJobConfirmationSummaryScreen = ({ navigation, route }: RootNavigationProps<"JobConfirmationSummary">) => {
 
@@ -105,7 +105,11 @@ const ViewJobConfirmationSummaryScreen = ({ navigation, route }: RootNavigationP
 
 							<InfoDisplay placeholder={`Product ${index + 1}`} info={item.product.name} bold={true} />
 							<InfoDisplay placeholder={`Unit`} info={item.unit} />
-							<InfoDisplay placeholder={`Price`} info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(item.price.value, "0")} per ${item.price.unit}`} />
+							<InfoDisplay
+								placeholder={`Price`}
+								info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(item.price.value, "0")} per ${item.price.unit}`}
+								secondLine={user?.role !== OPERATION_TEAM_ROLE ? item.price.remarks : ""}
+							/>
 						</View>
 					))
 				}
@@ -113,7 +117,19 @@ const ViewJobConfirmationSummaryScreen = ({ navigation, route }: RootNavigationP
 
 				<InfoDisplay placeholder="Port" info={data.port || "-"} />
 				<InfoDisplay placeholder="Delivery Location" info={data.delivery_location || "-"} />
-				<InfoDisplay placeholder="Delivery Date" info={`${data.delivery_date?.startDate ? `${data.delivery_date?.startDate} to ${data.delivery_date?.endDate}` : "-"}`} />
+
+				<InfoDisplay placeholder={`Delivery Date`} info={
+					data.delivery_date?.startDate
+						?
+						data.delivery_date.endDate
+							?
+							`${data.delivery_date?.startDate} to ${data.delivery_date?.endDate}`
+							:
+							`${data.delivery_date.startDate}`
+						:
+						"-"}
+				/>
+
 				<InfoDisplay placeholder="Delivery Mode" info={data.delivery_mode || "-"} />
 				<InfoDisplay placeholder="Receiving Vessel's Name" info={data.receiving_vessel_name || "-"} />
 				<InfoDisplay placeholder="Payment Term" info={data.payment_term || "-"} />
@@ -159,7 +175,7 @@ const ViewJobConfirmationSummaryScreen = ({ navigation, route }: RootNavigationP
 								updateJobConfirmation(docID, { bdn_file: filename, filename_storage_bdn: filename_storage }, user!, () => {
 									revalidateDocument(`${JOB_CONFIRMATIONS}/${docID}`);
 								}, (error) => {
-									console.log(error);
+									console.error(error);
 								})
 							}}
 							path={JOB_CONFIRMATIONS}

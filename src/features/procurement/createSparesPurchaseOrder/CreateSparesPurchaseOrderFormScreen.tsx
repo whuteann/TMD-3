@@ -68,7 +68,7 @@ const CreateSparesPurchaseOrderFormScreen = ({ navigation, route }: RootNavigati
   if (!allowedStatuses.includes(data?.status!)) {
     return <Unauthorized />;
   }
-
+  
   let initialValues: initialValuesType = {
     spares_procurement_id: data.id,
     spares_procurement_secondary_id: data.display_id,
@@ -77,7 +77,7 @@ const CreateSparesPurchaseOrderFormScreen = ({ navigation, route }: RootNavigati
     product: data.product,
     unit_of_measurement: data.unit_of_measurement || "",
     quantity: data.quantity || "",
-    proposed_date: `${data.proposed_date.startDate} to ${data.proposed_date.endDate}` || "",
+    proposed_date: data.proposed_date.endDate ? `${data.proposed_date.startDate} to ${data.proposed_date.endDate}` : `${data.proposed_date.startDate}` || "",
 
     currency_rate: "",
     unit_price: "",
@@ -101,10 +101,10 @@ const CreateSparesPurchaseOrderFormScreen = ({ navigation, route }: RootNavigati
               linkTo(`/spares-purchase-orders/${id}/edit/cont`);
               setLoading(false);
             }, (error) => {
-              console.log(error);
+              console.error(error);
             })
           }, (error) => {
-            console.log(error);
+            console.error(error);
           });
         }}
         validationSchema={formSchema}

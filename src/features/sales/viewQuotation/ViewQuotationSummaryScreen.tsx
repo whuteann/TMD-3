@@ -29,7 +29,7 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 	const [status, setStatus] = useState("");
 	const [uploaded, setUploaded] = useState(false);
 	const [deletedItems, setDeleteItems] = useState<Array<string>>([]);
-	const [updatedProducts, setUpdatedProducts] = useState<Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string }> }>>();
+	const [updatedProducts, setUpdatedProducts] = useState<Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string, remarks: string }> }>>();
 
 	const saveDeletedProducts = (deletedProduct: string) => {
 		let newList = deletedItems;
@@ -61,7 +61,7 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 
 	if (!data || !rfqs || !ports || !delivery_modes) return <LoadingData message="This document might not exist" />;
 
-	const productsDisplayList: Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string }> }> = generateProductDisplay(data.products);
+	const productsDisplayList: Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string, remarks: string }> }> = generateProductDisplay(data.products);
 
 	const onDownload = async () => {
 		let image = await loadPDFLogo();
@@ -115,7 +115,18 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 
 				<View style={tailwind("border border-neutral-300 mb-5 mt-2")} />
 
-				<InfoDisplay placeholder={`Delivery Date`} info={`${data.delivery_date?.startDate ? `${data.delivery_date?.startDate} to ${data.delivery_date?.endDate}` : "-"}`} />
+				<InfoDisplay placeholder={`Delivery Date`} info={
+					data.delivery_date?.startDate
+						?
+						data.delivery_date.endDate
+							?
+							`${data.delivery_date?.startDate} to ${data.delivery_date?.endDate}`
+							:
+							`${data.delivery_date.startDate}`
+						:
+						"-"}
+				/>
+				
 				{
 					delivery_modes.map((item, index) => {
 						return (

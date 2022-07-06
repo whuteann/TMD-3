@@ -50,7 +50,7 @@ const AddNewSupplier: React.FC<InputProps> = ({
             />
             <FormDouble
               left={<RegularButton text="Cancel" operation={onCancel} />}
-              right={<RegularButton text="Add" type="secondary" operation={() => { console.log('Added') }} />}
+              right={<RegularButton text="Add" type="secondary" operation={() => { console.error('Added') }} />}
             />
           </View>
         )}

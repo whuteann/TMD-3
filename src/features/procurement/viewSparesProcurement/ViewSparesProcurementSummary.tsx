@@ -53,7 +53,18 @@ const ViewSparesProcurementSummaryScreen = ({ navigation, route }: RootNavigatio
 
 
 				<InfoDisplay placeholder={`Procurement Date`} info={`${data.procurement_date}`} />
-				<InfoDisplay placeholder={`Propose Date`} info={`${data.proposed_date.startDate} to ${data.proposed_date.endDate}`} />
+				
+				<InfoDisplay placeholder={`Proposed Date`} info={
+						data.proposed_date?.startDate
+							?
+							data.proposed_date.endDate
+								?
+								`${data.proposed_date?.startDate} to ${data.proposed_date?.endDate}`
+								:
+								`${data.proposed_date.startDate}`
+							:
+							"-"}
+					/>
 
 				{
 					data.suppliers.map((item, index) => (

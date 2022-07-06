@@ -130,7 +130,7 @@ const CreateSparesPurchaseVoucherFormScreen = ({ navigation, route }: RootNaviga
               setLoading(false);
             }, (error) => {
               setLoading(false);
-              console.log(error);
+              console.error(error);
             })
           }
         }

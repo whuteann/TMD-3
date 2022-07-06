@@ -105,7 +105,7 @@ const UploadButton: React.FC<ButtonProps> = (({
         .child(`${path}/${filename_storage}`)
         .delete()
         .then(() => {
-        }).catch(error => console.log("error deleting file: ", error))
+        }).catch(error => console.error("error deleting file: ", error))
     }
     setFile(undefined);
     setUploadedFile(false);

@@ -129,7 +129,7 @@ const ProfileScreen = ({ navigation, route }: RootNavigationProps<"Profile">) =>
 									values,
 									values.currentPassword,
 									() => { navigation.navigate("Dashboard"); setLoading(false) },
-									(error) => { console.log(error) }
+									(error) => { console.error(error) }
 								);
 							}
 						}}

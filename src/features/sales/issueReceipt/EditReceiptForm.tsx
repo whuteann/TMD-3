@@ -112,7 +112,7 @@ const EditReceiptFormScreen = ({ navigation, route }: RootNavigationProps<"EditO
             user!,
             UPDATE_ACTION,
             () => { linkTo(`/receipts/${docID}/summary`); setLoading(false); },
-            (error) => { console.log(error); });
+            (error) => { console.error(error); });
         }}
       >
 

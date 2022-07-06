@@ -19,7 +19,7 @@ export async function displayPDF(uri: string) {
       });
 
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   } else {
     await WebBrowser.openBrowserAsync(completeUri);

@@ -105,11 +105,11 @@ const EditInvoiceFormScreen = ({ navigation, route }: RootNavigationProps<"EditI
                   linkTo(`/invoices/${docID}/edit/cont`);
                   setLoading(false);
                 }, (error) => {
-                  console.log(error);
+                  console.error(error);
                 }
               );
             }, (error) => {
-              console.log(error)
+              console.error(error)
             })
         }}
       >

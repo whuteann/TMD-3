@@ -59,11 +59,11 @@ const LoginPage = ({ navigation }: AuthNavigationProps<"Login">) => {
 			if (Platform.OS !== "web") {
 				registerForPushNotification(user.id).then(token => {
 					dispatch(setToken(token));
-				}).catch(err => console.log(err));
+				}).catch(err => console.error(err));
 			}
 			// This will be handled by firebase onAuthStateChanged()
 		}, (error) => {
-			console.log(error);
+			console.error(error);
 			setLoading(false);
 			setError(error)
 		});

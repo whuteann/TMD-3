@@ -16,7 +16,7 @@ export type SalesConfirmation = {
   quotation_date?: string,
   confirmed_date: string,
   customer: Customer,
-  products: Array<{ product: Product, unit: string, quantity: string, price: { value: string, unit: string } }>
+  products: Array<{ product: Product, unit: string, quantity: string, price: { value: string, unit: string, remarks: string } }>
   port?: string,
   delivery_location?: string,
   delivery_date?: DateRange,

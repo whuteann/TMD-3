@@ -44,8 +44,18 @@ const PreviewSparesProcurementSummaryScreen = ({ navigation, route }: RootNaviga
 
 
 				<InfoDisplay placeholder={`Procurement Date`} info={`${data.procurement_date}`} />
-				<InfoDisplay placeholder={`Propose Date`} info={`${data.proposed_date.startDate} to ${data.proposed_date.endDate}`} />
 
+				<InfoDisplay placeholder={`Proposed Date`} info={
+					data.proposed_date?.startDate
+						?
+						data.proposed_date.endDate
+							?
+							`${data.proposed_date?.startDate} to ${data.proposed_date?.endDate}`
+							:
+							`${data.proposed_date.startDate}`
+						:
+						"-"}
+				/>
 				{
 					data.suppliers.map((item, index) => (
 						<View key={index}>
@@ -65,7 +75,7 @@ const PreviewSparesProcurementSummaryScreen = ({ navigation, route }: RootNaviga
 				<View style={tailwind("mt-3")}>
 					<InfoDisplay placeholder={`Sizing`} info={`${data.sizing || "-"}`} />
 					<InfoDisplay placeholder={`Product`} info={`${data.product.product_description}`} />
-					<InfoDisplay placeholder={`Quantity`} info={addCommaNumber(`${data.quantity}`, "-") } />
+					<InfoDisplay placeholder={`Quantity`} info={addCommaNumber(`${data.quantity}`, "-")} />
 					<InfoDisplay placeholder={`Unit of Measurement`} info={`${data.unit_of_measurement}`} />
 					<InfoDisplay placeholder={`Remarks`} info={`${data.remarks || "-"}`} />
 

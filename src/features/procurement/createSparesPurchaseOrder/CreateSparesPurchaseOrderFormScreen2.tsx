@@ -118,7 +118,7 @@ const CreateSparesPurchaseOrderFormScreen2 = ({ navigation, route }: RootNavigat
             revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${docID}`)
             setLoading(false);
           }, (error) => {
-            console.log(error);
+            console.error(error);
           })
         }}
         validationSchema={formSchema}

@@ -164,12 +164,12 @@ const CreatePurchaseVoucherFormScreen = ({ navigation, route }: RootNavigationPr
                   }, (error) => {
                     setLoading(false);
                     setError(error.message);
-                    console.log(error);
+                    console.error(error);
                   });
                 }).catch(err => {
                   setLoading(false);
                   setError(err.message);
-                  console.log(err.message);
+                  console.error(err.message);
                 })
           }
         }

@@ -23,7 +23,7 @@ export const createAndDisplayPDF = async (html) => {
         });
   
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     } else {
       const { uri } = await Print.printToFileAsync({ html });

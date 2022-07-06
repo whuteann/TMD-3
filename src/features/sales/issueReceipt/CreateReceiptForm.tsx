@@ -126,7 +126,7 @@ const CreateReceiptFormScreen = ({ navigation, route }: RootNavigationProps<"Cre
 							linkTo(`/receipts/${id}/summary`);
 							setLoading(false);
 						}, (error) => {
-							console.log(error);
+							console.error(error);
 						}
 					);
 				}}

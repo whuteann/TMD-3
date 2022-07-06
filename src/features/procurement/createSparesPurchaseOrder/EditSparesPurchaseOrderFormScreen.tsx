@@ -100,10 +100,10 @@ const EditSparesPurchaseOrderFormScreen = ({ navigation, route }: RootNavigation
               linkTo(`/spares-purchase-orders/${data.id}/edit/cont`);
               setLoading(false);
             }, (error) => {
-              console.log(error);
+              console.error(error);
             })
           }, (error) => {
-            console.log(error);
+            console.error(error);
           });
         }}
         validationSchema={formSchema}

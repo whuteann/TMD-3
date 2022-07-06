@@ -21,7 +21,7 @@ export type Quotation = {
     product: Product,
     quantity: string,
     unit: string,
-    prices: Array<{ value: string, unit: string }>
+    prices: Array<{ value: string, unit: string, remarks: string }>
   }>,
 
   ports: Array<{ port: string, delivery_location: string }>

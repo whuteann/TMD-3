@@ -67,9 +67,9 @@ const ViewInvoiceButtons: React.FC<Props> = ({
 			nextAction={() => {
 				switch (approve) {
 					case "approve":
-						approveInvoice(docID, user!, (error) => { console.log(error); });
+						approveInvoice(docID, user!, (error) => { console.error(error); });
 						revalidateCollection(INVOICES);
-						updateJobConfirmation(job_confirmation_id, { invoice_status: "Approved" }, user!, () => { linkTo("/invoices") }, (error) => { console.log(error); });
+						updateJobConfirmation(job_confirmation_id, { invoice_status: "Approved" }, user!, () => { linkTo("/invoices") }, (error) => { console.error(error); });
 						setStatus("Approved");
 
 						sendNotifications(
@@ -78,9 +78,9 @@ const ViewInvoiceButtons: React.FC<Props> = ({
 							{ screen: "ViewInvoiceSummary", docID: docID });
 						break;
 					case "reject":
-						rejectInvoice(docID, rejectNotes, user!, (error) => { console.log(error); });
+						rejectInvoice(docID, rejectNotes, user!, (error) => { console.error(error); });
 						revalidateCollection(INVOICES);
-						updateJobConfirmation(job_confirmation_id, { invoice_status: "Rejected", reject_notes: rejectNotes }, user!, () => { linkTo("/invoices") }, (error) => { console.log(error); });
+						updateJobConfirmation(job_confirmation_id, { invoice_status: "Rejected", reject_notes: rejectNotes }, user!, () => { linkTo("/invoices") }, (error) => { console.error(error); });
 						setStatus("Rejected");
 
 						sendNotifications(

@@ -9,7 +9,7 @@ import RadioButtonGroup from '../../../molecules/buttons/RadioButtonGroup';
 interface InfoProps {
   product: string,
   index: number,
-  prices: Array<{ value: string, unit: string }>,
+  prices: Array<{ value: string, unit: string, remarks: string }>,
   pickedPrices: Array<{ product: Product, unit: string, quantity: string, price: { value: string, unit: string } }>,
   currItem: { product: Product, unit: string, quantity: string, prices: Array<{ value: string, unit: string }> },
   setPickedPrices: (val) => void,
@@ -63,6 +63,7 @@ const PriceRadioButtons: React.FC<InfoProps> = ({
             </View>
             <View style={tailwind("ml-2 w-[50%]")}>
               <TextLabel content={`${currency} ${item.value} per ${item.unit}`} />
+              <TextLabel content={`${item.remarks}`} />
             </View>
           </View>
         ), value: item.value

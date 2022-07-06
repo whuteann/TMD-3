@@ -43,7 +43,7 @@ const formSchema = Yup.object().shape({
   contact_person: Yup.string().required("Required"),
   ETA_delivery_date: Yup.object().shape({
     startDate: Yup.string().required("Required"),
-    endDate: Yup.string().required("Required")
+    endDate: Yup.string()
   }),
   vessel_name: Yup.string().required("Required"),
 });
@@ -196,10 +196,10 @@ const CreatePurchaseOrderFormScreen = ({ navigation, route }: RootNavigationProp
                 linkTo(`/purchase-orders/${id}/summary`);
                 setLoading(false);
               }, (error) => {
-                console.log(error);
+                console.error(error);
               })
             }, (error) => {
-              console.log(error);
+              console.error(error);
             });
         }}
         validationSchema={formSchema}
@@ -270,7 +270,7 @@ const CreatePurchaseOrderFormScreen = ({ navigation, route }: RootNavigationProp
               onChangeValue={text => setFieldValue("ETA_delivery_date", text)}
               required={true}
               hasError={errors.ETA_delivery_date && touched.ETA_delivery_date ? true : false}
-              errorMessage={errors.ETA_delivery_date?.startDate || errors.ETA_delivery_date?.endDate}
+              errorMessage={errors.ETA_delivery_date?.startDate}
             />
 
             <FormTextInputField

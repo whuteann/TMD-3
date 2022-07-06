@@ -62,7 +62,7 @@ const sendBatchPushNotifications = async (roles: Array<string>, message: string)
   }
   sendPushNotificationsFunc(data).then(val => {
   }).catch(err => {
-    console.log(err)
+    console.error(err)
   });
 
 }

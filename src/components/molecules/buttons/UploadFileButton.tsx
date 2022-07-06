@@ -43,7 +43,7 @@ const UploadFileButton: React.FC<ButtonProps> = (({
         })
       }
     }).catch(err => {
-      console.log(err);
+      console.error(err);
     });
   }
 

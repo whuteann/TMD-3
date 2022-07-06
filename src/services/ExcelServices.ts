@@ -12,7 +12,7 @@ export const generateSalesSummaryExcel = async (month: number, year: number, ema
 
   generateSalesExcelFunc(data)
     .then((result) => {
-      console.log(result.data);
+      console.error(result.data);
       onSuccess();
     })
     .catch((err) => {

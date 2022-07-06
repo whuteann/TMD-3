@@ -36,7 +36,19 @@ const PreviewProcurementScreen = ({ navigation, route }: RootNavigationProps<"Vi
 
         <View style={tailwind("h-[400px]")}>
           <InfoDisplay placeholder="Procurement Date" info={data.procurement_date || "-"} />
-          <InfoDisplay placeholder="Proposed Date" info={data.proposed_date ? `${data.proposed_date.startDate} to ${data.proposed_date.endDate}` : "-"} />
+          
+          <InfoDisplay placeholder={`Proposed Date`} info={
+						data.proposed_date?.startDate
+							?
+							data.proposed_date.endDate
+								?
+								`${data.proposed_date?.startDate} to ${data.proposed_date?.endDate}`
+								:
+								`${data.proposed_date.startDate}`
+							:
+							"-"}
+					/>
+                    
           <InfoDisplay placeholder="Supplier" info={data.supplier.name || "-"} />
           <InfoDisplay placeholder="Product" info={data.product.name || "-"} />
           <InfoDisplay placeholder="Quantity" info={addCommaNumber(data.quantity, "-")} />

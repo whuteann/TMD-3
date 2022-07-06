@@ -48,7 +48,7 @@ const formSchema = Yup.object().shape({
   unit_of_measurement: Yup.string().required("Required"),
   proposed_date: Yup.object().shape({
     startDate: Yup.string().required("Required"),
-    endDate: Yup.string().required("Required")
+    endDate: Yup.string()
   }),
 });
 
@@ -163,7 +163,7 @@ const CreateSparesProcurementFormScreen = ({ navigation }: RootNavigationProps<"
               });
             }).catch(err => {
               setLoading(false);
-              console.log("ERROR!")
+              console.error("ERROR!")
               setError(err.message);
             })
         }}
@@ -262,7 +262,7 @@ const CreateSparesProcurementFormScreen = ({ navigation }: RootNavigationProps<"
               onChangeValue={text => setFieldValue("proposed_date", text)}
               required={true}
               hasError={errors.proposed_date && touched.proposed_date ? true : false}
-              errorMessage={errors.proposed_date?.startDate || errors.proposed_date?.endDate}
+              errorMessage={errors.proposed_date?.startDate}
             />
 
             <FormTextInputField

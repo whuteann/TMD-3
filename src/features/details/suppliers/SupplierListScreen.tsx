@@ -139,7 +139,7 @@ const SupplierListScreen = ({ navigation }: RootNavigationProps<"SupplierList">)
               setModalVisible(true);
             }).catch(err => {
               setHasError(true);
-              console.log(err);
+              console.error(err);
             });
           }}
         />

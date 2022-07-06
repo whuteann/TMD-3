@@ -83,10 +83,10 @@ const CreatePurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationP
 									`New purchase order ${displayID} submitted by ${user?.name}.`,
 								{ screen: "ViewPurchaseOrderSummary", docID: docID });
 						}, (error) => {
-							console.log(error);
+							console.error(error);
 						});
 					}, (error) => {
-						console.log(error);
+						console.error(error);
 					}
 				)
 			}}
@@ -118,7 +118,19 @@ const CreatePurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationP
 					<InfoDisplay placeholder="Port" info={data.port || "-"} />
 					<InfoDisplay placeholder="Delivery Location" info={data.delivery_location || "-"} />
 					<InfoDisplay placeholder="Contact Person" info={data.contact_person ? data.contact_person.name : "-"} />
-					<InfoDisplay placeholder="ETA/ Delivery Date" info={data.ETA_delivery_date ? `${data.ETA_delivery_date.startDate} to ${data.ETA_delivery_date.endDate}` : "-"} />
+
+					<InfoDisplay placeholder={`ETA/ Delivery Date`} info={
+						data.ETA_delivery_date?.startDate
+							?
+							data.ETA_delivery_date.endDate
+								?
+								`${data.ETA_delivery_date?.startDate} to ${data.ETA_delivery_date?.endDate}`
+								:
+								`${data.ETA_delivery_date.startDate}`
+							:
+							"-"}
+					/>
+							
 					<InfoDisplay placeholder="Remarks" info={data.remarks || "-"} />
 				</View>
 			</View>

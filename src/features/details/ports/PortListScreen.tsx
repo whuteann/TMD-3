@@ -97,7 +97,7 @@ const PortListScreen = ({ navigation }: RootNavigationProps<"PortList">) => {
               revalidateCollection(PORTS);
             }).catch(err => {
               setHasError(true);
-              console.log(err);
+              console.error(err);
             });
           }}
         />

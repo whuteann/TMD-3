@@ -68,7 +68,7 @@ const ProceedSalesConfirmationScreen = ({ navigation, route }: RootNavigationPro
 		return <Unauthorized />;
 	}
 
-	const productsDisplayList: Array<{ product: Product, unit: string, quantity: string, prices: Array<{ value: string, unit: string }> }> = data?.__snapshot?.data().products;
+	const productsDisplayList: Array<{ product: Product, unit: string, quantity: string, prices: Array<{ value: string, unit: string, remarks: string }> }> = data?.__snapshot?.data().products;
 
 	data.ports.map((item, index) => (
 		portsDisplayItems.push(
@@ -112,7 +112,7 @@ const ProceedSalesConfirmationScreen = ({ navigation, route }: RootNavigationPro
 					user!, () => {
 						linkTo(`/sales-confirmation/${data.sales_confirmation_id}/summary`); setLoading(false);
 					}, (error) => {
-						console.log(error);
+						console.error(error);
 						setLoading(false);
 					});
 			} else {
@@ -131,7 +131,7 @@ const ProceedSalesConfirmationScreen = ({ navigation, route }: RootNavigationPro
 								updateSales(data.sales_id, { sales_id: id }, user, () => {
 									linkTo(`/sales-confirmation/${id}/summary`);
 								}, (error) => {
-									console.log(error);
+									console.error(error);
 								})
 							}, (error) => {
 
@@ -139,7 +139,7 @@ const ProceedSalesConfirmationScreen = ({ navigation, route }: RootNavigationPro
 						)
 						setLoading(false);
 					}, (error) => {
-						console.log(error);
+						console.error(error);
 					}
 				)
 			}
@@ -159,7 +159,18 @@ const ProceedSalesConfirmationScreen = ({ navigation, route }: RootNavigationPro
 
 				<RadioButtonGroup displayItem={portsDisplayItems} onPicked={(picked) => { setPickedIndex(picked); }} />
 
-				<InfoDisplay placeholder={`Delivery Date`} info={`${data.delivery_date?.startDate ? `${data.delivery_date?.startDate} to ${data.delivery_date?.endDate}` : "-"}`} />
+				<InfoDisplay placeholder={`Delivery Date`} info={
+					data.delivery_date?.startDate
+						?
+						data.delivery_date.endDate
+							?
+							`${data.delivery_date?.startDate} to ${data.delivery_date?.endDate}`
+							:
+							`${data.delivery_date.startDate}`
+						:
+						"-"}
+				/>
+				
 				<InfoDisplay placeholder={`Currency Rate`} info={data.currency_rate} />
 
 				<RadioButtonGroup displayItem={deliveryModeDisplayItems} onPicked={(picked) => { setPickedIndexDeliveryMode(picked); }} />
@@ -222,7 +233,7 @@ const ProceedSalesConfirmationScreen = ({ navigation, route }: RootNavigationPro
 					updateQuotation(docID, { purchase_order_file: filename, filename_storage: filename_storage }, user!, UPDATE_ACTION, () => {
 						revalidateDocument(`${QUOTATIONS}/${docID}`)
 					}, (error) => {
-						console.log(error);
+						console.error(error);
 					})
 				}}
 				setUploaded={setUploaded}

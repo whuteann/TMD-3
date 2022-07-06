@@ -84,7 +84,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 									`Purchase order ${display_id} has been approved by ${user?.name}.`,
 									{ screen: "ViewSparesPurchaseOrderSummary", docID: nav_id });
 							}, (error) => {
-								console.log(error);
+								console.error(error);
 							})
 							setStatus("Approved");
 							break;
@@ -92,12 +92,12 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 							if (filename_storage_do) {
 								deleteFile(SPARES_PURCHASE_ORDERS, filename_storage_do, () => {
 									updateSparesPurchaseOrder(nav_id, { doFile: "", doNumber: "", filename_storage_do: "" }, user!, UPDATE_ACTION, () => {
-									 }, (error) => { console.log(error); });
+									 }, (error) => { console.error(error); });
 								});
 							}
 							if (filename_storage_inv) {
 								deleteFile(SPARES_PURCHASE_ORDERS, filename_storage_inv, () => {
-									updateSparesPurchaseOrder(nav_id, { invFile: "", invNumber: "", filename_storage_inv: "" }, user!, UPDATE_ACTION, () => { }, (error) => { console.log(error); });
+									updateSparesPurchaseOrder(nav_id, { invFile: "", invNumber: "", filename_storage_inv: "" }, user!, UPDATE_ACTION, () => { }, (error) => { console.error(error); });
 								});
 							}
 							rejectSparesPurchaseOrder(nav_id, rejectNotes, user!, () => {
@@ -109,7 +109,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 									`Purchase order ${display_id} has been rejected by ${user?.name}.`,
 									{ screen: "ViewSparesPurchaseOrderSummary", docID: nav_id });
 							}, (error) => {
-								console.log(error);
+								console.error(error);
 							});
 							setStatus("Rejected");
 							setRejectNotes("");
@@ -124,7 +124,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 									`Purchase order ${display_id} has been verified by ${user?.name}.`,
 									{ screen: "ViewSparesPurchaseOrderSummary", docID: nav_id });
 							}, (error) => {
-								console.log(error);
+								console.error(error);
 							})
 							break;
 						case "submit":
@@ -140,7 +140,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 									{ screen: "ViewSparesPurchaseOrderSummary", docID: nav_id });
 
 							}, (error) => {
-								console.log(error);
+								console.error(error);
 							})
 							break;
 						case "verifyFinal":
@@ -155,7 +155,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 									`Submitted purchase order files ${display_id} has been verified by ${user?.name}, ready for approval`,
 									{ screen: "ViewSparesPurchaseOrderSummary", docID: nav_id });
 							}, (error) => {
-								console.log(error);
+								console.error(error);
 							})
 							break;
 						case "approveFinal":
@@ -170,7 +170,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 									`Submitted purchase order files ${display_id} has been approved by ${user?.name}.`,
 									{ screen: "ViewSparesPurchaseOrderSummary", docID: nav_id });
 							}, (error) => {
-								console.log(error);
+								console.error(error);
 							})
 							break;
 					}
@@ -233,7 +233,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 								updateDoc={(filename, filename_storage_output) => {
 									updateSparesPurchaseOrder(nav_id, { doFile: filename, filename_storage_do: filename_storage_output }, user!, UPDATE_ACTION, () => {
 										revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`)
-									}, (error) => { console.log(error); })
+									}, (error) => { console.error(error); })
 								}}
 								setUploaded={setUploadedDO}
 							/>
@@ -259,7 +259,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 									updateSparesPurchaseOrder(nav_id, { invFile: filename, filename_storage_inv: filename_storage_output }, user!, UPDATE_ACTION, () => {
 										revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`)
 									}, (error) => {
-										console.log(error);
+										console.error(error);
 									})
 								}}
 								setUploaded={setUploadedINV}
@@ -353,7 +353,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 															setModalOpen(true);
 															setAction("approveFinal");
 														}, (error) => {
-															console.log(error);
+															console.error(error);
 														})
 													});
 												} else {
@@ -365,7 +365,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 															setModalOpen(true);
 															setAction("approveFinal");
 														}, (error) => {
-															console.log(error);
+															console.error(error);
 														})
 													});
 												}
@@ -387,7 +387,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 															setModalOpen(true);
 															setAction("verifyFinal");
 														}, (error) => {
-															console.log(error);
+															console.error(error);
 														})
 													});
 												} else {
@@ -399,7 +399,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 															setModalOpen(true);
 															setAction("verifyFinal");
 														}, (error) => {
-															console.log(error);
+															console.error(error);
 														})
 													});
 												}
@@ -469,7 +469,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 												setModalOpen(true);
 												setAction("approveFinal");
 											}, (error) => {
-												console.log(error);
+												console.error(error);
 											})
 										});
 									} else {
@@ -481,7 +481,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 												setModalOpen(true);
 												setAction("approveFinal");
 											}, (error) => {
-												console.log(error);
+												console.error(error);
 											})
 										});
 									}
@@ -598,7 +598,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 																		setLoading(false);
 																		navigation.navigate("CreateSparesPurchaseVoucherForm", { docID: nav_id })
 																	}, (error) => {
-																		console.log(error);
+																		console.error(error);
 																	})
 															});
 														} else {
@@ -613,7 +613,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 																		setLoading(false);
 																		navigation.navigate("CreateSparesPurchaseVoucherForm", { docID: nav_id })
 																	}, (error) => {
-																		console.log(error);
+																		console.error(error);
 																	})
 															});
 														}
@@ -630,7 +630,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 																	setLoading(false);
 																	navigation.navigate("CreateSparesPurchaseVoucherForm", { docID: nav_id })
 																}, (error) => {
-																	console.log(error);
+																	console.error(error);
 																})
 														}
 													}

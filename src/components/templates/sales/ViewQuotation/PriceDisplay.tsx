@@ -11,9 +11,9 @@ interface InfoProps {
   length?: number,
   currency: string,
   index: number,
-  prices: Array<{ value: string, unit: string }>,
-  products: Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string }> }>,
-  setProducts?: (val: Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string }> }>) => void,
+  prices: Array<{ value: string, unit: string, remarks: string }>,
+  products: Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string, remarks: string }> }>,
+  setProducts?: (val: Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string, remarks: string }> }>) => void,
   deleteAProduct?: (deleted: string) => void,
 }
 
@@ -24,7 +24,7 @@ const PriceDisplay: React.FC<InfoProps> = ({
   const [localProducts, setLocalProducts] = useState(products);
   const deleteProduct = () => {
 
-    let newArr: Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string }> }> = localProducts;
+    let newArr: Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string, remarks: string }> }> = localProducts;
     newArr.splice(index, 1);
 
     let arr = [
@@ -32,7 +32,7 @@ const PriceDisplay: React.FC<InfoProps> = ({
         name: "Diesel Fuel-AB890",
         unit: "50,000 per litre",
         prices: [
-          { value: "100", unit: "sample" }
+          { value: "100", unit: "sample", remarks: "" }
         ]
       }];
     arr = [...arr, ...newArr]
@@ -69,7 +69,11 @@ const PriceDisplay: React.FC<InfoProps> = ({
         keyExtractor={(item: any, index: number) => index.toString()}
         data={prices}
         renderItem={({ item, index }: { item: any, index: number }) => (
-          <InfoDisplay placeholder={`Price ${index + 1}`} info={`${currency} ${item.value} per ${item.unit}`} />
+          <InfoDisplay
+            placeholder={`Price ${index + 1}`}
+            info={`${currency} ${item.value} per ${item.unit}`}
+            secondLine={item.remarks}
+          />
         )}
       />
     </View>

@@ -70,7 +70,7 @@ const ViewSparesProcurementButtons: React.FC<Props> = ({
                   [SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE],
                   `Procurement ${displayID} has been rejected by ${user?.name}.`,
                   { screen: "ViewSparesProcurementSummary", docID: docID });
-              }, (error) => { console.log(error); });
+              }, (error) => { console.error(error); });
               setStatus("Rejected");
               setRejectNotes("");
               break;

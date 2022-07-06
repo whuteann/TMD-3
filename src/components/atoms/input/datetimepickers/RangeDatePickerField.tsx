@@ -37,8 +37,14 @@ const RangeDatePickerField: React.FC<dateProps> = ({
   useEffect(() => {
     if (value?.startDate || value?.endDate) {
       let existingStartDate = moment(value.startDate, 'DD/MM/YYYY');
-      let existingEndDate = moment(value.endDate, 'DD/MM/YYYY');
-      setRange({ startDate: existingStartDate.toDate(), endDate: existingEndDate.toDate() });
+      let existingEndDate: any;
+      if(value.endDate){
+        existingEndDate = moment(value.endDate, 'DD/MM/YYYY').toDate(); 
+      }else{
+        existingEndDate = "";
+      }
+        
+      setRange({ startDate: existingStartDate.toDate(), endDate: existingEndDate });
     }
   }, []);
 
@@ -58,8 +64,8 @@ const RangeDatePickerField: React.FC<dateProps> = ({
       datePicked
         ?
         onChangeText({
-          startDate: datePicked.startDate ? `${datePicked.startDate.getDate()}/${(datePicked.startDate.getMonth() || 0) + 1}/${datePicked.startDate.getFullYear()}` : undefined,
-          endDate: datePicked.endDate ? `${datePicked.endDate.getDate()}/${(datePicked.endDate.getMonth() || 0) + 1}/${datePicked.endDate.getFullYear()}` : undefined
+          startDate: datePicked.startDate ? `${datePicked.startDate.getDate()}/${(datePicked.startDate.getMonth() || 0) + 1}/${datePicked.startDate.getFullYear()}` : "",
+          endDate: datePicked.endDate ? `${datePicked.endDate.getDate()}/${(datePicked.endDate.getMonth() || 0) + 1}/${datePicked.endDate.getFullYear()}` : ""
         })
         :
         onChangeText("")
@@ -79,9 +85,17 @@ const RangeDatePickerField: React.FC<dateProps> = ({
           <TouchableWithoutFeedback onPress={() => setOpen(true)}>
             <View style={tailwind('flex flex-row w-full')}>
               {
-                range.startDate || range.endDate
+                range.startDate
                   ?
-                  <Text style={tailwind("text-black text-16px")}>{`${range.startDate?.getDate()}/${(range.startDate?.getMonth() || 0) + 1}/${range.startDate?.getFullYear()} to ${range.endDate ? `${range.endDate?.getDate()}/${(range.endDate?.getMonth() || 0) + 1}/${range.endDate?.getFullYear()}` : "Not Selected"} `}</Text>
+                  <Text style={tailwind("text-black text-16px")}>
+                    {
+                      range.endDate
+                        ?
+                        `${range.startDate?.getDate()}/${(range.startDate?.getMonth() || 0) + 1}/${range.startDate?.getFullYear()} to ${range.endDate?.getDate()}/${(range.endDate?.getMonth() || 0) + 1}/${range.endDate?.getFullYear()}`
+                        :
+                        `${range.startDate?.getDate()}/${(range.startDate?.getMonth() || 0) + 1}/${range.startDate?.getFullYear()}`
+                    }
+                  </Text>
                   :
                   <Text style={tailwind("text-gray-primary text-16px")}>{placeholder}</Text>
               }

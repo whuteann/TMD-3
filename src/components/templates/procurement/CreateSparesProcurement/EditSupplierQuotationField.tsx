@@ -103,7 +103,7 @@ const EditSupplierQuotationField: React.FC<inputProps> = ({
     newList[index].quotation_no = "";
 
     if (localList[index].filename_storage != "") {
-      updateSparesProcurement(docID, { suppliers: newList }, user!, UPDATE_ACTION, () => { }, (error) => { console.log(error); })
+      updateSparesProcurement(docID, { suppliers: newList }, user!, UPDATE_ACTION, () => { }, (error) => { console.error(error); })
     }
 
   }

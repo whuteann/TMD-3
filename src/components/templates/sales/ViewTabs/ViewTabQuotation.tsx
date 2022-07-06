@@ -69,6 +69,7 @@ const ViewTabQuotation: React.FC<inputProps> = ({
     dropdowns = (
       <View>
         <ViewTabDropdown icon={<PreviewIcon height={24} width={24} />} text="Preview Quotation" setDropdown={path} navigation={() => { linkTo(`/quotations/${nav_id}/show`); }} />
+        <ViewTabDropdown icon={<CreateIcon height={24} width={24} />} text="Edit Quotation" setDropdown={path} navigation={() => { linkTo(`/quotations/${nav_id}/edit`); }} />
         <ViewTabDropdown icon={<DownloadIcon height={24} width={24} />} text="Download Quotation" setDropdown={path} navigation={() => { onDownload(data) }} />
       </View>
     )
@@ -78,6 +79,7 @@ const ViewTabQuotation: React.FC<inputProps> = ({
         <ViewTabDropdown icon={<PreviewIcon height={24} width={24} />} text="Preview Quotation" setDropdown={path} navigation={() => { linkTo(`/quotations/${nav_id}/show`); }} />
         <ViewTabDropdown icon={<DownloadIcon height={24} width={24} />} text="Download Quotation" setDropdown={path} navigation={() => { onDownload(data) }} />
         <ViewTabDropdown icon={<ProceedIcon height={24} width={24} />} text="Proceed Sales Confirmation" setDropdown={path} navigation={() => { navigation.navigate("ProceedSalesConfirmation", { docID: nav_id }); }} />
+        <ViewTabDropdown icon={<CreateIcon height={24} width={24} />} text="Edit Quotation" setDropdown={path} navigation={() => { linkTo(`/quotations/${nav_id}/edit`); }} />
         <ViewTabDropdown icon={<FolderIcon height={24} width={24} />} text="Archive Quotation" setDropdown={path} navigation={() => { linkTo(`/quotations/${nav_id}/show`); }} />
       </View>
     )

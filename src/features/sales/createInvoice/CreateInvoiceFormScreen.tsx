@@ -107,7 +107,7 @@ const CreateInvoiceFormScreen = ({ navigation, route }: RootNavigationProps<"Cre
       <View style={tailwind("mt-5")} />
 
       <Formik
-        initialValues={{ invoice_date: "", do_no: "", attention_pic: "" }}
+        initialValues={{ invoice_date: `${new Date().getDate().toString()}/${(new Date().getMonth() + 1).toString()}/${new Date().getFullYear().toString()}`, do_no: "", attention_pic: "" }}
         enableReinitialize={true}
         validationSchema={formSchema}
         onSubmit={(values) => {
@@ -149,15 +149,15 @@ const CreateInvoiceFormScreen = ({ navigation, route }: RootNavigationProps<"Cre
                       linkTo(`/invoices/${newID}/edit/cont`);
                       setLoading(false);
                     }, (error) => {
-                      console.log(error);
+                      console.error(error);
                     }
                   )
                 }, (error) => {
-                  console.log(error);
+                  console.error(error);
                 }
               );
             }, (error) => {
-              console.log(error);
+              console.error(error);
             })
         }}
       >

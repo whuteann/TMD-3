@@ -13,7 +13,7 @@ const current_time = new Date;
 //     .then(
 //       (docRef) => {
 //         addLog(SPARES_PURCHASE_VOUCHERS, docRef.id, CREATE_ACTION, user!, () => {
-//           console.log(`Purchase voucher ${docRef.id} created succesfully`);
+//           console.error(`Purchase voucher ${docRef.id} created succesfully`);
 //           onSuccess(docRef.id);
 //         }, (error) => {
 //           onError(`Something went wrong in createSparesPurchaseVoucher: ${error}`);

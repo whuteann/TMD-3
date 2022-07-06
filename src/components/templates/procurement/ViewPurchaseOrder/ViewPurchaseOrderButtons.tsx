@@ -61,7 +61,7 @@ const ViewPurchaseOrderButtons: React.FC<Props> = ({
 								`Purchase order ${displayID} has been approved by ${user?.name}`,
 								{ screen: "ViewPurchaseOrderSummary", docID: nav_id });
 
-						}, (error) => { console.log(error); });
+						}, (error) => { console.error(error); });
 						break;
 					case "reject":
 						setStatus("Rejected");
@@ -74,10 +74,10 @@ const ViewPurchaseOrderButtons: React.FC<Props> = ({
 								`Purchase order ${displayID} has been rejected by ${user?.name}`,
 								{ screen: "ViewPurchaseOrderSummary", docID: nav_id });
 
-						}, (error) => { console.log(error); });
+						}, (error) => { console.error(error); });
 						break;
 					case "proceed":
-						updatePurchaseOrder(nav_id, { status: "No Purchase Voucher" }, user!, UPDATE_ACTION, () => { revalidateCollection(PURCHASE_ORDERS); navigation.navigate("ViewAllPurchaseOrder"); }, (error) => { console.log(error) })
+						updatePurchaseOrder(nav_id, { status: "No Purchase Voucher" }, user!, UPDATE_ACTION, () => { revalidateCollection(PURCHASE_ORDERS); navigation.navigate("ViewAllPurchaseOrder"); }, (error) => { console.error(error) })
 
 						sendNotifications(
 							[ACCOUNT_ASSISTANT_ROLE, OPERATION_TEAM_ROLE, SUPER_ADMIN_ROLE],
