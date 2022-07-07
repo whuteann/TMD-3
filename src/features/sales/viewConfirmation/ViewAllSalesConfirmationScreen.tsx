@@ -1,5 +1,3 @@
-import { useCollection } from '@nandorojo/swr-firestore';
-import { useLinkTo } from '@react-navigation/native';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { Platform, SectionList, TouchableOpacity, View } from 'react-native';
@@ -9,16 +7,12 @@ import { SearchIcon, XSimpleIcon } from '../../../../assets/svg/SVG';
 import Body from '../../../components/atoms/display/Body';
 import HeaderStack from '../../../components/atoms/display/HeaderStack';
 import NoData from '../../../components/atoms/display/NoData';
-import TextInputField from '../../../components/atoms/input/text/TextInputField';
 import Header from '../../../components/atoms/typography/Header';
 import TextLabel from '../../../components/atoms/typography/TextLabel';
 import { getListStyle } from '../../../constants/Style';
-import { salesConfirmationRef } from '../../../functions/Firebase';
 import { RootNavigationProps } from '../../../navigations/NavigationProps/NavigationProps';
 import { setRefresh } from '../../../redux/reducers/Refresh';
 import { SalesConfirmation } from '../../../types/SalesConfirmation';
-
-
 import SearchBar from '../../../components/atoms/input/searchbar/SearchBar';
 import { cloneDeep } from 'lodash';
 import * as AlgoliaHelper from "../../../helpers/AlgoliaHelper";
@@ -60,7 +54,6 @@ export const ViewTabSalesConfirmation = ({ item, navigation }) => {
 }
 
 const ViewAllSalesConfirmationScreen = ({ navigation }: RootNavigationProps<"ViewAllSalesConfirmation">) => {
-
 
 	const [filteredsalesConfirmations, setFilteredsalesConfirmations] = useState<[]>([]);
 	

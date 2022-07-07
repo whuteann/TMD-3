@@ -10,10 +10,83 @@ import CustomerListScreen from "../features/details/customers/CustomerListScreen
 import SupplierListScreen from "../features/details/suppliers/SupplierListScreen";
 import BankListScreen from "../features/details/banks/BankListScreen";
 import BankFormScreen from "../features/details/banks/BankFormScreen";
-
 import { useSelector } from "react-redux";
 import { UserSelector } from "../redux/reducers/Auth";
 import protectedRoute from "./Middlewares/ProtectedRoute";
+import LoadingData from "../components/atoms/loading/loadingData";
+import ProfileScreen from "../features/auth/ProfileScreen";
+import UserFormScreen from "../features/department/users/UserFormScreen";
+import BunkerBargeListScreen from "../features/details/bunkers/BunkerBargeListScreen";
+import BunkerDetailsScreen from "../features/details/bunkers/BunkerDetailsScreen";
+import BunkerFormScreen from "../features/details/bunkers/BunkerFormScreen";
+import UnawardedRFQListScreen from "../features/details/unawardedRFQ/UnawardedRFQListScreen";
+import UnawardedRFQFormScreen from "../features/details/unawardedRFQ/UnawardedRFQFormScreen";
+import ShipSpareListScreen from "../features/details/shipSpares/ShipSparesListScreen";
+import PortListScreen from "../features/details/ports/PortListScreen";
+import PortFormScreen from "../features/details/ports/PortFormScreen";
+import SalesListScreen from "../features/details/sales/SaleListScreen";
+import SalesSummaryScreen from "../features/details/sales/SalesSummaryScreen";
+import CreateQuotationFormScreen from "../features/sales/createquotation/CreateQuotationFormScreen";
+import EditQuotationFormScreen from "../features/sales/createquotation/EditQuotationFormScreen";
+import CreateQuotationFormScreen2 from "../features/sales/createquotation/CreateQuotationFormScreen2";
+import CreateQuotationSummaryScreen from "../features/sales/createquotation/CreateQuotationSummaryScreen";
+import ViewAllQuotationScreen from "../features/sales/viewquotation/ViewAllQuotationScreen";
+import ViewQuotationSummaryScreen from "../features/sales/viewquotation/ViewQuotationSummaryScreen";
+import ProceedSalesConfirmationScreen from "../features/sales/viewquotation/ProceedSalesConfirmation";
+import ProceedSalesConfirmationFinalScreen from "../features/sales/viewquotation/ProceedSalesConfirmationFinalScreen";
+import ViewSalesConfirmationSummaryScreen from "../features/sales/viewconfirmation/ViewSalesConfirmationSummaryScreen";
+import ViewAllJobConfirmationScreen from "../features/sales/viewjobconfirmation/ViewAllJobConfirmationScreen";
+import ViewJobConfirmationSummaryScreen from "../features/sales/viewjobconfirmation/ViewJobConfirmationSummaryScreen";
+import CreateInvoiceFormScreen from "../features/sales/createinvoice/CreateInvoiceFormScreen";
+import EditInvoiceFormScreen from "../features/sales/createinvoice/EditInvoiceFormScreen";
+import CreateInvoiceFormScreen2 from "../features/sales/createinvoice/CreateInvoiceFormScreen2";
+import CreateInvoiceSummaryScreen from "../features/sales/createinvoice/CreateInvoiceSummaryScreen";
+import ViewAllInvoiceScreen from "../features/sales/viewinvoice/ViewAllInvoiceScreen";
+import ViewInvoiceSummaryScreen from "../features/sales/viewinvoice/ViewInvoiceSummary";
+import PreviewInvoiceSummaryScreen from "../features/sales/viewinvoice/PreviewInvoiceScreen";
+import CreateReceiptFormScreen from "../features/sales/issuereceipt/CreateReceiptForm";
+import EditReceiptFormScreen from "../features/sales/issuereceipt/EditReceiptForm";
+import CreateReceiptSummaryScreen from "../features/sales/issuereceipt/CreateReceiptSummaryScreen";
+import ViewAllReceiptScreen from "../features/sales/viewreceipt/ViewAllReceiptScreen";
+import ViewReceiptSummaryScreen from "../features/sales/viewreceipt/ViewReceiptSummaryScreen";
+import CreateProcurementFormScreen from "../features/procurement/createprocurement/CreateProcurmentFormScreen";
+import ViewAllPurchaseOrderScreen from "../features/procurement/viewpurchaseorder/ViewAllPurchaseOrderScreen";
+import ViewPurchaseOrderSummaryScreen from "../features/procurement/viewpurchaseorder/ViewPurchaseOrderSummary";
+import PreviewPurchaseOrderScreen from "../features/procurement/viewpurchaseorder/PreviewPurchaseOrderScreen";
+import ViewAllProcurementSearchScreen from "../features/procurement/viewprocurement/ViewAllProcurementScreen";
+import ViewProcurementSummaryScreen from "../features/procurement/viewprocurement/ViewProcurementSummaryScreen";
+import PreviewProcurementScreen from "../features/procurement/viewprocurement/PreviewProcurmentScreen";
+import CreatePurchaseOrderFormScreen from "../features/procurement/createpurchaseorder/CreatePurchaseOrderFormScreen";
+import EditPurchaseOrderFormScreen from "../features/procurement/createpurchaseorder/EditPurchaseOrderFormScreen";
+import CreatePurchaseOrderSummaryScreen from "../features/procurement/createpurchaseorder/CreatePurchaseOrderSummary";
+import CreatePurchaseVoucherFormScreen from "../features/procurement/createpurchasevoucher/CreatePurchaseVoucherFormScreen";
+import EditPurchaseVoucherFormScreen from "../features/procurement/createpurchasevoucher/EditPurchaseVoucherFormScreen";
+import CreatePurchaseVoucherSummaryScreen from "../features/procurement/createpurchasevoucher/CreatePurchaseVoucherSummaryScreen";
+import ViewAllPurchaseVoucherScreen from "../features/procurement/viewpurchasevoucher/ViewAllPurchaseVoucherScreen";
+import ViewPurchaseVoucherSummaryScreen from "../features/procurement/viewpurchasevoucher/ViewPurchaseVoucherSummaryScreen";
+import CreateSparesProcurementFormScreen from "../features/procurement/createsparesprocurement/CreateSparesProcurementFormScreen";
+import EditSparesProcurementFormScreen from "../features/procurement/createsparesprocurement/EditSparesProcurementFormScreen";
+import CreateSparesProcurementSummaryScreen from "../features/procurement/createsparesprocurement/CreateSparesProcurementSummaryScreen";
+import ViewAllSparesProcurementSearchScreen from "../features/procurement/viewsparesprocurement/ViewAllSparesProcurmentScreen";
+import ViewSparesProcurementSummaryScreen from "../features/procurement/viewsparesprocurement/ViewSparesProcurementSummary";
+import PreviewSparesProcurementSummaryScreen from "../features/procurement/viewsparesprocurement/PreviewSparesProcurementSummaryScreen";
+import ViewSparesProcurementApproveScreen from "../features/procurement/viewsparesprocurement/ViewSparesProcurementApproveScreen";
+import CreateSparesPurchaseOrderFormScreen from "../features/procurement/createsparespurchaseorder/CreateSparesPurchaseOrderFormScreen";
+import EditSparesPurchaseOrderFormScreen from "../features/procurement/createsparespurchaseorder/EditSparesPurchaseOrderFormScreen";
+import CreateSparesPurchaseOrderFormScreen2 from "../features/procurement/createsparespurchaseorder/CreateSparesPurchaseOrderFormScreen2";
+import CreateSparesPurchaseOrderSummaryScreen from "../features/procurement/createsparespurchaseorder/CreateSparesPurchaseOrderSummaryScreen";
+import ViewAllSparesPurchaseOrderScreen from "../features/procurement/ViewSparesPurchaseOrder/ViewAllSparesPurchaseOrderScreen";
+import ViewSparesPurchaseOrderSummaryScreen from "../features/procurement/ViewSparesPurchaseOrder/ViewSparesPurchaseOrderSummary";
+import PreviewSparesPurchaseOrderSummaryScreen from "../features/procurement/ViewSparesPurchaseOrder/PreviewSparesPurchaseOrderSummary";
+import CreateSparesPurchaseVoucherFormScreen from "../features/procurement/createSparesPurchaseVoucher/CreateSparesPurchaseVoucherFormScreen";
+import EditSparesPurchaseVoucherFormScreen from "../features/procurement/createSparesPurchaseVoucher/EditSparesPurchaseVoucherFormScreen";
+import CreateSparesPurchaseVoucherSummaryScreen from "../features/procurement/createSparesPurchaseVoucher/CreateSparesPurchasevoucherSummaryScreen";
+import ViewAllSparesPurchaseVoucherScreen from "../features/procurement/viewSparesPurchaseVoucher/ViewAllSparesPurchaseVoucherScreen";
+import ViewSparesPurchaseVoucherSummaryScreen from "../features/procurement/viewSparesPurchaseVoucher/ViewSparesPurchaseVoucherSummaryScreen";
+import DepartmentListScreen from "../features/department/DepartmentListScreen";
+import CustomerSegmentationListScreen from "../features/details/customerSegmentation/CustomerSegmentationListScreen";
+import CustomerSegmentationFormScreen from "../features/details/customerSegmentation/CustomerSegmentationFormScreen";
+
 
 import {
   CREATE_PROCUREMENT,
@@ -35,84 +108,7 @@ import {
   VIEW_SPARES_PURCHASE_ORDER,
   CREATE_PURCHASE_VOUCHER
 } from "../permissions/Permissions";
-
-import LoadingData from "../components/atoms/loading/loadingData";
-import ProfileScreen from "../features/auth/ProfileScreen";
-
-import UserFormScreen from "../features/department/users/UserFormScreen";
-import BunkerBargeListScreen from "../features/details/bunkers/BunkerBargeListScreen";
-import BunkerDetailsScreen from "../features/details/bunkers/BunkerDetailsScreen";
-import BunkerFormScreen from "../features/details/bunkers/BunkerFormScreen";
-import UnawardedRFQListScreen from "../features/details/unawardedRFQ/UnawardedRFQListScreen";
-import UnawardedRFQFormScreen from "../features/details/unawardedRFQ/UnawardedRFQFormScreen";
-import ShipSpareListScreen from "../features/details/shipSpares/ShipSparesListScreen";
-import PortListScreen from "../features/details/ports/PortListScreen";
-import PortFormScreen from "../features/details/ports/PortFormScreen";
-import SalesListScreen from "../features/details/sales/SaleListScreen";
-import SalesSummaryScreen from "../features/details/sales/SalesSummaryScreen";
-import ViewAllQuotationScreen from "../features/sales/viewQuotation/ViewAllQuotationScreen";
-import CreateQuotationFormScreen from "../features/sales/createQuotation/CreateQuotationFormScreen";
-import ViewQuotationSummaryScreen from "../features/sales/viewQuotation/ViewQuotationSummaryScreen";
-import ProceedSalesConfirmationScreen from "../features/sales/viewQuotation/ProceedSalesConfirmation";
-import ProceedSalesConfirmationFinalScreen from "../features/sales/viewQuotation/ProceedSalesConfirmationFinalScreen";
-import ViewSalesConfirmationSummaryScreen from "../features/sales/viewConfirmation/ViewSalesConfirmationSummaryScreen";
-import ViewAllJobConfirmationScreen from "../features/sales/viewJobConfirmation/ViewAllJobConfirmationScreen";
-import ViewJobConfirmationSummaryScreen from "../features/sales/viewJobConfirmation/ViewJobConfirmationSummaryScreen";
-import CreateInvoiceFormScreen from "../features/sales/createInvoice/CreateInvoiceFormScreen";
-import CreateInvoiceSummaryScreen from "../features/sales/createInvoice/CreateInvoiceSummaryScreen";
-import ViewAllInvoiceScreen from "../features/sales/viewInvoice/ViewAllInvoiceScreen";
-import ViewInvoiceSummaryScreen from "../features/sales/viewInvoice/ViewInvoiceSummary";
-import ViewAllReceiptScreen from "../features/sales/viewReceipt/ViewAllReceiptScreen";
-import ViewReceiptSummaryScreen from "../features/sales/viewReceipt/ViewReceiptSummaryScreen";
-import CreateProcurementFormScreen from "../features/procurement/createProcurement/CreateProcurmentFormScreen";
-import ViewAllPurchaseOrderScreen from "../features/procurement/viewPurchaseOrder/ViewAllPurchaseOrderScreen";
-import ViewPurchaseOrderSummaryScreen from "../features/procurement/viewPurchaseOrder/ViewPurchaseOrderSummary";
-import ViewAllProcurementSearchScreen from "../features/procurement/viewProcurement/ViewAllProcurementScreen";
-import ViewProcurementSummaryScreen from "../features/procurement/viewProcurement/ViewProcurementSummaryScreen";
-import CreatePurchaseOrderFormScreen from "../features/procurement/createPurchaseOrder/CreatePurchaseOrderFormScreen";
-import CreatePurchaseOrderSummaryScreen from "../features/procurement/createPurchaseOrder/CreatePurchaseOrderSummary";
-import CreatePurchaseVoucherFormScreen from "../features/procurement/createPurchaseVoucher/CreatePurchaseVoucherFormScreen";
-import CreatePurchaseVoucherSummaryScreen from "../features/procurement/createPurchaseVoucher/CreatePurchaseVoucherSummaryScreen";
-import ViewAllPurchaseVoucherScreen from "../features/procurement/viewPurchaseVoucher/ViewAllPurchaseVoucherScreen";
-import ViewPurchaseVoucherSummaryScreen from "../features/procurement/viewPurchaseVoucher/ViewPurchaseVoucherSummaryScreen";
-import CreateSparesProcurementSummaryScreen from "../features/procurement/createSparesProcurement/CreateSparesProcurementSummaryScreen";
-import EditQuotationFormScreen from "../features/sales/createQuotation/EditQuotationFormScreen";
-import CreateQuotationFormScreen2 from "../features/sales/createQuotation/CreateQuotationFormScreen2";
-import CreateQuotationSummaryScreen from "../features/sales/createQuotation/CreateQuotationSummaryScreen";
 import ViewAllSalesConfirmationScreen from "../features/sales/viewConfirmation/ViewAllSalesConfirmationScreen";
-import EditInvoiceFormScreen from "../features/sales/createInvoice/EditInvoiceFormScreen";
-import CreateInvoiceFormScreen2 from "../features/sales/createInvoice/CreateInvoiceFormScreen2";
-import PreviewInvoiceSummaryScreen from "../features/sales/viewInvoice/PreviewInvoiceScreen";
-import CreateReceiptFormScreen from "../features/sales/issueReceipt/CreateReceiptForm";
-import EditReceiptFormScreen from "../features/sales/issueReceipt/EditReceiptForm";
-import CreateReceiptSummaryScreen from "../features/sales/issueReceipt/CreateReceiptSummaryScreen";
-import PreviewPurchaseOrderScreen from "../features/procurement/viewPurchaseOrder/PreviewPurchaseOrderScreen";
-import PreviewProcurementScreen from "../features/procurement/viewProcurement/PreviewProcurmentScreen";
-import EditPurchaseOrderFormScreen from "../features/procurement/createPurchaseOrder/EditPurchaseOrderFormScreen";
-import EditPurchaseVoucherFormScreen from "../features/procurement/createPurchaseVoucher/EditPurchaseVoucherFormScreen";
-import CreateSparesProcurementFormScreen from "../features/procurement/createSparesProcurement/CreateSparesProcurementFormScreen";
-import EditSparesProcurementFormScreen from "../features/procurement/createSparesProcurement/EditSparesProcurementFormScreen";
-import ViewAllSparesProcurementSearchScreen from "../features/procurement/viewSparesProcurement/ViewAllSparesProcurmentScreen";
-import ViewSparesProcurementSummaryScreen from "../features/procurement/viewSparesProcurement/ViewSparesProcurementSummary";
-import PreviewSparesProcurementSummaryScreen from "../features/procurement/viewSparesProcurement/PreviewSparesProcurementSummaryScreen";
-import ViewSparesProcurementApproveScreen from "../features/procurement/viewSparesProcurement/ViewSparesProcurementApproveScreen";
-import CreateSparesPurchaseOrderFormScreen from "../features/procurement/createSparesPurchaseOrder/CreateSparesPurchaseOrderFormScreen";
-import EditSparesPurchaseOrderFormScreen from "../features/procurement/createSparesPurchaseOrder/EditSparesPurchaseOrderFormScreen";
-import CreateSparesPurchaseOrderFormScreen2 from "../features/procurement/createSparesPurchaseOrder/CreateSparesPurchaseOrderFormScreen2";
-import CreateSparesPurchaseOrderSummaryScreen from "../features/procurement/createSparesPurchaseOrder/CreateSparesPurchaseOrderSummaryScreen";
-import ViewAllSparesPurchaseOrderScreen from "../features/procurement/viewSparesPurchaseOrder/ViewAllSparesPurchaseOrderScreen";
-import ViewSparesPurchaseOrderSummaryScreen from "../features/procurement/viewSparesPurchaseOrder/ViewSparesPurchaseOrderSummary";
-import PreviewSparesPurchaseOrderSummaryScreen from "../features/procurement/viewSparesPurchaseOrder/PreviewSparesPurchaseOrderSummary";
-import CreateSparesPurchaseVoucherFormScreen from "../features/procurement/createSparesPurchaseVoucher/CreateSparesPurchaseVoucherFormScreen";
-import EditSparesPurchaseVoucherFormScreen from "../features/procurement/createSparesPurchaseVoucher/EditSparesPurchaseVoucherFormScreen";
-import CreateSparesPurchaseVoucherSummaryScreen from "../features/procurement/createSparesPurchaseVoucher/CreateSparesPurchasevoucherSummaryScreen";
-import ViewAllSparesPurchaseVoucherScreen from "../features/procurement/viewSparesPurchaseVoucher/ViewAllSparesPurchaseVoucherScreen";
-import ViewSparesPurchaseVoucherSummaryScreen from "../features/procurement/viewSparesPurchaseVoucher/ViewSparesPurchaseVoucherSummaryScreen";
-import DepartmentListScreen from "../features/department/DepartmentListScreen";
-import CustomerSegmentationFormScreen from "../features/details/customerSegmentation/CustomerSegmentationFormScreen";
-import CustomerSegmentationListScreen from "../features/details/customerSegmentation/CustomerSegmentationListScreen";
-
-
 
 
 
@@ -158,7 +154,7 @@ const MainNavigation = () => {
       {(() => protectedRoute('ProceedSalesConfirmationFinal', ProceedSalesConfirmationFinalScreen, "Proceed Sales", Stack, permissions, [VIEW_QUOTATION]))()}
 
       {/* View Sales Confirmation */}
-      {(() => protectedRoute('ViewAllSalesConfirmation', ViewAllSalesConfirmationScreen, "View Sales Confirmation", Stack, permissions, [VIEW_SALES_CONFIRMATION]))()}
+å      {(() => protectedRoute('ViewAllSalesConfirmation', ViewAllSalesConfirmationScreen, "View Sales Confirmation", Stack, permissions, [VIEW_SALES_CONFIRMATION]))()}
       {(() => protectedRoute('SalesConfirmationSummary', ViewSalesConfirmationSummaryScreen, "View Sales Confirmation", Stack, permissions, [VIEW_SALES_CONFIRMATION]))()}
 
       {/* View Job Confirmation */}

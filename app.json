@@ -37,7 +37,7 @@
   "ios": {
     "supportsTablet": true,
     "bundleIdentifier": "com.tthub.tmd",
-    "buildNumber": "2.2",
+    "buildNumber": "2.3",
     "infoPlist": {
       "NSUserNotificationAlertStyle": "banner"
     }
