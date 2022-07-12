@@ -472,6 +472,9 @@ export const linking: LinkingOptions<RootRoutes> = {
           docID: docID => docID,
         },
       },
+      Settings: {
+        path: "/settings",
+      },
     }
   }
 };

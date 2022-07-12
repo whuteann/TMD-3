@@ -20,6 +20,7 @@ import { RFQ } from '../../../types/RFQ';
 import { QUOTATIONS, RFQS } from '../../../constants/Firebase';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { convertCurrency } from '../../../constants/Currency';
+import { APPROVED, ARCHIVED, CONFIRMED, REJECTED } from '../../../types/Common';
 
 const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"ViewQuotationSummary">) => {
 
@@ -126,7 +127,7 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 						:
 						"-"}
 				/>
-				
+
 				{
 					delivery_modes.map((item, index) => {
 						return (
@@ -222,16 +223,24 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 				<InfoDisplay placeholder={``} info={`Time: ${data.validity_time || "-"}`} />
 
 				{
-					status == "Rejected"
+					status == REJECTED
 						?
 						(<InfoDisplay placeholder={`Reject Notes from HOM`} info={data.reject_notes || "-"} />)
+						:
+						null
+				}
+
+				{
+					status == ARCHIVED
+						?
+						(<InfoDisplay placeholder={`Reject Notes`} info={data.reject_notes || "-"} />)
 						:
 						null
 				}
 			</View>
 
 			{
-				status == "Approved" || status == "Confirmed"
+				status == APPROVED || status == CONFIRMED
 					?
 					(
 						<View>

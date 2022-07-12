@@ -86,7 +86,7 @@ import ViewSparesPurchaseVoucherSummaryScreen from "../features/procurement/view
 import DepartmentListScreen from "../features/department/DepartmentListScreen";
 import CustomerSegmentationListScreen from "../features/details/customerSegmentation/CustomerSegmentationListScreen";
 import CustomerSegmentationFormScreen from "../features/details/customerSegmentation/CustomerSegmentationFormScreen";
-
+import ViewAllSalesConfirmationScreen from "../features/sales/viewconfirmation/ViewAllSalesConfirmationScreen";
 
 import {
   CREATE_PROCUREMENT,
@@ -108,7 +108,9 @@ import {
   VIEW_SPARES_PURCHASE_ORDER,
   CREATE_PURCHASE_VOUCHER
 } from "../permissions/Permissions";
-import ViewAllSalesConfirmationScreen from "../features/sales/viewConfirmation/ViewAllSalesConfirmationScreen";
+import { Settings } from "react-native";
+import SettingsScreen from "../features/settings/SettingsScreen";
+
 
 
 
@@ -154,7 +156,7 @@ const MainNavigation = () => {
       {(() => protectedRoute('ProceedSalesConfirmationFinal', ProceedSalesConfirmationFinalScreen, "Proceed Sales", Stack, permissions, [VIEW_QUOTATION]))()}
 
       {/* View Sales Confirmation */}
-å      {(() => protectedRoute('ViewAllSalesConfirmation', ViewAllSalesConfirmationScreen, "View Sales Confirmation", Stack, permissions, [VIEW_SALES_CONFIRMATION]))()}
+      {(() => protectedRoute('ViewAllSalesConfirmation', ViewAllSalesConfirmationScreen, "View Sales Confirmation", Stack, permissions, [VIEW_SALES_CONFIRMATION]))()}
       {(() => protectedRoute('SalesConfirmationSummary', ViewSalesConfirmationSummaryScreen, "View Sales Confirmation", Stack, permissions, [VIEW_SALES_CONFIRMATION]))()}
 
       {/* View Job Confirmation */}
@@ -285,6 +287,8 @@ const MainNavigation = () => {
       <Stack.Screen name="PortList" component={PortListScreen} options={{ title: "Ports" }} />
       <Stack.Screen name="CreatePort" component={PortFormScreen} options={{ title: "Ports" }} />
       <Stack.Screen name="EditPort" component={PortFormScreen} options={{ title: "Ports" }} />
+
+      <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: "Settings" }} />
 
       {/* <Stack.Screen name="QuotationSaleSummary" component={QuotationSaleSummaryScreen} options={{ title: "Quotation Summary" }} /> */}
     </Stack.Navigator>

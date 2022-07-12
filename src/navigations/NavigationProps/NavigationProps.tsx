@@ -20,6 +20,7 @@ export interface RootNavigationProps<RouteName extends keyof RootRoutes> {
 export type DrawerRoutes = {
   Dashboard: undefined;
   Profile: { docID?: string };
+  Settings: undefined;
 }
 
 export type AuthRoutes = {
@@ -155,5 +156,7 @@ export type RootRoutes = {
   CreateSparesPurchaseVoucherSummary: { docID: string };
   ViewAllSparesPurchaseVoucher: undefined;
   ViewSparesPurchaseVoucherSummary: { docID: string };
+
+  Settings: undefined;
 }
 

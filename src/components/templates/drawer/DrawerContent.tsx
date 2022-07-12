@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTailwind } from "tailwind-rn";
 import { DrawerNavigationProps } from "../../../navigations/NavigationProps/NavigationProps";
 import { Dimensions, TouchableOpacity, View } from "react-native";
-import { LogoAndTextIcon, LogoutIcon } from "../../../../assets/svg/SVG";
+import { LogoAndTextIcon, LogoutIcon, SettingsIcon } from "../../../../assets/svg/SVG";
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import { useSelector } from "react-redux";
 import { User } from "../../../types/User";
@@ -69,17 +69,8 @@ const Drawer = ({ navigation }: DrawerNavigationProps<"Dashboard">) => {
             <TextLabel content="Apps" color="text-gray-primary" style={tailwind("font-bold")} />
           </View>
           
-
-          <TouchableOpacity onPress={() => { handleSignOut() }}>
-            <View style={tailwind("flex-row items-center mb-2")}>
-              <View style={tailwind("mr-5")}>
-                <LogoutIcon height={25} width={25} />
-              </View>
-              <View>
-                <TextLabel content="Log out" />
-              </View>
-            </View>
-          </TouchableOpacity>
+          {/* <DrawerItem icon={<SettingsIcon height={25} width={25} />} text="Settings" onPress={()=>{navigation.navigate("Settings")}}/> */}
+          <DrawerItem icon={<LogoutIcon height={25} width={25} />} text="Log out" onPress={()=>{handleSignOut()}}/>
 
         </View>
 

@@ -19,8 +19,7 @@ import { JobConfirmation } from '../../../types/JobConfirmation';
 import ViewTabJob from '../../../components/templates/sales/ViewTabs/ViewTabJob';
 import { Invoice } from '../../../types/Invoice';
 import ViewTabInvoice from '../../../components/templates/sales/ViewTabs/ViewTabInvoice';
-import { ViewTabSalesConfirmation } from '../../sales/viewConfirmation/ViewAllSalesConfirmationScreen';
-
+import ViewTabSalesConfirmation from '../../../components/templates/sales/ViewTabs/ViewTabSales';
 
 const SalesSummaryScreen = ({ navigation, route }: RootNavigationProps<"SalesSummary">) => {
   const docID: any = route.params?.docID;

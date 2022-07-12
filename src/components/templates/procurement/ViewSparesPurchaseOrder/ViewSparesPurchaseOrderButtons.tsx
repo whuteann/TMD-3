@@ -11,7 +11,7 @@ import { UserSelector } from '../../../../redux/reducers/Auth';
 import { sendNotifications } from '../../../../services/NotificationServices';
 import { approveSparesPurchaseOrder, rejectSparesPurchaseOrder, updateSparesPurchaseOrder, verifySparesPurchaseOrder } from '../../../../services/SparesPurchaseOrderServices';
 import { deleteFile, UploadFileAndroid, UploadFileWeb } from '../../../../services/StorageServices';
-import { APPROVED, APPROVED_DOC, DRAFT, DOC_SUBMITTED, IN_REVIEW, PV_ISSUED, PV_PENDING, REJECTED, REJECTING, VERIFIED, VERIFIED_DOC, SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, HEAD_OF_PROCUREMENT_ROLE, ACCOUNT_ASSISTANT_ROLE } from '../../../../types/Common';
+import { APPROVED, APPROVED_DOC, DRAFT, DOC_SUBMITTED, IN_REVIEW, PV_ISSUED, PV_PENDING, REJECTED, REJECTING, VERIFIED, VERIFIED_DOC, SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, HEAD_OF_PROCUREMENT_ROLE, ACCOUNT_ASSISTANT_ROLE, GENERAL_MANAGER_ROLE } from '../../../../types/Common';
 import { sparesPurchaseOrderStatuses } from '../../../../types/SparesPurchaseOrder';
 import { User } from '../../../../types/User';
 import RegularButton from '../../../atoms/buttons/RegularButton';
@@ -80,7 +80,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 								revalidateCollection(SPARES_PURCHASE_ORDERS);
 
 								sendNotifications(
-									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE],
+									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE, GENERAL_MANAGER_ROLE],
 									`Purchase order ${display_id} has been approved by ${user?.name}.`,
 									{ screen: "ViewSparesPurchaseOrderSummary", docID: nav_id });
 							}, (error) => {
@@ -92,7 +92,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 							if (filename_storage_do) {
 								deleteFile(SPARES_PURCHASE_ORDERS, filename_storage_do, () => {
 									updateSparesPurchaseOrder(nav_id, { doFile: "", doNumber: "", filename_storage_do: "" }, user!, UPDATE_ACTION, () => {
-									 }, (error) => { console.error(error); });
+									}, (error) => { console.error(error); });
 								});
 							}
 							if (filename_storage_inv) {
@@ -166,7 +166,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 								revalidateCollection(SPARES_PURCHASE_ORDERS);
 
 								sendNotifications(
-									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE],
+									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE, GENERAL_MANAGER_ROLE],
 									`Submitted purchase order files ${display_id} has been approved by ${user?.name}.`,
 									{ screen: "ViewSparesPurchaseOrderSummary", docID: nav_id });
 							}, (error) => {
@@ -180,7 +180,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 	}
 
 	if (status == IN_REVIEW) {
-		setModal(totalAmount < 5000 ? `Purchase Order “${display_id}” has been approved` : `Purchase Order “${display_id}” has submitted to GM`);
+		setModal(totalAmount < 5000 ? `Purchase Order “${display_id}” has been approved` : `Purchase Order “${display_id}” has been submitted to GM`);
 		bottom = (
 			<View>
 				{
@@ -206,80 +206,72 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 		)
 
 	} else if (status == APPROVED) {
-		setModal(`Purchase Order “${display_id}” has submitted to GM`);
+		setModal(`Purchase Order “${display_id}” has been submitted to GM`);
 		bottom = (
 			<View>
 				{
-					permissions?.includes(REVIEW_SPARES_PURCHASE_ORDER)
+					uploadedDO
 						?
-						<View>
-							{
-								uploadedDO
-									?
-									<InfoInput
-										placeholder="Delivery Noted No."
-										onChangeText={(text) => { setDoFileNo(text) }}
-										hasError={doFileError ? true : false}
-										errorMessage={doFileError}
-									/>
-									:
-									null
-							}
-							<UploadButton
-								value={doFile}
-								filename_storage={filename_storage_do}
-								buttonText="Upload DO"
-								path={SPARES_PURCHASE_ORDERS}
-								updateDoc={(filename, filename_storage_output) => {
-									updateSparesPurchaseOrder(nav_id, { doFile: filename, filename_storage_do: filename_storage_output }, user!, UPDATE_ACTION, () => {
-										revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`)
-									}, (error) => { console.error(error); })
-								}}
-								setUploaded={setUploadedDO}
-							/>
-
-							{
-								uploadedINV
-									?
-									<InfoInput
-										placeholder="Invoice No."
-										onChangeText={(text) => { setInvFileNo(text) }}
-										hasError={invFileError ? true : false}
-										errorMessage={invFileError}
-									/>
-									:
-									null
-							}
-							<UploadButton
-								value={invFile}
-								filename_storage={filename_storage_inv}
-								buttonText="Upload Invoice"
-								path={SPARES_PURCHASE_ORDERS}
-								updateDoc={(filename, filename_storage_output) => {
-									updateSparesPurchaseOrder(nav_id, { invFile: filename, filename_storage_inv: filename_storage_output }, user!, UPDATE_ACTION, () => {
-										revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`)
-									}, (error) => {
-										console.error(error);
-									})
-								}}
-								setUploaded={setUploadedINV}
-							/>
-							<View style={tailwind("mb-4")} />
-							<RegularButton text="Submit" type={uploadedDO ? "primary" : "disabled"} operation={() => {
-								if (!doFileNo) {
-									setDoFileError(doFileNo ? "" : "Required");
-								} else if (uploadedINV && !invFileNo) {
-									setInvFileError(invFileNo ? "" : "Required");
-								}
-								else {
-									setAction("submit")
-									setModalOpen(true);
-								}
-							}} />
-						</View>
+						<InfoInput
+							placeholder="Delivery Noted No."
+							onChangeText={(text) => { setDoFileNo(text) }}
+							hasError={doFileError ? true : false}
+							errorMessage={doFileError}
+						/>
 						:
-						<RegularButton text="Download" operation={() => { onDownload(); }} />
+						null
 				}
+				<UploadButton
+					value={doFile}
+					filename_storage={filename_storage_do}
+					buttonText="Upload DO"
+					path={SPARES_PURCHASE_ORDERS}
+					updateDoc={(filename, filename_storage_output) => {
+						updateSparesPurchaseOrder(nav_id, { doFile: filename, filename_storage_do: filename_storage_output }, user!, UPDATE_ACTION, () => {
+							revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`)
+						}, (error) => { console.error(error); })
+					}}
+					setUploaded={setUploadedDO}
+				/>
+
+				{
+					uploadedINV
+						?
+						<InfoInput
+							placeholder="Invoice No."
+							onChangeText={(text) => { setInvFileNo(text) }}
+							hasError={invFileError ? true : false}
+							errorMessage={invFileError}
+						/>
+						:
+						null
+				}
+				<UploadButton
+					value={invFile}
+					filename_storage={filename_storage_inv}
+					buttonText="Upload Invoice"
+					path={SPARES_PURCHASE_ORDERS}
+					updateDoc={(filename, filename_storage_output) => {
+						updateSparesPurchaseOrder(nav_id, { invFile: filename, filename_storage_inv: filename_storage_output }, user!, UPDATE_ACTION, () => {
+							revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`)
+						}, (error) => {
+							console.error(error);
+						})
+					}}
+					setUploaded={setUploadedINV}
+				/>
+				<View style={tailwind("mb-4")} />
+				<RegularButton text="Submit" type={uploadedDO ? "primary" : "disabled"} operation={() => {
+					if (!doFileNo) {
+						setDoFileError(doFileNo ? "" : "Required");
+					} else if (uploadedINV && !invFileNo) {
+						setInvFileError(invFileNo ? "" : "Required");
+					}
+					else {
+						setAction("submit")
+						setModalOpen(true);
+					}
+				}} />
 			</View>
 		)
 	} else if (status == VERIFIED) {
@@ -300,7 +292,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 			</View>
 		)
 	} else if (status == DOC_SUBMITTED) {
-		setModal(totalAmount < 5000 ? `Invoice of “${display_id}” has been approved` : `Invoice of “${display_id}” has submitted to GM`);
+		setModal(totalAmount < 5000 ? `Invoice of “${display_id}” has been approved` : `Invoice of “${display_id}” has been submitted to GM`);
 		bottom = (
 			<View>
 				{
@@ -327,7 +319,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 								buttonText="Upload Invoice"
 								path={SPARES_PURCHASE_ORDERS}
 								autoSave={false}
-								setSelectedFile={(file) => {setInvUploaded(file); }}
+								setSelectedFile={(file) => { setInvUploaded(file); }}
 								setUploaded={setUploadedINV}
 							/>
 							<View style={tailwind("mb-4")} />
@@ -563,7 +555,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 								buttonText="Upload Invoice"
 								path={SPARES_PURCHASE_ORDERS}
 								autoSave={false}
-								setSelectedFile={(file) => {setInvUploaded(file); }}
+								setSelectedFile={(file) => { setInvUploaded(file); }}
 								setUploaded={setUploadedINV}
 							/>
 							<View style={tailwind("mb-4")} />

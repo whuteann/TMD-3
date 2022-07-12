@@ -53,7 +53,7 @@ const CreatePurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavigatio
 
 	let modal = (
 		<ConfirmModal
-			text1={`Purchase Voucher “${displayID}” has submitted to HOA`}
+			text1={`Purchase Voucher “${displayID}” has been submitted to HOA`}
 			text2=""
 			downloadButton={false}
 			horizontalButtons={false}

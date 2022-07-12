@@ -28,6 +28,7 @@ export const PREPARE_PURCHASE_ORDER = 'prepare.purchase.order';
 export const ISSUE_PURCHASE_ORDER = 'issue.purchase.order';
 
 export const VIEW_PURCHASE_VOUCHER = 'view.purchase.voucher';
+export const VIEW_SPARES_PURCHASE_VOUCHER = 'view.spares.purchase.voucher';
 export const REVIEW_PURCHASE_VOUCHER = 'review.purchase.voucher';
 
 export const CREATE_USER = 'create.user';

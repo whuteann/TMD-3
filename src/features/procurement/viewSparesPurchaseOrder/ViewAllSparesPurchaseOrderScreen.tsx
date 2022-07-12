@@ -178,7 +178,7 @@ const ViewAllSparesPurchaseOrderScreen = ({ navigation }: RootNavigationProps<"V
 				<FormDropdownInputField
 					label="Filter by"
 					value={filterBy}
-					items={[IN_REVIEW,  DRAFT,  APPROVED,  REJECTED, VERIFIED,  DOC_SUBMITTED,  VERIFIED_DOC,  APPROVED_DOC,  NO_PURCHASE_VOUCHER,  PV_ISSUED,  PV_PENDING]}
+					items={[IN_REVIEW,  DRAFT,  APPROVED,  REJECTED, VERIFIED,  DOC_SUBMITTED,  VERIFIED_DOC,  APPROVED_DOC,  NO_PURCHASE_VOUCHER,  PV_ISSUED]}
 					onChangeValue={(val) => { setFilterBy(val) }}
 					placeholder='All'
 				/>

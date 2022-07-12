@@ -54,7 +54,7 @@ const CreatePurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationP
 
 	let modal = (
 		<ConfirmModal
-			text1={`Purchase Order “${displayID}” has submitted to HOM`}
+			text1={`Purchase Order “${displayID}” has been submitted to HOM`}
 			text2=""
 			downloadButton={false}
 			horizontalButtons={false}

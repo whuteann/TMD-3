@@ -52,7 +52,7 @@ const CreateSparesPurchaseVoucherSummaryScreen = ({ navigation, route }: RootNav
 
 	let modal = (
 		<ConfirmModal
-			text1={`Purchase Voucher “${data.secondary_id}” has submitted to HOA`}
+			text1={`Purchase Voucher “${data.secondary_id}” has been submitted to HOA`}
 			text2=""
 			downloadButton={false}
 			horizontalButtons={false}

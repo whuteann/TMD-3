@@ -91,7 +91,7 @@ const UserFormScreen = ({ navigation, route }: RootNavigationProps<"CreateUser" 
   }
 
   return (
-    <Body header={<HeaderStack title={"Create new employee profile"} navigateProp={navigation} />} style={tailwind("mt-6")}>
+    <Body header={<HeaderStack title={`${docID ? "Edit": "Create new"} employee profile`} navigateProp={navigation} />} style={tailwind("mt-6")}>
       <Formik
         initialValues={{
           name: user?.name || '',
@@ -164,7 +164,7 @@ const UserFormScreen = ({ navigation, route }: RootNavigationProps<"CreateUser" 
             </FieldArray>
 
             <RegularButton
-              text="Next"
+              text={`${docID ? "Update" : "Next"}`}
               operation={() => { handleSubmit() }}
               loading={loading && !isDelete} />
 

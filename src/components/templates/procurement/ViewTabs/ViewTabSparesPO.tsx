@@ -52,6 +52,7 @@ const ViewTabSparesPO: React.FC<inputProps> = ({
     dropdowns = (
       <View>
         <ViewTabDropdown icon={<PreviewIcon height={25} width={25} />} text="Preview Purchase Order" setDropdown={path} navigation={() => { navigation.navigate(route, { docID: nav_id }) }} />
+        <ViewTabDropdown icon={<DownloadIcon height={25} width={25} />} text="Download Purchase Order" setDropdown={path} navigation={() => { onDownload(data); }} />
       </View>
     )
   } else if (status == REJECTED) {
@@ -81,12 +82,12 @@ const ViewTabSparesPO: React.FC<inputProps> = ({
       <View>
         <ViewTabDropdown icon={<PreviewIcon height={25} width={25} />} text="Preview Purchase Order" setDropdown={path} navigation={() => { navigation.navigate(route, { docID: nav_id }) }} />
         {
-					user?.id == data.created_by.id
-						?
-						<ViewTabDropdown icon={<DownloadIcon height={25} width={25} />} text="Download Purchase Order" setDropdown={path} navigation={() => { onDownload(data); }} />
-						:
-						<></>
-				}
+          user?.id == data.created_by.id
+            ?
+            <ViewTabDropdown icon={<DownloadIcon height={25} width={25} />} text="Download Purchase Order" setDropdown={path} navigation={() => { onDownload(data); }} />
+            :
+            <></>
+        }
       </View>
     )
   }

@@ -24,6 +24,7 @@ import { generateJobConfirmationOPPDF } from '../../../components/templates/pdf/
 import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { convertCurrency } from '../../../constants/Currency';
 import { ACCOUNT_ASSISTANT_ROLE, HEAD_OF_MARKETING_ROLE, MARKETING_EXECUTIVE_ROLE, OPERATION_TEAM_ROLE } from '../../../types/Common';
+import { ISSUE_INVOICE } from '../../../permissions/Permissions';
 
 const ViewJobConfirmationSummaryScreen = ({ navigation, route }: RootNavigationProps<"JobConfirmationSummary">) => {
 
@@ -182,7 +183,14 @@ const ViewJobConfirmationSummaryScreen = ({ navigation, route }: RootNavigationP
 							setUploaded={setUploaded}
 						/>
 						<View style={tailwind("mt-5")}>
-							<RegularButton type={uploaded ? "primary" : "disabled"} text="Proceed Issue Invoice" operation={() => { linkTo(`/invoices/${docID}/create`) }} />
+							{
+								user?.permission?.includes(ISSUE_INVOICE)
+									?
+									<RegularButton type={uploaded ? "primary" : "disabled"} text="Proceed Issue Invoice" operation={() => { linkTo(`/invoices/${docID}/create`) }} />
+									:
+									<></>
+							}
+
 						</View>
 						{
 							user?.role == "Marketing Executive/Marketing Assistant" || user?.role == "Super Admin"

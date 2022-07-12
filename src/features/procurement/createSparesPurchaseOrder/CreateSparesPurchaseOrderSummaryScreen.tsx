@@ -53,7 +53,7 @@ const CreateSparesPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavig
 
 	let modal = (
 		<ConfirmModal
-			text1={`Purchase Order “${data.secondary_id}" has submitted to HOM`}
+			text1={`Purchase Order “${data.secondary_id}" has been submitted to HP`}
 			text2=""
 			downloadButton={false}
 			horizontalButtons={false}

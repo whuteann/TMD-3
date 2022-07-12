@@ -51,7 +51,7 @@ const CreateSparesProcurementSummaryScreen = ({ navigation, route }: RootNavigat
 
 	let modal = (
 		<ConfirmModal
-			text1={`Procurement "${displayID}" has submitted to HOP`}
+			text1={`Procurement "${displayID}" has been submitted to HOP`}
 			text2={``}
 			downloadButton={false}
 			horizontalButtons={false}

@@ -161,7 +161,7 @@ const ViewPurchaseOrderButtons: React.FC<Props> = ({
 						?
 						<RegularButton type="secondary" text="Create Purchase Voucher" operation={() => { navigation.navigate("CreatePurchaseVoucherForm", { docID: nav_id }); }} />
 						:
-						<RegularButton text="Download" operation={() => { onDownload(); }} />
+						<></>
 				}
 			</View>
 		)
