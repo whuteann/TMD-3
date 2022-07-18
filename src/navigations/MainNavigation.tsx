@@ -106,7 +106,9 @@ import {
   VIEW_SPARES_PROCUREMENT,
   CREATE_SPARES_PURCHASE_ORDER,
   VIEW_SPARES_PURCHASE_ORDER,
-  CREATE_PURCHASE_VOUCHER
+  CREATE_PURCHASE_VOUCHER,
+  VIEW_SPARES_PURCHASE_VOUCHER,
+  CREATE_SPARES_PURCHASE_VOUCHER
 } from "../permissions/Permissions";
 import { Settings } from "react-native";
 import SettingsScreen from "../features/settings/SettingsScreen";
@@ -202,9 +204,9 @@ const MainNavigation = () => {
       {(() => protectedRoute('CreatePurchaseOrderSummary', CreatePurchaseOrderSummaryScreen, "Purchase Orders", Stack, permissions, [VIEW_PURCHASE_ORDER]))()}
 
       {/* Create Purchase Voucher */}
-      {(() => protectedRoute('CreatePurchaseVoucherForm', CreatePurchaseVoucherFormScreen, "Purchase Vouchers", Stack, permissions, [VIEW_PURCHASE_VOUCHER]))()}
-      {(() => protectedRoute('EditPurchaseVoucherForm', EditPurchaseVoucherFormScreen, "Purchase Vouchers", Stack, permissions, [VIEW_PURCHASE_VOUCHER]))()}
-      {(() => protectedRoute('CreatePurchaseVoucherSummary', CreatePurchaseVoucherSummaryScreen, "Purchase Vouchers", Stack, permissions, [VIEW_PURCHASE_VOUCHER]))()}
+      {(() => protectedRoute('CreatePurchaseVoucherForm', CreatePurchaseVoucherFormScreen, "Purchase Vouchers", Stack, permissions, [CREATE_PURCHASE_VOUCHER]))()}
+      {(() => protectedRoute('EditPurchaseVoucherForm', EditPurchaseVoucherFormScreen, "Purchase Vouchers", Stack, permissions, [CREATE_PURCHASE_VOUCHER]))()}
+      {(() => protectedRoute('CreatePurchaseVoucherSummary', CreatePurchaseVoucherSummaryScreen, "Purchase Vouchers", Stack, permissions, [CREATE_PURCHASE_VOUCHER]))()}
 
       {/* View Purchase Voucher */}
       {(() => protectedRoute('ViewAllPurchaseVoucher', ViewAllPurchaseVoucherScreen, "View Purchase Vouchers", Stack, permissions, [VIEW_PURCHASE_VOUCHER]))()}
@@ -234,13 +236,13 @@ const MainNavigation = () => {
       {(() => protectedRoute('PreviewSparesPurchaseOrderSummary', PreviewSparesPurchaseOrderSummaryScreen, "View Spares Purchase Order", Stack, permissions, [VIEW_SPARES_PURCHASE_ORDER]))()}
 
       {/* Create Spares Purchase Voucher */}
-      {(() => protectedRoute('CreateSparesPurchaseVoucherForm', CreateSparesPurchaseVoucherFormScreen, "Spares Purchase Voucher", Stack, permissions, [CREATE_PURCHASE_VOUCHER]))()}
-      {(() => protectedRoute('EditSparesPurchaseVoucherForm', EditSparesPurchaseVoucherFormScreen, "Spares Purchase Voucher", Stack, permissions, [CREATE_PURCHASE_VOUCHER]))()}
-      {(() => protectedRoute('CreateSparesPurchaseVoucherSummary', CreateSparesPurchaseVoucherSummaryScreen, "Spares Purchase Voucher", Stack, permissions, [CREATE_PURCHASE_VOUCHER]))()}
+      {(() => protectedRoute('CreateSparesPurchaseVoucherForm', CreateSparesPurchaseVoucherFormScreen, "Spares Purchase Voucher", Stack, permissions, [CREATE_SPARES_PURCHASE_VOUCHER]))()}
+      {(() => protectedRoute('EditSparesPurchaseVoucherForm', EditSparesPurchaseVoucherFormScreen, "Spares Purchase Voucher", Stack, permissions, [CREATE_SPARES_PURCHASE_VOUCHER]))()}
+      {(() => protectedRoute('CreateSparesPurchaseVoucherSummary', CreateSparesPurchaseVoucherSummaryScreen, "Spares Purchase Voucher", Stack, permissions, [CREATE_SPARES_PURCHASE_VOUCHER]))()}
 
       {/* View Spares Purchase Voucher */}
-      {(() => protectedRoute('ViewAllSparesPurchaseVoucher', ViewAllSparesPurchaseVoucherScreen, "View Spares Purchase Voucher", Stack, permissions, [VIEW_PURCHASE_VOUCHER]))()}
-      {(() => protectedRoute('ViewSparesPurchaseVoucherSummary', ViewSparesPurchaseVoucherSummaryScreen, "View Spares Purchase Voucher", Stack, permissions, [VIEW_PURCHASE_VOUCHER]))()}
+      {(() => protectedRoute('ViewAllSparesPurchaseVoucher', ViewAllSparesPurchaseVoucherScreen, "View Spares Purchase Voucher", Stack, permissions, [VIEW_SPARES_PURCHASE_VOUCHER]))()}
+      {(() => protectedRoute('ViewSparesPurchaseVoucherSummary', ViewSparesPurchaseVoucherSummaryScreen, "View Spares Purchase Voucher", Stack, permissions, [VIEW_SPARES_PURCHASE_VOUCHER]))()}
 
       {/* Departments */}
       <Stack.Screen name="Departments" component={DepartmentListScreen} />

@@ -15,6 +15,7 @@ import { View } from 'react-native';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { User } from '../../../types/User';
 import { convertCurrency } from '../../../constants/Currency';
+import { REJECTED } from '../../../types/Common';
 
 
 const ViewInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"ViewInvoiceSummary">) => {
@@ -132,7 +133,7 @@ const ViewInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"Vi
 				<InfoDisplay placeholder="Bank Details" info={data.bank_details?.name || "-"} />
 				<InfoDisplay placeholder="Notes" info={data.notes || "-"} />
 
-				{status == "rejected" ? (
+				{status == REJECTED ? (
 					<InfoDisplay placeholder="Reject Notes" info={data.reject_notes || "-"} />
 				) : null}
 

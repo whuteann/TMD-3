@@ -1,6 +1,6 @@
 import React from "react";
 import { CartIcon, CartSettingsIcon, EditCartIcon, OrderSettingsIcon, SettingsEyeIcon, ViewPCIcon, VoucherIcon, VoucherSettingsIcon } from "../../../assets/svg/SVG";
-import { CREATE_PROCUREMENT, CREATE_SPARES_PROCUREMENT, VIEW_PROCUREMENT, VIEW_PURCHASE_ORDER, VIEW_PURCHASE_VOUCHER, VIEW_SPARES_PROCUREMENT, VIEW_SPARES_PURCHASE_ORDER } from "../../permissions/Permissions";
+import { CREATE_PROCUREMENT, CREATE_SPARES_PROCUREMENT, VIEW_PROCUREMENT, VIEW_PURCHASE_ORDER, VIEW_PURCHASE_VOUCHER, VIEW_SPARES_PROCUREMENT, VIEW_SPARES_PURCHASE_ORDER, VIEW_SPARES_PURCHASE_VOUCHER } from "../../permissions/Permissions";
 
 const procurements = (permissions: string[] | undefined) => {
   let tabs = [
@@ -62,7 +62,7 @@ const procurements = (permissions: string[] | undefined) => {
       onPress: (navigation) => { navigation.navigate("ViewAllSparesPurchaseVoucher") },
       icon: <VoucherSettingsIcon height={25} width={25} />,
       text: "View All Spares Purchase Voucher",
-      requiredPermissions: [VIEW_PURCHASE_VOUCHER]
+      requiredPermissions: [VIEW_SPARES_PURCHASE_VOUCHER]
     },
   ];
 

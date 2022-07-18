@@ -105,7 +105,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 								revalidateCollection(SPARES_PURCHASE_ORDERS);
 
 								sendNotifications(
-									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE],
+									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE, HEAD_OF_PROCUREMENT_ROLE],
 									`Purchase order ${display_id} has been rejected by ${user?.name}.`,
 									{ screen: "ViewSparesPurchaseOrderSummary", docID: nav_id });
 							}, (error) => {
@@ -120,7 +120,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 								revalidateCollection(SPARES_PURCHASE_ORDERS);
 
 								sendNotifications(
-									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE],
+									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE, GENERAL_MANAGER_ROLE],
 									`Purchase order ${display_id} has been verified by ${user?.name}.`,
 									{ screen: "ViewSparesPurchaseOrderSummary", docID: nav_id });
 							}, (error) => {
@@ -151,7 +151,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 								revalidateCollection(SPARES_PURCHASE_ORDERS);
 
 								sendNotifications(
-									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE],
+									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE, GENERAL_MANAGER_ROLE, HEAD_OF_PROCUREMENT_ROLE],
 									`Submitted purchase order files ${display_id} has been verified by ${user?.name}, ready for approval`,
 									{ screen: "ViewSparesPurchaseOrderSummary", docID: nav_id });
 							}, (error) => {
@@ -166,7 +166,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 								revalidateCollection(SPARES_PURCHASE_ORDERS);
 
 								sendNotifications(
-									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE, GENERAL_MANAGER_ROLE],
+									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE, GENERAL_MANAGER_ROLE, HEAD_OF_PROCUREMENT_ROLE],
 									`Submitted purchase order files ${display_id} has been approved by ${user?.name}.`,
 									{ screen: "ViewSparesPurchaseOrderSummary", docID: nav_id });
 							}, (error) => {
