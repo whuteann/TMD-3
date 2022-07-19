@@ -135,7 +135,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 								revalidateCollection(SPARES_PURCHASE_ORDERS);
 
 								sendNotifications(
-									[SUPER_ADMIN_ROLE, HEAD_OF_PROCUREMENT_ROLE],
+									totalAmount < 5000 ? [SUPER_ADMIN_ROLE, HEAD_OF_PROCUREMENT_ROLE] : [SUPER_ADMIN_ROLE, HEAD_OF_PROCUREMENT_ROLE, GENERAL_MANAGER_ROLE],
 									`Purchase order files for ${display_id} has been submitted by ${user?.name}.`,
 									{ screen: "ViewSparesPurchaseOrderSummary", docID: nav_id });
 
