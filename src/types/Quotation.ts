@@ -16,7 +16,7 @@ export type Quotation = {
 
   quotation_date: string,
   customer?: Customer,
-  
+
   products: Array<{
     product: Product,
     quantity: string,
@@ -26,7 +26,7 @@ export type Quotation = {
 
   ports: Array<{ port: string, delivery_location: string }>
 
-  
+
   bunker_barges?: Array<Bunker>
   delivery_date?: DateRange,
   delivery_modes?: Array<string>,
@@ -53,6 +53,9 @@ export type Quotation = {
   //rejected
   reject_notes?: string,
   reject_reason?: string,
+
+  //archived
+  archived_notes?: string,
 
   //After confirmation
   sales_confirmation_id?: string,

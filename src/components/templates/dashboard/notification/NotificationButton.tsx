@@ -55,7 +55,6 @@ const NotificationButton: React.FC<ButtonProps> = ({
     ignoreFirestoreDocumentSnapshotField: false,
     where: ["read", "==", false],
     orderBy: ['created_at', 'desc'],
-    limit: 50
   }, {
     refreshInterval: 0,
     revalidateOnFocus: false,

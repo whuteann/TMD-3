@@ -88,6 +88,7 @@ const ViewQuotationButtons: React.FC<Props> = ({
 
 	// Form data
 	const [rejectReason, setRejectReason] = useState("1. Pricing Issue");
+	const [rejectReasonError, setRejectReasonError] = useState(false);
 	const [rejectNotes, setRejectNotes] = useState("");
 	const [poNumber, setPoNumber] = useState<string | undefined>(purchaseOrderNo);
 
@@ -148,22 +149,28 @@ const ViewQuotationButtons: React.FC<Props> = ({
 							setRejectNotes("");
 							break;
 						case "archive":
-							archiveQuotation(
-								docID,
-								rejectReason,
-								rejectNotes,
-								user!, () => {
-									navigation.navigate("ViewAllQuotation");
-
-									sendNotifications(
-										[SUPER_ADMIN_ROLE, HEAD_OF_MARKETING_ROLE],
-										`Quotation ${displayID} has been archived by ${user?.name}.`,
-										{ screen: "ViewQuotationSummary", docID: docID });
-
-									revalidateCollection(QUOTATIONS);
-								}, (error) => {
-									console.error(error);
-								});
+							if(rejectReason){
+								setRejectReasonError(false);
+								archiveQuotation(
+									docID,
+									rejectReason,
+									rejectNotes,
+									user!, () => {
+										navigation.navigate("ViewAllQuotation");
+	
+										sendNotifications(
+											[SUPER_ADMIN_ROLE, HEAD_OF_MARKETING_ROLE],
+											`Quotation ${displayID} has been archived by ${user?.name}.`,
+											{ screen: "ViewQuotationSummary", docID: docID });
+	
+										revalidateCollection(QUOTATIONS);
+									}, (error) => {
+										console.error(error);
+									});
+							}else{
+								setModalOpen(false);
+								setRejectReasonError(true);
+							}
 
 							break;
 					}
@@ -316,6 +323,8 @@ const ViewQuotationButtons: React.FC<Props> = ({
 					items={rfqs.map(item => item.reason)}
 					shadow={true}
 					onChangeValue={(val) => { setRejectReason(val) }}
+					hasError={rejectReasonError}
+					errorMessage={"Reject reason is required"}
 				/>
 
 				<FormTextInputField

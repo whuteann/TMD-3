@@ -49,21 +49,6 @@ const ViewJobConfirmationSummaryScreen = ({ navigation, route }: RootNavigationP
 
 	if (!data || !bunkers) return <LoadingData message="This document might not exist" />;
 
-	const onDownload = async () => {
-		let html: any;
-
-		if (user?.role == ACCOUNT_ASSISTANT_ROLE) {
-			html = generateJobConfirmationAAPDF(data);
-		} else if (user?.role == OPERATION_TEAM_ROLE) {
-			html = generateJobConfirmationOPPDF(data);
-		} else {
-			// Should return something else
-			html = generateJobConfirmationOPPDF(data);
-		}
-
-		await createAndDisplayPDF(html);
-	}
-
 	const onDownloadOTVer = async () => {
 		let html: any;
 		html = generateJobConfirmationOPPDF(data);
@@ -200,7 +185,13 @@ const ViewJobConfirmationSummaryScreen = ({ navigation, route }: RootNavigationP
 									<RegularButton text="Download AA job confirmation" operation={() => { onDownloadAAVer() }} />
 								</View>
 								:
-								<RegularButton text="Download" operation={() => { onDownload() }} />
+								<RegularButton text="Download" operation={() => {
+									if (user?.role == ACCOUNT_ASSISTANT_ROLE) {
+										onDownloadAAVer()
+									} else if (user?.role == OPERATION_TEAM_ROLE){
+										onDownloadOTVer()
+									}
+								}} />
 						}
 
 					</View>

@@ -223,7 +223,7 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 				<InfoDisplay placeholder={``} info={`Time: ${data.validity_time || "-"}`} />
 
 				{
-					status == REJECTED || status == ARCHIVED
+					status == REJECTED
 						?
 						(<InfoDisplay placeholder={`Reject Notes from HOM`} info={data.reject_notes || "-"} />)
 						:
@@ -233,7 +233,12 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 				{
 					status == ARCHIVED
 						?
-						(<InfoDisplay placeholder={`Reject Notes`} info={data.reject_notes || "-"} />)
+						(
+							<View>
+								<InfoDisplay placeholder={`Reject Notes from HOM`} info={data.reject_notes || "-"} />
+								<InfoDisplay placeholder={`Archive Notes`} info={data.archived_notes || "-"} />
+							</View>
+						)
 						:
 						null
 				}

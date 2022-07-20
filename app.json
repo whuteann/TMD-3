@@ -1,7 +1,7 @@
 {
   "name": "Tumpuan Megah Development",
   "slug": "TMD",
-  "version": "0.0.7",
+  "version": "0.0.1",
   "owner": "studio20",
   "orientation": "portrait",
   "icon": "./assets/images/icon.png",
@@ -68,7 +68,7 @@
     }
   },
   "android": {
-    "versionCode": 11,
+    "versionCode": 1,
     "googleServicesFile": "./google-services.json",
     "adaptiveIcon": {
       "foregroundImage": "./assets/images/icon.png",

@@ -176,7 +176,7 @@ export const archiveQuotation = (docID: string, rejectReason: string, rejectNote
     .doc(docID).update({
       status: ARCHIVED,
       reject_reason: rejectReason,
-      reject_notes: rejectNotes
+      archived_notes: rejectNotes
     })
     .then(() => {
       addLog(QUOTATIONS, docID, ARCHIVE_ACTION, user!, () => {
