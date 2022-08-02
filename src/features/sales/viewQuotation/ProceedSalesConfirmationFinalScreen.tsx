@@ -257,7 +257,7 @@ const ProceedSalesConfirmationFinalScreen = ({ navigation, route }: RootNavigati
 
 						<View style={tailwind("mt-5")}>
 							<RegularButton
-								text="Confirm"
+								text="Proceed to Job Confirmation"
 								loading={loading}
 								operation={() => { handleSubmit() }}
 							/>

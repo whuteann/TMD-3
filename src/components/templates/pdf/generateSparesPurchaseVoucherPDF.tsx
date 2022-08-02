@@ -53,12 +53,12 @@ export const generateSparesPurchaseVoucherPDF = (data: SparesPurchaseVoucher, im
               <div style="display: flex; flex-direction: row">
                 <div style="width: 45%;">Received In: </div>
                 <div style="width: 5%">:</div>
-                <div style="width: 50%;">  ${data.account_purchase_by.name}</div>
+                <div style="width: 50%;">  ${data.account_purchase_by.name ? data.account_purchase_by.name : "-"}</div>
               </div>
               <div style="display: flex; flex-direction: row">
                 <div style="width: 45%;">Cheque No.: </div>
                 <div style="width: 5%">:</div>
-                <div style="width: 50%;">  ${data.cheque_no}</div>
+                <div style="width: 50%;">  ${data.cheque_no ? data.cheque_no : "-"}</div>
               </div>
             </div>
           </div>
@@ -76,7 +76,7 @@ export const generateSparesPurchaseVoucherPDF = (data: SparesPurchaseVoucher, im
           </div>
           <div style="display: flex; flex-direction: row; margin-top: 10px;  width: 100%;">
             <div style="display: flex; flex-direction: row; width: 33.3333333%;">
-              <div style=" width: 30%">${data.supplier.secondary_id || "-"}</div>
+            <div style=" width: 30%">${data.supplier.account_no || "-"}</div>
               <div style="width: 70%;">${data.supplier.name}</div>
             </div>
             <div style="width: 33.3333333%;">
@@ -123,7 +123,7 @@ export const generateSparesPurchaseVoucherPDF = (data: SparesPurchaseVoucher, im
             <div style="width: 80%; display: flex; flex-direction: row;">
               <div style=" width: 15%; font-size: 13px;">${convertCurrencyText(data.currency_rate)}</div>
               <div style="width: 5%">:</div>
-              <div style="width: 80%; font-size: 13px; ">${converter.toWords(data.paid_amount).toUpperCase()} ONLY</div>
+              <div style="width: 80%; font-size: 13px; ">${converter.toWords(Number(data.paid_amount)).toUpperCase()} ONLY</div>
             </div>
             <div style="width: 20%;  display: flex; flex-direction: column; align-items: flex-end;">
               <div style="display: flex; flex-direction: row;">

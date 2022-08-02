@@ -32,7 +32,7 @@ export type Invoice = {
     BDN_quantity: { quantity: string, unit: string },
     quantity: string,
     unit: string,
-    price: { value: string, unit: string },
+    price: { value: string, unit: string, remarks: string },
     subtotal: string,
     MOPS?: boolean,
   }>,

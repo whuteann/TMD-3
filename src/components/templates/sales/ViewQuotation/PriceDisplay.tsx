@@ -11,6 +11,7 @@ interface InfoProps {
   length?: number,
   currency: string,
   index: number,
+  currency_rate: string,
   prices: Array<{ value: string, unit: string, remarks: string }>,
   products: Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string, remarks: string }> }>,
   setProducts?: (val: Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string, remarks: string }> }>) => void,
@@ -18,7 +19,7 @@ interface InfoProps {
 }
 
 const PriceDisplay: React.FC<InfoProps> = ({
-  product, unit, prices, index, status, products, setProducts = () => { }, deleteAProduct = () => { }, length = 2, currency
+  product, unit, prices, index, status, products, currency_rate, setProducts = () => { }, deleteAProduct = () => { }, length = 2, currency
 }) => {
   const tailwind = useTailwind();
   const [localProducts, setLocalProducts] = useState(products);
@@ -49,12 +50,21 @@ const PriceDisplay: React.FC<InfoProps> = ({
 
   return (
     <View>
-      <View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
+
+      {index == 0
+        ?
+        <View>
+          <View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
+          <InfoDisplay placeholder={`Currency Rate`} info={currency_rate} />
+        </View>
+        :
+        <View style={tailwind("mb-5")}/>
+      }
       {
         status == "Approved" && length > 1
           ?
           // z-50
-          <View style={tailwind("absolute top-9  z-50 left-[98%] ")}>
+          <View style={tailwind(`absolute ${index==0 ? "top-16" : "top-6"}  z-50 left-[98%] `)}>
             <TouchableOpacity onPress={() => deleteProduct()}>
               <TrashIcon height={20} width={15} />
             </TouchableOpacity>

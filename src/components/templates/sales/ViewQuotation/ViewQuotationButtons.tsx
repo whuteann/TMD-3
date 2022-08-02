@@ -18,7 +18,7 @@ import { Product } from '../../../../types/Product';
 import { updateSalesConfirmation } from '../../../../services/SalesConfirmationServices';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../../redux/reducers/Auth';
-import { ARCHIVE_QUOTATION, CREATE_QUOTATION, REVIEW_QUOTATION } from '../../../../permissions/Permissions';
+import { ARCHIVE_QUOTATION, CREATE_QUOTATION, EDIT_DRAFT, REVIEW_QUOTATION } from '../../../../permissions/Permissions';
 import { UPDATE_ACTION } from '../../../../constants/Action';
 import { APPROVED, ARCHIVED, DRAFT, HEAD_OF_MARKETING_ROLE, IN_REVIEW, MARKETING_EXECUTIVE_ROLE, REJECTED, REJECTING, SUPER_ADMIN_ROLE } from '../../../../types/Common';
 import { updateJobConfirmation } from '../../../../services/JobConfirmationServices';
@@ -208,7 +208,7 @@ const ViewQuotationButtons: React.FC<Props> = ({
 		buttons = (
 			<View>
 				{
-					user?.id == created_by.id
+					user?.id == created_by.id || user?.permission?.includes(EDIT_DRAFT)
 						?
 						<RegularButton text="Edit" operation={() => { navigation.navigate("EditQuotation", { docID: docID }) }} />
 						:

@@ -80,7 +80,7 @@ const ProfileScreen = ({ navigation, route }: RootNavigationProps<"Profile">) =>
 				/>
 
 				<FormTextInputField
-					label='Deparment/Position'
+					label='Department/Position'
 					value={`${data.role}`}
 					editable={false}
 					shadow={false}

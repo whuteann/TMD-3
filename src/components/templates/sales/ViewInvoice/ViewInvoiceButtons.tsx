@@ -7,7 +7,7 @@ import { TickIcon } from '../../../../../assets/svg/SVG';
 import { INVOICES } from '../../../../constants/Firebase';
 import { createAndDisplayPDF, loadPDFLogo } from '../../../../functions/PDFv2Functions';
 import { loadingDelay } from '../../../../helpers/GenericHelper';
-import { REVIEW_INVOICE } from '../../../../permissions/Permissions';
+import { EDIT_DRAFT, REVIEW_INVOICE } from '../../../../permissions/Permissions';
 import { useRefreshContext } from '../../../../providers/RefreshProvider';
 import { UserSelector } from '../../../../redux/reducers/Auth';
 import { approveInvoice, rejectInvoice } from '../../../../services/InvoiceServices';
@@ -146,7 +146,7 @@ const ViewInvoiceButtons: React.FC<Props> = ({
 		buttons = (
 			<View>
 				{
-					user?.id == created_by.id
+					user?.id == created_by.id || permissions?.includes(EDIT_DRAFT)
 						?
 						<RegularButton text="Edit" operation={() => { linkTo(`/invoices/${docID}/edit`) }} />
 						:

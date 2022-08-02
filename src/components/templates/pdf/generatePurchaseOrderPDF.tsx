@@ -142,12 +142,13 @@ export const generatePurchaseOrderPDF = (data: PurchaseOrder, image) => {
               <div style="width: 12%"><b>${addCommaNumber(data.total_amount, "0")}</b></div>
 
             </div>
+            
             <div style="width: 100%; padding-left: 20%;">${data.delivery_mode_details}</div>
           </div>
 
           <div style="border: 1px solid #000000; margin-top: 5px; margin-bottom: 5px;"></div>
           <div style="display: flex; flex-direction: row;">
-            <div style="width: 80%; font-size: 13px;"><b>${converter.toWords(data.total_amount).toUpperCase()} ONLY</b></div>
+            <div style="width: 80%; font-size: 13px;"><b>${converter.toWords(Number(data.total_amount)).toUpperCase()} ONLY</b></div>
             <div style="width: 20%; font-size: 13px; text-align:right;  "><b>${convertCurrency(data.currency_rate)} ${addCommaNumber(data.total_amount, "0")}</b></div>
           </div>
 

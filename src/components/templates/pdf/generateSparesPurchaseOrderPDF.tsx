@@ -1,3 +1,4 @@
+import { convertCurrency } from "../../../constants/Currency";
 import { pickBetween } from "../../../helpers/GenericHelper";
 import { addCommaNumber } from "../../../helpers/NumericHelper";
 import { SparesPurchaseOrder } from "../../../types/SparesPurchaseOrder";
@@ -121,6 +122,7 @@ export const generateSparesPurchaseOrderPDF = (data: SparesPurchaseOrder, image)
             </div>
             <div style="display: flex; flex-duration: row">
               <div style="padding-left: 77%;">${data.currency_rate}</div>
+              <div style="padding-left: 10%;">${data.currency_rate}</div>
             </div>
             <div style="border: 1px solid #000000; margin-top: 5px; margin-bottom: 5px;"></div>
             <div style="display: flex; flex-direction: row;">
@@ -146,7 +148,7 @@ export const generateSparesPurchaseOrderPDF = (data: SparesPurchaseOrder, image)
 
           <div style="border: 1px solid #000000; margin-top: 5px; margin-bottom: 5px;"></div>
           <div style="width: 100%; display: flex; flex-direction: row;">
-            <div style="width: 80%; font-size: 12px;"><b>${converter.toWords(data.total_amount).toUpperCase()} ONLY</b></div>
+            <div style="width: 80%; font-size: 12px;"><b>${converter.toWords(Number(data.total_amount)).toUpperCase()} ONLY</b></div>
             <div style="width: 20%;">
               <div style="text-align: right; padding-left: 20%; font-size: 13px;">
                 <b>${addCommaNumber(data.total_amount, "0")}</b>

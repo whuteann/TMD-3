@@ -135,7 +135,7 @@ export const generateOfficialReceiptPDF = (data: Receipt, image) => {
               <div style=" width: 15%; ">${convertCurrencyText(data.currency_rate)}: </div>
               <div style="width: 60%;">
                 <div style="padding-left: 5%;">
-                  ${converter.toWords(data.amount_received).toUpperCase()} ONLY
+                  ${converter.toWords(Number(data.amount_received)).toUpperCase()} ONLY
                 </div>
               </div>
               <div style="width: 25%;">

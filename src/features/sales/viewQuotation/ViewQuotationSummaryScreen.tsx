@@ -101,12 +101,19 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 				<InfoDisplay placeholder={`Quotation Date`} info={`${data.quotation_date}`} />
 				<InfoDisplay placeholder={`Customer`} info={`${data.customer?.name}`} />
 				<InfoDisplay placeholder={`Customer Address`} info={`${data.customer?.address}`} />
+				<InfoDisplay placeholder={`Receiving Vessel's Name`} info={`${data.receiving_vessel_name || "-"}`} />
 
 				{
 					ports.map((item, index) => {
 						return (
 							<View key={item.port}>
-								<View style={tailwind("border border-neutral-300 mb-5 mt-2")} />
+								{
+									index == 0
+										?
+										<View style={tailwind("border border-neutral-300 mb-5 mt-2")} />
+										:
+										<View style={tailwind("mb-5")}/>
+								}
 								<InfoDisplay placeholder={`Port ${index + 1}`} info={`${item.port || "-"}`} bold={true} />
 								<InfoDisplay placeholder={`Delivery Location`} info={`${item.delivery_location || "-"}`} />
 							</View>
@@ -137,8 +144,6 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 						)
 					})
 				}
-				<InfoDisplay placeholder={`Currency Rate`} info={data.currency_rate || "-"} />
-
 				{
 					bunkers
 						? (
@@ -159,10 +164,8 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 						<InfoDisplay placeholder={`Bunker Barge(s)`} info={"-"} />
 				}
 
-				<InfoDisplay placeholder={`Receiving Vessel's Name`} info={`${data.receiving_vessel_name || "-"}`} />
-				<InfoDisplay placeholder={`Remarks`} info={`${data.remarks || "-"}`} />
-				<InfoDisplay placeholder={`Barging Fee`} info={`${data.barging_fee ? `${convertCurrency(data.currency_rate!)} ${addCommaNumber(data.barging_fee, "-")}${data.barging_remark ? `/${data.barging_remark}` : ""}` : `-`}`} />
-				<InfoDisplay placeholder={`Conversion Factor`} info={`${data.conversion_factor || "-"}`} />
+				<InfoDisplay placeholder={`Validity`} info={`Date: ${data.validity_date == "" ? "-" : data.validity_date}`} />
+				<InfoDisplay placeholder={``} info={`Date: ${data.validity_time == "" ? "-" : data.validity_time}`} />
 
 				{
 					status == "Confirmed"
@@ -183,6 +186,7 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 						updatedProducts.map(
 							(item, index) => (
 								<PriceDisplay
+									currency_rate={data.currency_rate}
 									key={index}
 									product={item.name}
 									currency={convertCurrency(data.currency_rate!)}
@@ -201,6 +205,7 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 						productsDisplayList.map(
 							(item, index) => (
 								<PriceDisplay
+									currency_rate={data.currency_rate}
 									key={index}
 									product={item.name}
 									currency={convertCurrency(data.currency_rate!)}
@@ -218,9 +223,10 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 
 				<View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 
+				<InfoDisplay placeholder={`Barging Fee`} info={`${data.barging_fee ? `${convertCurrency(data.currency_rate!)} ${addCommaNumber(data.barging_fee, "-")}${data.barging_remark ? `/${data.barging_remark}` : ""}` : `-`}`} />
+				<InfoDisplay placeholder={`Conversion Factor`} info={`${data.conversion_factor || "-"}`} />
 				<InfoDisplay placeholder={`Payment Term`} info={`${data.payment_term || "-"}`} />
-				<InfoDisplay placeholder={`Validity`} info={`Date: ${data.validity_date == "" ? "-" : data.validity_date}`} />
-				<InfoDisplay placeholder={``} info={`Time: ${data.validity_time || "-"}`} />
+				<InfoDisplay placeholder={`Remarks`} info={`${data.remarks || "-"}`} />
 
 				{
 					status == REJECTED

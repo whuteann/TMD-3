@@ -6,7 +6,7 @@ import { TickIcon } from '../../../../../assets/svg/SVG';
 import { UPDATE_ACTION } from '../../../../constants/Action';
 import { SPARES_PURCHASE_VOUCHERS } from '../../../../constants/Firebase';
 import { loadingDelay } from '../../../../helpers/GenericHelper';
-import { REVIEW_PURCHASE_VOUCHER } from '../../../../permissions/Permissions';
+import { EDIT_DRAFT, REVIEW_PURCHASE_VOUCHER } from '../../../../permissions/Permissions';
 import { useRefreshContext } from '../../../../providers/RefreshProvider';
 import { UserSelector } from '../../../../redux/reducers/Auth';
 import { sendNotifications } from '../../../../services/NotificationServices';
@@ -132,7 +132,7 @@ const ViewSparesPurchaseVoucherButtons: React.FC<Props> = ({
 		bottom = (
 			<View>
 				{
-					user?.id == created_by.id
+					user?.id == created_by.id || permissions?.includes(EDIT_DRAFT)
 						?
 						<RegularButton text="Edit" operation={() => { navigation.navigate("EditSparesPurchaseVoucherForm", { docID: navID }) }} />
 						:

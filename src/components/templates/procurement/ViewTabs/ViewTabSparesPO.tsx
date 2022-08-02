@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useTailwind } from 'tailwind-rn/dist';
 import { ArrowDownIcon, DownloadIcon, PreviewIcon, PVIcon } from '../../../../../assets/svg/SVG';
 import { createAndDisplayPDF, loadPDFLogo } from '../../../../functions/PDFv2Functions';
+import { EDIT_DRAFT } from '../../../../permissions/Permissions';
 import { UserSelector } from '../../../../redux/reducers/Auth';
 import { APPROVED, APPROVED_DOC, DRAFT, DOC_SUBMITTED, IN_REVIEW, NO_PURCHASE_VOUCHER, PV_ISSUED, REJECTED, VERIFIED, VERIFIED_DOC } from '../../../../types/Common';
 import TextLabel from '../../../atoms/typography/TextLabel';
@@ -82,7 +83,7 @@ const ViewTabSparesPO: React.FC<inputProps> = ({
       <View>
         <ViewTabDropdown icon={<PreviewIcon height={25} width={25} />} text="Preview Purchase Order" setDropdown={path} navigation={() => { navigation.navigate(route, { docID: nav_id }) }} />
         {
-          user?.id == data.created_by.id
+          user?.id == data.created_by.id || user?.permission?.includes(EDIT_DRAFT)
             ?
             <ViewTabDropdown icon={<DownloadIcon height={25} width={25} />} text="Download Purchase Order" setDropdown={path} navigation={() => { onDownload(data); }} />
             :

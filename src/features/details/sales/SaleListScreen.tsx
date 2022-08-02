@@ -16,7 +16,6 @@ import { getListStyle } from '../../../constants/Style';
 import { cloneDeep } from 'lodash';
 import moment from 'moment';
 import Header from '../../../components/atoms/typography/Header';
-import { APPROVED, ARCHIVED, CONFIRMED, DRAFT, IN_REVIEW, REJECTED } from '../../../types/Common';
 import { Sales } from '../../../types/Sales';
 import ViewTabSales from '../../../components/templates/job/ViewTabs/ViewTabSales';
 import AddButtonText from '../../../components/atoms/buttons/AddButtonText';

@@ -131,6 +131,7 @@ const CreateSparesProcurementFormScreen = ({ navigation }: RootNavigationProps<"
                 name: selectedSupplier.name,
                 address: selectedSupplier.address,
                 contact_persons: selectedSupplier.contact_persons,
+                account_no: selectedSupplier.account_no,
                 telephone: selectedSupplier.telephone,
                 year: selectedSupplier.year,
                 email: selectedSupplier.email,

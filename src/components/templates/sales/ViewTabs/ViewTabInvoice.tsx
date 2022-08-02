@@ -9,6 +9,7 @@ import { generateSalesInvoicePDF } from '../../pdf/generateSalesInvoicePDF';
 import { APPROVED, DRAFT, IN_REVIEW, REJECTED } from '../../../../types/Common';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../../redux/reducers/Auth';
+import { EDIT_DRAFT } from '../../../../permissions/Permissions';
 
 interface inputProps {
   id: string,
@@ -47,7 +48,7 @@ const ViewTabInvoice: React.FC<inputProps> = ({
       <View>
         <ViewTabDropdown icon={<PreviewIcon height={25} width={25} />} text="Preview Invoice" setDropdown={path} navigation={() => { navigation.navigate(route, { docID: id }) }} />
         {
-					user?.id == data.created_by.id
+					user?.id == data.created_by.id || user?.permission?.includes(EDIT_DRAFT)
 						?
 						<ViewTabDropdown icon={<CreateIcon height={25} width={25} />} text="Edit Invoice" setDropdown={path} navigation={() => { navigation.navigate("EditInvoice", { docID: id }) }} />
 						:

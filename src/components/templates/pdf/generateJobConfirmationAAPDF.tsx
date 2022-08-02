@@ -90,7 +90,7 @@ export const generateJobConfirmationAAPDF = (data: JobConfirmation) => {
         <div style="display: flex; flex-direction: row; margin-top: 10px;">
           <div style="${pickBetween("", "width: 320px;", "width: 380px;")} font-size: 18px;">PURCHASE ORDER / SALES CONFIRM</div>
           <div style="width: 10px; font-size: 18px;">:</div>
-          <div style="width: 400px; font-size: 18px; line-height: 25px;">${data?.purchase_order_no || "N/A"}</div>
+          <div style="width: 400px; font-size: 18px; line-height: 25px;">${data?.purchase_order_no || "N/A"} / ${data.sales_confirmation_secondary_id || "N/A"}</div>
         </div>
 
         ${productList}
@@ -154,12 +154,6 @@ export const generateJobConfirmationAAPDF = (data: JobConfirmation) => {
           <div style="${pickBetween("", "width: 320px;", "width: 380px;")} font-size: 18px;">REMARKS</div>
           <div style="width: 10px; font-size: 18px;">:</div>
           <div style="width: 400px; font-size: 18px; line-height: 25px;">${data?.remarks || "N/A"}</div>
-        </div>
-
-        <div style="display: flex; flex-direction: row; margin-top: 10px;">
-          <div style="${pickBetween("", "width: 320px;", "width: 380px;")} font-size: 18px;">REMARKS FOR OPERATION TEAM</div>
-          <div style="width: 10px; font-size: 18px;">:</div>
-          <div style="width: 400px; font-size: 18px; line-height: 25px;">${data?.remarks_OT || "N/A"}</div>
         </div>
 
       </div>

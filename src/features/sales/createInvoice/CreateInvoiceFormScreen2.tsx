@@ -28,7 +28,7 @@ import { UPDATE_ACTION } from '../../../constants/Action';
 import { convertCurrency } from '../../../constants/Currency';
 
 type InitialValues = {
-  products: Array<{ product: Product, BDN_quantity: { quantity: string, unit: string }, quantity: string, unit: string, price: { value: string, unit: string }, subtotal: string }>,
+  products: Array<{ product: Product, BDN_quantity: { quantity: string, unit: string }, quantity: string, unit: string, price: { value: string, unit: string, remarks: string }, subtotal: string }>,
   contract: string,
   discount: string,
   notes: string | "",

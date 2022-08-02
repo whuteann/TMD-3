@@ -25,6 +25,7 @@ import { convertCurrency } from '../../../constants/Currency';
 import { sendNotifications } from '../../../services/NotificationServices';
 import { useRefreshContext } from '../../../providers/RefreshProvider';
 import { loadingDelay } from '../../../helpers/GenericHelper';
+import { VIEW_JOB_CONFIRMATION } from '../../../permissions/Permissions';
 
 const CreateInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"CreateInvoiceSummary">) => {
 
@@ -97,11 +98,11 @@ const CreateInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"
               () => {
 
                 loadingDelay(() => {
-                  role == "Head of Finance & Accounts"
+                  user?.permission?.includes(VIEW_JOB_CONFIRMATION)
                     ?
-                    navigation.navigate("Dashboard")
-                    :
                     navigation.navigate("ViewAllJobConfirmation")
+                    :
+                    navigation.navigate("Dashboard")
 
                   revalidateCollection(JOB_CONFIRMATIONS);
                   revalidateDocument(`${INVOICES}/${docID}`);
@@ -171,8 +172,12 @@ const CreateInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"
               <View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
               <InfoDisplay placeholder={`Product ${index + 1}`} info={item.product.name} />
               <InfoDisplay placeholder="BDN Quantity" info={`${addCommaNumber(item.BDN_quantity.quantity, "0")} ${item.BDN_quantity.unit}`} />
-              <InfoDisplay placeholder="Unit of Measurement" info={`${addCommaNumber(item.quantity, "0")} ${item.unit}`} />
-              <InfoDisplay placeholder="Price 1" info={`${convertCurrency(data.currency_rate!)}${addCommaNumber(item.price.value, "0")} per ${item.price.unit}${item.MOPS ? ` - MOPS price` : ""}`} />
+              <InfoDisplay placeholder="Initial Ordered Quantity" info={`${addCommaNumber(item.quantity, "0")} ${item.unit}`} />
+              <InfoDisplay
+                placeholder="Price 1"
+                info={`${convertCurrency(data.currency_rate!)}${addCommaNumber(item.price.value, "0")} per ${item.price.unit}`}
+                secondLine={item.price.remarks ? item.price.remarks : undefined}
+              />
               <InfoDisplay placeholder="Subtotal" info={`${convertCurrency(data.currency_rate!)}${addCommaNumber(item.subtotal, "0")}`} />
             </View>
           ))

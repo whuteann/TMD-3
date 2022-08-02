@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useTailwind } from 'tailwind-rn/dist';
 import { ArrowDownIcon, CreateIcon, DownloadIcon, PreviewIcon } from '../../../../../assets/svg/SVG';
 import { createAndDisplayPDF, loadPDFLogo } from '../../../../functions/PDFv2Functions';
+import { EDIT_DRAFT } from '../../../../permissions/Permissions';
 import { UserSelector } from '../../../../redux/reducers/Auth';
 import { DRAFT, REJECTED } from '../../../../types/Common';
 import TextLabel from '../../../atoms/typography/TextLabel';
@@ -51,7 +52,7 @@ const ViewTabPV: React.FC<inputProps> = ({
       <View>
         <ViewTabDropdown icon={<PreviewIcon height={25} width={25} />} text="Preview Purchase Voucher" setDropdown={path} navigation={() => { navigation.navigate(route, { docID: nav_id }) }} />
         {
-          user?.id == data.created_by.id
+          user?.id == data.created_by.id || user?.permission?.includes(EDIT_DRAFT)
             ?
             <ViewTabDropdown icon={<CreateIcon height={25} width={25} />} text="Edit Purchase Voucher" setDropdown={path} navigation={() => { navigation.navigate("EditPurchaseVoucherForm", { docID: nav_id }) }} />
             :

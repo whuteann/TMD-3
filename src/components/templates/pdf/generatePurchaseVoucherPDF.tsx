@@ -122,7 +122,7 @@ export const generatePurchaseVoucherPDF = (data: PurchaseVoucher, image) => {
               <div style="width: 80%; display: flex; flex-direction: row;">
                 <div style=" width: 15%; font-size: 13px;">${convertCurrencyText(data.currency_rate)}</div>
                 <div style="width: 5%">:</div>
-                <div style="width: 80%; font-size: 13px; ">${converter.toWords(data.paid_amount).toUpperCase()} ONLY</div>
+                <div style="width: 80%; font-size: 13px; ">${converter.toWords(Number(data.paid_amount)).toUpperCase()} ONLY</div>
               </div>
               <div style="width: 20%;  display: flex; flex-direction: column; align-items: flex-end;">
                 <div style="display: flex; flex-direction: row;">

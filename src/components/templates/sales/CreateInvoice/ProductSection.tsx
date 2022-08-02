@@ -16,7 +16,7 @@ import FormLabel from '../../../molecules/typography/FormLabel';
 
 interface sectionProps {
   index: number,
-  products: Array<{ product: Product, BDN_quantity: { quantity: string, unit: string }, quantity: string, unit: string, price: { value: string, unit: string }, subtotal: string, MOPS?: boolean }>
+  products: Array<{ product: Product, BDN_quantity: { quantity: string, unit: string }, quantity: string, unit: string, price: { value: string, unit: string, remarks: string }, subtotal: string, MOPS?: boolean }>
   HandleChange: (val) => void,
   currency: string,
   errors: any,
@@ -27,7 +27,7 @@ const ProductSection: React.FC<sectionProps> = ({
 }) => {
   const [localList, setLocalList] = useState(products);
   const [BDNerrors, setBDNerrors] = useState<{ quantity: string, unit: string }>();
-  const [priceErrors, setPriceErrors] = useState<{ value: string, unit: string }>();
+  const [priceErrors, setPriceErrors] = useState<{ value: string, unit: string, remarks: string }>();
   const [toggleMOPS, setToggleMOPS] = useState(products[index].MOPS);
   const tailwind = useTailwind();
 
@@ -49,6 +49,10 @@ const ProductSection: React.FC<sectionProps> = ({
           newList[index].price.unit = value;
           newList[index].MOPS = true;
         }
+        break;
+      case "value remarks":
+        newList[index].price.remarks = value;
+        newList[index].MOPS = true;
         break;
       case "checkbox":
         newList[index].MOPS = value;
@@ -126,7 +130,7 @@ const ProductSection: React.FC<sectionProps> = ({
 
       <FormLabel text='Price 1' />
       <Checkbox
-        title='MOPS Price'
+        title='Edit Price'
         checked={products[index].MOPS}
         onChecked={() => {
           setToggleMOPS(!toggleMOPS);
@@ -164,12 +168,25 @@ const ProductSection: React.FC<sectionProps> = ({
                 />
               }
             />
+            <TextInputField
+              value={products[index].price.remarks}
+              onChangeText={(val) => {
+                updateList(val, "value remarks");
+              }}
+              placeholder={"Price remarks..."}
+              shadow={true}
+              hasError={Object.keys(priceErrors || {}).includes("remarks")}
+              errorMessage={priceErrors ? priceErrors.remarks : ""}
+            />
           </View>
           :
-          <FormDouble
-            left={<TextInputField onChangeText={() => null} placeholder={`${currency}${products[index].price.value}`} editable={false} shadow={true} />}
-            right={<TextInputField onChangeText={() => null} placeholder={products[index].price.unit} editable={false} shadow={true} />}
-          />
+          <View>
+            <FormDouble
+              left={<TextInputField onChangeText={() => null} placeholder={`${currency}${products[index].price.value}`} editable={false} shadow={true} />}
+              right={<TextInputField onChangeText={() => null} placeholder={products[index].price.unit} editable={false} shadow={true} />}
+            />
+            <TextInputField onChangeText={(val) => null} editable={false} shadow={true} placeholder={products[index].price.remarks || "Price remarks..."} />
+          </View>
       }
 
       <View style={tailwind("mb-4")}>

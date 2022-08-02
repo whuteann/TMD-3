@@ -23,6 +23,15 @@ export const generateSalesInvoicePDF = (data: Invoice, image) => {
         <div style="width: 16.6666%; ">${product.price.value}/ ${product.price.unit} </div>
         <div style="width: 16.6666%; text-align: right;">${addCommaNumber(product.subtotal, "0")}</div>
       </div>
+
+      ${
+        product.price.remarks
+        ?
+        `<div style="width: 100%; padding-left: 10%;"><b>${product.price.remarks}</b></div>`
+        :
+        ""
+      }
+      
       `;
 
     if (index == (data.products.length - 1)) {
@@ -111,11 +120,11 @@ export const generateSalesInvoicePDF = (data: Invoice, image) => {
                 </div>
                 <div style="display: flex; flex-direction: row">
                   <div style="width: 40%; text-align: right; ${pickBetween("font-size: 12px; line-height: 16px;", "", "")}">D/O No. :</div>
-                  <div style="width: 60%; margin-left: 10px; ${pickBetween("font-size: 12px; line-height: 16px;", "", "")}"><b>${data.do_no}</b></div>
+                  <div style="width: 60%; margin-left: 10px; ${pickBetween("font-size: 12px; line-height: 16px;", "", "")}"><b>${data.do_no ? data.do_no : "-"}</b></div>
                 </div>
                 <div style="display: flex; flex-direction: row">
                   <div style="width: 40%; text-align: right; ${pickBetween("font-size: 12px; line-height: 16px;", "", "")}">P/O No. :</div>
-                  <div style="width: 60%; margin-left: 10px; ${pickBetween("font-size: 12px; line-height: 16px;", "", "")}"><b>${data.purchase_order_no}</b></div>
+                  <div style="width: 60%; margin-left: 10px; ${pickBetween("font-size: 12px; line-height: 16px;", "", "")}"><b>${data.purchase_order_no ? data.purchase_order_no  : "-"}</b></div>
                 </div>
                 <div style="display: flex; flex-direction: row">
                   <div style="width: 40%; text-align: right; ${pickBetween("font-size: 12px; line-height: 16px;", "", "")}">Payment Terms :</div>
@@ -174,7 +183,7 @@ export const generateSalesInvoicePDF = (data: Invoice, image) => {
           </div>
           <div style="border: 1px solid #000000; margin-top: 10px; margin-bottom: 10px"></div>
           <div style="display: flex; flex-direction: row">
-              <div style="width: 75%; padding-left: 5px;">${convertCurrencyText(data.currency_rate!)}: ${converter.toWords(totalPrice).toUpperCase()} ONLY</div>
+              <div style="width: 75%; padding-left: 5px;">${convertCurrencyText(data.currency_rate!)}: ${converter.toWords(Number(totalPrice)).toUpperCase()} ONLY</div>
               <div style="width: 25%; display: flex ; flex-direction: column; align-items: flex-end;">
                 <div>${convertCurrency(data.currency_rate!)} ${addCommaNumber(`${totalPrice}`, "0")}</div>
               </div>

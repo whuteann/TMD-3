@@ -6,7 +6,7 @@ import { TickIcon } from '../../../../../assets/svg/SVG';
 import { UPDATE_ACTION } from '../../../../constants/Action';
 import { PURCHASE_ORDERS } from '../../../../constants/Firebase';
 import { loadingDelay } from '../../../../helpers/GenericHelper';
-import { CREATE_PURCHASE_VOUCHER, PROCEED_PURCHASE_ORDER, REVIEW_PURCHASE_ORDER } from '../../../../permissions/Permissions';
+import { CREATE_PURCHASE_VOUCHER, EDIT_DRAFT, PROCEED_PURCHASE_ORDER, REVIEW_PURCHASE_ORDER } from '../../../../permissions/Permissions';
 import { useRefreshContext } from '../../../../providers/RefreshProvider';
 import { UserSelector } from '../../../../redux/reducers/Auth';
 import { sendNotifications } from '../../../../services/NotificationServices';
@@ -139,7 +139,7 @@ const ViewPurchaseOrderButtons: React.FC<Props> = ({
 		bottom = (
 			<View>
 				{
-					user?.id == created_by.id
+					user?.id == created_by.id || user?.permission?.includes(EDIT_DRAFT)
 						?
 						<RegularButton text="Edit" operation={() => { navigation.navigate("EditPurchaseOrderForm", { docID: nav_id }); }} />
 						:

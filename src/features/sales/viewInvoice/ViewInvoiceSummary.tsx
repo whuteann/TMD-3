@@ -37,7 +37,7 @@ const ViewInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"Vi
 	}, [data?.status])
 
 	let bunkers = data?.bunker_barges;
-	
+
 	if (!data || !bunkers) return <LoadingData message="This document might not exist" />;
 
 	buttons = <ViewInvoiceButtons
@@ -96,8 +96,12 @@ const ViewInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"Vi
 							<View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 							<InfoDisplay placeholder={`Product ${index + 1}`} info={item.product.name} />
 							<InfoDisplay placeholder="BDN Quantity" info={`${addCommaNumber(item.BDN_quantity.quantity, "0")} ${item.BDN_quantity.unit}`} />
-							<InfoDisplay placeholder="Unit of Measurement" info={`${addCommaNumber(item.quantity, "0")} ${item.unit}`} />
-							<InfoDisplay placeholder="Price 1" info={`${convertCurrency(data.currency_rate!)} ${addCommaNumber(item.price.value, "0")} ${item.price.unit}${item.MOPS ? ` - MOPS price` : ""}`} />
+							<InfoDisplay placeholder="Initial Ordered Quantity" info={`${addCommaNumber(item.quantity, "0")} ${item.unit}`} />
+							<InfoDisplay
+								placeholder="Price 1"
+								info={`${convertCurrency(data.currency_rate!)} ${addCommaNumber(item.price.value, "0")} ${item.price.unit}`} 
+								secondLine={item.price.remarks ? item.price.remarks : undefined}
+								/>
 							<InfoDisplay placeholder="Subtotal" info={`${convertCurrency(data.currency_rate!)} ${addCommaNumber(item.subtotal, "0")}`} />
 						</View>
 					))
@@ -125,8 +129,9 @@ const ViewInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"Vi
 						:
 						"-"}
 				/>
-								
+
 				<InfoDisplay placeholder="Mode of Delivery" info={data.delivery_mode} />
+				<InfoDisplay placeholder="Receiving Vessel Name" info={data.receiving_vessel_name || "-"} />
 
 				<View style={tailwind("mt-5")} />
 				<InfoDisplay placeholder="Contract" info={data.contract || "-"} />

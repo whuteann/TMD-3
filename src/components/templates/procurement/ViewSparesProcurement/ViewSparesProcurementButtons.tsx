@@ -12,7 +12,7 @@ import { spareProcurementStatuses } from '../../../../types/SparesProcurement';
 import { rejectSparesProcurement } from '../../../../services/SparesProcurementServices';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../../redux/reducers/Auth';
-import { CREATE_SPARES_PURCHASE_ORDER, REVIEW_SPARES_PROCUREMENT } from '../../../../permissions/Permissions';
+import { CREATE_SPARES_PURCHASE_ORDER, EDIT_DRAFT, REVIEW_SPARES_PROCUREMENT } from '../../../../permissions/Permissions';
 import { User } from '../../../../types/User';
 import { sendNotifications } from '../../../../services/NotificationServices';
 import { useRefreshContext } from '../../../../providers/RefreshProvider';
@@ -101,7 +101,7 @@ const ViewSparesProcurementButtons: React.FC<Props> = ({
     buttons = (
       <View>
         {
-          user?.id == created_by.id
+          user?.id == created_by.id || permissions?.includes(EDIT_DRAFT)
             ?
             <RegularButton text="Edit" operation={() => { navigation.navigate("EditSparesProcurement", { docID: docID }) }} />
             :

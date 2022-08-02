@@ -9,6 +9,7 @@ import { createAndDisplayPDF, loadPDFLogo } from '../../../../functions/PDFv2Fun
 import { generatePurchaseOrderPDF } from '../../pdf/generatePurchaseOrderPDF';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../../redux/reducers/Auth';
+import { EDIT_DRAFT } from '../../../../permissions/Permissions';
 
 interface inputProps {
   id: string,
@@ -66,7 +67,7 @@ const ViewTabPO: React.FC<inputProps> = ({
       <View>
         <ViewTabDropdown icon={<PreviewIcon height={25} width={25} />} text="Preview Purchase Order" setDropdown={path} navigation={() => { navigation.navigate(route, { docID: nav_id }) }} />
         {
-          user?.id == data.created_by.id
+          user?.id == data.created_by.id || user?.permission?.includes(EDIT_DRAFT)
             ?
             <ViewTabDropdown icon={<DownloadIcon height={25} width={25} />} text="Edit Purchase Order" setDropdown={path} navigation={() => { navigation.navigate("EditPurchaseOrderForm", { docID: nav_id }) }} />
             :

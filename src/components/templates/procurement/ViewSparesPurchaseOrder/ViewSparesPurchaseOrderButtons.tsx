@@ -7,7 +7,7 @@ import { TickIcon } from '../../../../../assets/svg/SVG';
 import { APPROVE_ACTION, UPDATE_ACTION, VERIFY_ACTION } from '../../../../constants/Action';
 import { SPARES_PURCHASE_ORDERS } from '../../../../constants/Firebase';
 import { loadingDelay } from '../../../../helpers/GenericHelper';
-import { CREATE_PURCHASE_VOUCHER, CREATE_SPARES_PURCHASE_ORDER, FINAL_REVIEW_SPARES_PURCHASE_ORDER, REVIEW_SPARES_PURCHASE_ORDER } from '../../../../permissions/Permissions';
+import { CREATE_PURCHASE_VOUCHER, CREATE_SPARES_PURCHASE_ORDER, EDIT_DRAFT, FINAL_REVIEW_SPARES_PURCHASE_ORDER, REVIEW_SPARES_PURCHASE_ORDER } from '../../../../permissions/Permissions';
 import { useRefreshContext } from '../../../../providers/RefreshProvider';
 import { UserSelector } from '../../../../redux/reducers/Auth';
 import { sendNotifications } from '../../../../services/NotificationServices';
@@ -157,12 +157,11 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 							refreshContext?.refreshList(SPARES_PURCHASE_ORDERS);
 							break;
 						case "submit":
+
 							updateSparesPurchaseOrder(nav_id, { status: DOC_SUBMITTED, doNumber: doFileNo, invNumber: invFileNo }, user!, VERIFY_ACTION, () => {
-
-
 								loadingDelay(() => {
 									navigation.navigate("ViewAllSparesPurchaseOrder");
-									revalidateCollection(SPARES_PURCHASE_ORDERS);
+									revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`);
 									setLoading(false);
 									setStatus(DOC_SUBMITTED)
 									setDoFileNo("");
@@ -463,7 +462,46 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 							</View>
 						)
 						:
-						<View></View>
+						(<View>
+							<RegularButton type={`${invUploaded ? "primary" : "disabled"}`} loading={loading} text="Submit Files"
+								operation={() => {
+
+									setLoading(true);
+									if (Platform.OS == "web") {
+										UploadFileWeb({ name: invUploaded.filename, file: invUploaded.file }, SPARES_PURCHASE_ORDERS).then((data) => {
+											const { url, filename, filename_storage } = data as { url: string, filename: string, filename_storage: string };
+											updateSparesPurchaseOrder(nav_id, { invFile: filename, filename_storage_inv: filename_storage }, user!, UPDATE_ACTION, () => {
+												revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`);
+												setLoading(false);
+												setInvUploaded(null);
+											}, (error) => {
+												console.error(error);
+											})
+										});
+									} else {
+										UploadFileAndroid({ name: invUploaded.filename, file: invUploaded.file, uri: invUploaded.uri }, SPARES_PURCHASE_ORDERS).then((data) => {
+											const { url, filename, filename_storage } = data as { url: string, filename: string, filename_storage: string };
+											updateSparesPurchaseOrder(nav_id, { invFile: filename, filename_storage_inv: filename_storage }, user!, UPDATE_ACTION, () => {
+												revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`);
+												setLoading(false);
+												setInvUploaded(null);
+											}, (error) => {
+												console.error(error);
+											})
+										});
+									}
+
+									if (invFileNo) {
+										updateSparesPurchaseOrder(
+											nav_id,
+											{ invNumber: invFileNo },
+											user!, UPDATE_ACTION, () => {
+												revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`);
+											}, () => { }
+										)
+									}
+								}} />
+						</View>)
 				}
 
 			</View>
@@ -542,7 +580,47 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 							<RegularButton type="secondary" loading={loading} text="Reject" operation={() => { setStatus(REJECTING); setPrevStatus(status); }} />
 						</View>
 						:
-						<RegularButton text="Download" operation={() => { onDownload(); }} />
+						(<View>
+							<RegularButton text="Download" operation={() => { onDownload(); }} />
+							<RegularButton type={`${invUploaded ? "primary" : "disabled"}`} loading={loading} text="Submit Files"
+								operation={() => {
+
+									setLoading(true);
+									if (Platform.OS == "web") {
+										UploadFileWeb({ name: invUploaded.filename, file: invUploaded.file }, SPARES_PURCHASE_ORDERS).then((data) => {
+											const { url, filename, filename_storage } = data as { url: string, filename: string, filename_storage: string };
+											updateSparesPurchaseOrder(nav_id, { invFile: filename, filename_storage_inv: filename_storage }, user!, UPDATE_ACTION, () => {
+												revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`);
+												setLoading(false);
+												setInvUploaded(null);
+											}, (error) => {
+												console.error(error);
+											})
+										});
+									} else {
+										UploadFileAndroid({ name: invUploaded.filename, file: invUploaded.file, uri: invUploaded.uri }, SPARES_PURCHASE_ORDERS).then((data) => {
+											const { url, filename, filename_storage } = data as { url: string, filename: string, filename_storage: string };
+											updateSparesPurchaseOrder(nav_id, { invFile: filename, filename_storage_inv: filename_storage }, user!, UPDATE_ACTION, () => {
+												revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`);
+												setLoading(false);
+												setInvUploaded(null);
+											}, (error) => {
+												console.error(error);
+											})
+										});
+									}
+
+									if (invFileNo) {
+										updateSparesPurchaseOrder(
+											nav_id,
+											{ invNumber: invFileNo },
+											user!, UPDATE_ACTION, () => {
+												revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`);
+											}, () => { }
+										)
+									}
+								}} />
+						</View>)
 				}
 			</View>
 		)
@@ -577,7 +655,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 		bottom = (
 			<View>
 				{
-					user?.id == created_by.id
+					user?.id == created_by.id || permissions?.includes(EDIT_DRAFT)
 						?
 						<RegularButton text="Edit" operation={() => { navigation.navigate("EditSparesPurchaseOrder", { docID: nav_id }) }} />
 						:
@@ -693,7 +771,46 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 							}
 						</View>
 						:
-						<></>
+						(<View>
+							<RegularButton type={`${invUploaded ? "primary" : "disabled"}`} loading={loading} text="Submit Files"
+								operation={() => {
+
+									setLoading(true);
+									if (Platform.OS == "web") {
+										UploadFileWeb({ name: invUploaded.filename, file: invUploaded.file }, SPARES_PURCHASE_ORDERS).then((data) => {
+											const { url, filename, filename_storage } = data as { url: string, filename: string, filename_storage: string };
+											updateSparesPurchaseOrder(nav_id, { invFile: filename, filename_storage_inv: filename_storage }, user!, UPDATE_ACTION, () => {
+												revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`);
+												setLoading(false);
+												setInvUploaded(null);
+											}, (error) => {
+												console.error(error);
+											})
+										});
+									} else {
+										UploadFileAndroid({ name: invUploaded.filename, file: invUploaded.file, uri: invUploaded.uri }, SPARES_PURCHASE_ORDERS).then((data) => {
+											const { url, filename, filename_storage } = data as { url: string, filename: string, filename_storage: string };
+											updateSparesPurchaseOrder(nav_id, { invFile: filename, filename_storage_inv: filename_storage }, user!, UPDATE_ACTION, () => {
+												revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`);
+												setLoading(false);
+												setInvUploaded(null);
+											}, (error) => {
+												console.error(error);
+											})
+										});
+									}
+
+									if (invFileNo) {
+										updateSparesPurchaseOrder(
+											nav_id,
+											{ invNumber: invFileNo },
+											user!, UPDATE_ACTION, () => {
+												revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`);
+											}, () => { }
+										)
+									}
+								}} />
+						</View>)
 				}
 			</View>
 		)

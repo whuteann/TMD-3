@@ -33,6 +33,7 @@ export const VIEW_SPARES_PURCHASE_VOUCHER = 'view.spares.purchase.voucher';
 export const REVIEW_PURCHASE_VOUCHER = 'review.purchase.voucher';
 
 export const CREATE_USER = 'create.user';
+export const EDIT_DRAFT = 'edit.draft';
 
 //new permissions 
 export const CREATE_PURCHASE_VOUCHER = "create.purchase.voucher"; //AA
