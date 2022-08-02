@@ -5,7 +5,9 @@ import { useSelector } from 'react-redux';
 import { TickIcon } from '../../../../../assets/svg/SVG';
 import { UPDATE_ACTION } from '../../../../constants/Action';
 import { PURCHASE_ORDERS } from '../../../../constants/Firebase';
+import { loadingDelay } from '../../../../helpers/GenericHelper';
 import { CREATE_PURCHASE_VOUCHER, PROCEED_PURCHASE_ORDER, REVIEW_PURCHASE_ORDER } from '../../../../permissions/Permissions';
+import { useRefreshContext } from '../../../../providers/RefreshProvider';
 import { UserSelector } from '../../../../redux/reducers/Auth';
 import { sendNotifications } from '../../../../services/NotificationServices';
 import { approvePurchaseOrder, rejectPurchaseOrder, updatePurchaseOrder } from '../../../../services/PurchaseOrderServices';
@@ -31,8 +33,10 @@ const ViewPurchaseOrderButtons: React.FC<Props> = ({
 	const [modalOpen, setModalOpen] = useState(false);
 	const [action, setAction] = useState<"approve" | "reject" | "proceed">("approve");
 	const [rejectNotes, setRejectNotes] = useState("");
+	const [loading, setLoading] = useState(false);
 	const user = useSelector(UserSelector);
 	const permissions = user?.permission;
+	const refreshContext = useRefreshContext();
 
 	let modal;
 	let bottom;
@@ -49,47 +53,66 @@ const ViewPurchaseOrderButtons: React.FC<Props> = ({
 			visible={modalOpen}
 			setModalClose={() => { setModalOpen(false) }}
 			nextAction={() => {
+				setLoading(true);
+
 				switch (action) {
 					case "approve":
-						setStatus("Approved");
 						approvePurchaseOrder(nav_id, user!, () => {
-							revalidateCollection(PURCHASE_ORDERS);
-							navigation.navigate("ViewAllPurchaseOrder");
-
 							sendNotifications(
 								[MARKETING_EXECUTIVE_ROLE, SUPER_ADMIN_ROLE],
 								`Purchase order ${displayID} has been approved by ${user?.name}`,
 								{ screen: "ViewPurchaseOrderSummary", docID: nav_id });
 
+							loadingDelay(() => {
+								revalidateCollection(PURCHASE_ORDERS);
+								setLoading(false);
+								navigation.navigate("ViewAllPurchaseOrder");
+								setStatus("Approved");
+							})
 						}, (error) => { console.error(error); });
+
+						refreshContext?.refreshList(PURCHASE_ORDERS);
 						break;
 					case "reject":
-						setStatus("Rejected");
 						rejectPurchaseOrder(nav_id, rejectNotes, user!, () => {
-							revalidateCollection(PURCHASE_ORDERS);
-							navigation.navigate("ViewAllPurchaseOrder");
-
 							sendNotifications(
 								[MARKETING_EXECUTIVE_ROLE, SUPER_ADMIN_ROLE],
 								`Purchase order ${displayID} has been rejected by ${user?.name}`,
 								{ screen: "ViewPurchaseOrderSummary", docID: nav_id });
 
+							loadingDelay(() => {
+								revalidateCollection(PURCHASE_ORDERS);
+								setLoading(false);
+								navigation.navigate("ViewAllPurchaseOrder");
+								setStatus("Rejected");
+							})
+
 						}, (error) => { console.error(error); });
+
+						refreshContext?.refreshList(PURCHASE_ORDERS);
 						break;
 					case "proceed":
-						updatePurchaseOrder(nav_id, { status: "No Purchase Voucher" }, user!, UPDATE_ACTION, () => { revalidateCollection(PURCHASE_ORDERS); navigation.navigate("ViewAllPurchaseOrder"); }, (error) => { console.error(error) })
+						updatePurchaseOrder(nav_id, { status: "No Purchase Voucher" }, user!, UPDATE_ACTION
+							, () => {
+								loadingDelay(() => {
+									setLoading(false);
+									revalidateCollection(PURCHASE_ORDERS);
+									navigation.navigate("ViewAllPurchaseOrder");
+								})
+							}, (error) => { console.error(error) })
 
 						sendNotifications(
 							[ACCOUNT_ASSISTANT_ROLE, OPERATION_TEAM_ROLE, SUPER_ADMIN_ROLE],
 							`Purchase order ${displayID} permitted to proceed by ${user?.name}.`,
 							{ screen: "ViewPurchaseOrderSummary", docID: nav_id });
+
+						refreshContext?.refreshList(PURCHASE_ORDERS);
 						break;
 				}
 			}
 			}
 		/>
-	)
-		;
+	);
 
 	if (status == IN_REVIEW) {
 		bottom = (
@@ -98,8 +121,8 @@ const ViewPurchaseOrderButtons: React.FC<Props> = ({
 					permissions?.includes(REVIEW_PURCHASE_ORDER)
 						?
 						<View>
-							<RegularButton text="Approve" operation={() => { setAction("approve"); setModalOpen(true) }} />
-							<RegularButton type="secondary" text="Reject" operation={() => { setStatus("Rejecting") }} />
+							<RegularButton text="Approve" loading={loading} operation={() => { setAction("approve"); setModalOpen(true) }} />
+							<RegularButton type="secondary" loading={loading} text="Reject" operation={() => { setStatus("Rejecting") }} />
 						</View>
 						:
 						<RegularButton text="Download" operation={() => { onDownload(); }} />
@@ -134,8 +157,8 @@ const ViewPurchaseOrderButtons: React.FC<Props> = ({
 					multiline={true}
 				/>
 
-				<RegularButton text="Submit" operation={() => { setAction("reject"), setModalOpen(true) }} />
-				<RegularButton text="Cancel" type="secondary" operation={() => { setStatus("In Review"); setRejectNotes(""); }} />
+				<RegularButton text="Submit" loading={loading} operation={() => { setAction("reject"), setModalOpen(true) }} />
+				<RegularButton text="Cancel" loading={loading} type="secondary" operation={() => { setStatus("In Review"); setRejectNotes(""); }} />
 			</View>
 		);
 	} else if (status == NO_PURCHASE_VOUCHER) {
@@ -172,7 +195,7 @@ const ViewPurchaseOrderButtons: React.FC<Props> = ({
 				{
 					permissions?.includes(PROCEED_PURCHASE_ORDER)
 						?
-						<RegularButton type="secondary" text="Proceed" operation={() => { setAction("proceed"); setModalOpen(true) }} />
+						<RegularButton type="secondary" loading={loading} text="Proceed" operation={() => { setAction("proceed"); setModalOpen(true) }} />
 						:
 						null
 				}

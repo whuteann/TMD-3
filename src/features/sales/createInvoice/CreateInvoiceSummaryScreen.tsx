@@ -3,7 +3,7 @@ import { RootNavigationProps } from '../../../navigations/NavigationProps/Naviga
 import { TickIcon } from '../../../../assets/svg/SVG';
 import ConfirmModal from '../../../components/molecules/modal/ConfirmModal';
 import InfoDisplay from '../../../components/atoms/display/InfoDisplay';
-import { revalidateCollection, useCollection, useDocument } from '@nandorojo/swr-firestore';
+import { revalidateCollection, revalidateDocument, useCollection, useDocument } from '@nandorojo/swr-firestore';
 import { Invoice } from '../../../types/Invoice';
 import LoadingData from '../../../components/atoms/loading/loadingData';
 import { updateInvoice } from '../../../services/InvoiceServices';
@@ -23,6 +23,8 @@ import { SUBMIT_ACTION } from '../../../constants/Action';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { convertCurrency } from '../../../constants/Currency';
 import { sendNotifications } from '../../../services/NotificationServices';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { loadingDelay } from '../../../helpers/GenericHelper';
 
 const CreateInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"CreateInvoiceSummary">) => {
 
@@ -31,7 +33,10 @@ const CreateInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"
   const tailwind = useTailwind();
   const allowedStatuses = [DRAFT, REJECTED];
   const [role, setRole] = useState<UserRole | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
   const user = useSelector(UserSelector);
+  const refreshContext = useRefreshContext();
+
   let displayID = "";
   let revisedCode;
 
@@ -70,6 +75,8 @@ const CreateInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"
       visible={modalOpen}
       setModalClose={() => { setModalOpen(false) }}
       nextAction={() => {
+        setLoading(true);
+
         updateInvoice(
           docID,
           { status: IN_REVIEW, revised_code: revisedCode, display_id: displayID },
@@ -88,21 +95,27 @@ const CreateInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"
               data.job_confirmation_id,
               { status: ISSUED_INV, invoice_secondary_id: displayID, invoice_id: data.id, invoice_status: IN_REVIEW }, user!,
               () => {
-                role == "Head of Finance & Accounts"
-                  ?
-                  navigation.navigate("Dashboard")
-                  :
-                  navigation.navigate("ViewAllJobConfirmation")
 
-                revalidateCollection(JOB_CONFIRMATIONS);
+                loadingDelay(() => {
+                  role == "Head of Finance & Accounts"
+                    ?
+                    navigation.navigate("Dashboard")
+                    :
+                    navigation.navigate("ViewAllJobConfirmation")
+
+                  revalidateCollection(JOB_CONFIRMATIONS);
+                  revalidateDocument(`${INVOICES}/${docID}`);
+                  setLoading(false);
+                });
               }, (error) => {
                 console.error(error);
               }
             )
-
           }, (error) => {
             console.error(error);
           });
+
+        refreshContext?.refreshList(INVOICES);
       }}
       cancelAction={() => {
         // navigation.navigate("Dashboard");
@@ -198,7 +211,7 @@ const CreateInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"
       </View>
 
       <View style={tailwind("mt-7 mb-4")} >
-        <RegularButton text="Submit Invoice" operation={() => { setModalOpen(true) }} />
+        <RegularButton text="Submit Invoice" loading={loading} operation={() => { setModalOpen(true) }} />
       </View>
 
     </Body>

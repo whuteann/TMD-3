@@ -10,7 +10,6 @@ import HeaderStack from '../../../components/atoms/display/HeaderStack';
 import FormTextInputField from '../../../components/molecules/input/FormTextInputField';
 import FormDropdownInputField from '../../../components/molecules/input/FormDropdownInputField';
 import FormDouble from '../../../components/molecules/alignment/FormDouble';
-import FormDateInputField from '../../../components/molecules/input/FormDateInputField';
 import { View } from 'react-native';
 import { revalidateDocument, useCollection, useDocument } from '@nandorojo/swr-firestore';
 import { Supplier } from '../../../types/Supplier';
@@ -199,6 +198,7 @@ const EditSparesProcurementFormScreen = ({ navigation, route }: RootNavigationPr
               updateSparesProcurement(spares_procurement.id, { ...values, suppliers: suppliersPickedList, product: product_data, created_by: user }, user!, UPDATE_ACTION, () => {
                 revalidateDocument(`${SPARES_PROCUREMENTS}/${docID}`);
                 navigation.navigate("CreateSparesProcurementSummary", { docID: spares_procurement.id });
+                setLoading(false);
               }, (error) => {
                 console.error(error);
               });

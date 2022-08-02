@@ -74,7 +74,7 @@ const ViewSparesPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigat
 					<InfoDisplay placeholder="Product" info={data.product.product_description || "-"} />
 					<InfoDisplay placeholder="Unit of Measurement" info={data.unit_of_measurement || "-"} />
 					<InfoDisplay placeholder="Quantity" info={addCommaNumber(data.quantity, "-")} />
-					<InfoDisplay placeholder="Unit Price" info={data.unit_price ?  `${convertCurrency(data.currency_rate)} ${addCommaNumber(data.unit_price, "-")}` : "-"} />
+					<InfoDisplay placeholder="Unit Price" info={data.unit_price ? `${convertCurrency(data.currency_rate)} ${addCommaNumber(data.unit_price, "-")}` : "-"} />
 					<InfoDisplay placeholder="Currency Rate" info={data.currency_rate || "-"} />
 					<InfoDisplay placeholder="Type of Supply" info={data.type_of_supply || "-"} />
 					<InfoDisplay placeholder="Total Amount" info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(`${Number(data.quantity) * Number(data.unit_price)}`, "-")}`} />

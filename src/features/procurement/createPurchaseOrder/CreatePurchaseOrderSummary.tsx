@@ -25,6 +25,8 @@ import { SUBMIT_ACTION } from '../../../constants/Action';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { convertCurrency } from '../../../constants/Currency';
 import { sendNotifications } from '../../../services/NotificationServices';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { loadingDelay } from '../../../helpers/GenericHelper';
 
 const CreatePurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationProps<"CreatePurchaseOrderSummary">) => {
 
@@ -34,6 +36,8 @@ const CreatePurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationP
 	const user = useSelector(UserSelector);
 	const linkTo = useLinkTo();
 	const allowedStatuses = [DRAFT, REJECTED];
+	const refreshContext = useRefreshContext();
+	const [loading, setLoading] = useState(false);
 	let displayID = "";
 	let revisedCode;
 
@@ -63,28 +67,39 @@ const CreatePurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationP
 			visible={modalOpen}
 			setModalClose={() => { setModalOpen(false) }}
 			nextAction={() => {
+				setLoading(true);
+
 				updatePurchaseOrder(
 					docID,
 					{ status: IN_REVIEW, display_id: displayID, revised_code: revisedCode },
 					user!,
 					SUBMIT_ACTION,
 					() => {
-						revalidateCollection(PURCHASE_ORDERS);
-						updateProcurement(data.procurement_id, { status: SUBMITTED, purchase_order_id: data.id, purchase_order_secondary_id: displayID }, user!, () => {
-							navigation.navigate("Dashboard");
-							revalidateCollection(PROCUREMENTS);
 
-							sendNotifications(
-								[HEAD_OF_MARKETING_ROLE, SUPER_ADMIN_ROLE],
-								revisedCode > 0
-									?
-									`Purchase order ${displayID} updated by ${user?.name}.`
-									:
-									`New purchase order ${displayID} submitted by ${user?.name}.`,
-								{ screen: "ViewPurchaseOrderSummary", docID: docID });
-						}, (error) => {
-							console.error(error);
-						});
+						updateProcurement(data.procurement_id, { status: SUBMITTED, purchase_order_id: data.id, purchase_order_secondary_id: displayID }, user!
+							, () => {
+
+								sendNotifications(
+									[HEAD_OF_MARKETING_ROLE, SUPER_ADMIN_ROLE],
+									revisedCode > 0
+										?
+										`Purchase order ${displayID} updated by ${user?.name}.`
+										:
+										`New purchase order ${displayID} submitted by ${user?.name}.`,
+									{ screen: "ViewPurchaseOrderSummary", docID: docID });
+
+								loadingDelay(() => {
+									setLoading(false);
+									navigation.navigate("Dashboard");
+									revalidateCollection(PROCUREMENTS);
+									revalidateCollection(PURCHASE_ORDERS);
+								})
+
+							}, (error) => {
+								console.error(error);
+							});
+
+						refreshContext?.refreshList(PURCHASE_ORDERS);
 					}, (error) => {
 						console.error(error);
 					}
@@ -130,15 +145,15 @@ const CreatePurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationP
 							:
 							"-"}
 					/>
-							
+
 					<InfoDisplay placeholder="Remarks" info={data.remarks || "-"} />
 				</View>
 			</View>
 
 
 			<View style={tailwind("mt-5")} />
-			<RegularButton text="Submit" operation={() => { setModalOpen(true) }} />
-			<RegularButton type="secondary" text="Cancel" operation={() => { navigation.navigate("Dashboard") }} />
+			<RegularButton text="Submit" loading={loading} operation={() => { setModalOpen(true) }} />
+			<RegularButton type="secondary" loading={loading} text="Cancel" operation={() => { navigation.navigate("Dashboard") }} />
 
 		</Body>
 	)

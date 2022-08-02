@@ -23,6 +23,8 @@ import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { sendNotifications } from '../../../services/NotificationServices';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { loadingDelay } from '../../../helpers/GenericHelper';
 
 const CreateSparesProcurementSummaryScreen = ({ navigation, route }: RootNavigationProps<"CreateSparesProcurementSummary">) => {
 
@@ -30,9 +32,11 @@ const CreateSparesProcurementSummaryScreen = ({ navigation, route }: RootNavigat
 	const { docID } = route.params;
 	const allowedStatuses = [DRAFT, REJECTED];
 	const [modalOpen, setModalOpen] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const user = useSelector(UserSelector);
 	let displayID = "";
 	let revisedCode;
+	const refreshContext = useRefreshContext();
 
 	const { data } = useDocument<SparesProcurement>(`${SPARES_PROCUREMENTS}/${docID}`, {
 		ignoreFirestoreDocumentSnapshotField: false,
@@ -60,10 +64,9 @@ const CreateSparesProcurementSummaryScreen = ({ navigation, route }: RootNavigat
 			visible={modalOpen}
 			setModalClose={() => { setModalOpen(false) }}
 			nextAction={() => {
-				updateSparesProcurement(data.id, { status: IN_REVIEW, display_id: displayID, revised_code: revisedCode }, user!, SUBMIT_ACTION, () => {
-					navigation.navigate("Dashboard");
-					revalidateCollection(SPARES_PROCUREMENTS);
+				setLoading(true);
 
+				updateSparesProcurement(data.id, { status: IN_REVIEW, display_id: displayID, revised_code: revisedCode }, user!, SUBMIT_ACTION, () => {
 					sendNotifications(
 						[HEAD_OF_PROCUREMENT_ROLE, SUPER_ADMIN_ROLE],
 						revisedCode > 0
@@ -73,6 +76,13 @@ const CreateSparesProcurementSummaryScreen = ({ navigation, route }: RootNavigat
 							`New procurement ${data.display_id} submitted by ${user?.name}.`,
 						{ screen: "ViewSparesProcurementSummary", docID: docID });
 
+					loadingDelay(() => {
+						navigation.navigate("Dashboard");
+						setLoading(false);
+						revalidateCollection(SPARES_PROCUREMENTS);
+					})
+
+					refreshContext?.refreshList(SPARES_PROCUREMENTS);
 				}, (error) => {
 					console.error(error);
 				})
@@ -124,7 +134,7 @@ const CreateSparesProcurementSummaryScreen = ({ navigation, route }: RootNavigat
 			</View>
 			<View>
 				<View style={tailwind("mt-10")}>
-					<RegularButton text="Submit" operation={() => { setModalOpen(!modalOpen); }} />
+					<RegularButton text="Submit" loading={loading} operation={() => { setModalOpen(!modalOpen); }} />
 				</View>
 			</View>
 

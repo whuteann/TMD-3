@@ -23,13 +23,17 @@ import { REVISED_CODE } from '../../../types/Common';
 import { createAndDisplayPDF, loadPDFLogo } from '../../../functions/PDFv2Functions';
 import { generateOfficialReceiptPDF } from '../../../components/templates/pdf/generateOfficialReceiptPDF';
 import { convertCurrency } from '../../../constants/Currency';
+import { loadingDelay } from '../../../helpers/GenericHelper';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
 
 const CreateReceiptSummaryScreen = ({ navigation, route }: RootNavigationProps<"CreateReceiptSummary">) => {
   const tailwind = useTailwind();
   const { docID } = route.params;
   const linkTo = useLinkTo();
   const [modalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const user = useSelector(UserSelector);
+  const refreshContext = useRefreshContext();
   let displayID = "";
   let revisedCode;
 
@@ -59,7 +63,20 @@ const CreateReceiptSummaryScreen = ({ navigation, route }: RootNavigationProps<"
       visible={modalOpen}
       setModalClose={() => { setModalOpen(false) }}
       nextAction={() => {
-        confirmReceipt(`${data.invoice_id}`, data.id, `${displayID}`, revisedCode, user!, () => { navigation.navigate("Dashboard"); revalidateCollection(RECEIPTS); }, (error) => { console.error(error); });
+        setLoading(true);
+
+        confirmReceipt(`${data.invoice_id}`, data.id, `${displayID}`, revisedCode, user!,
+          () => {
+
+            loadingDelay(() => {
+              navigation.navigate("Dashboard");
+              revalidateCollection(RECEIPTS);
+              setLoading(false);
+            })
+          },
+          (error) => { console.error(error); });
+
+        refreshContext?.refreshList(RECEIPTS);
       }}
       cancelAction={() => { }}
       downloadButton={true}
@@ -97,7 +114,7 @@ const CreateReceiptSummaryScreen = ({ navigation, route }: RootNavigationProps<"
         }
         <View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 
-        <InfoDisplay placeholder="Barging Fee" info={`${data.barging_fee ?`${convertCurrency(data.currency_rate!)} ${addCommaNumber(data.barging_fee, "-")}${data.barging_remark ? `/${data.barging_remark}` : ""}` : `-`}`} />
+        <InfoDisplay placeholder="Barging Fee" info={`${data.barging_fee ? `${convertCurrency(data.currency_rate!)} ${addCommaNumber(data.barging_fee, "-")}${data.barging_remark ? `/${data.barging_remark}` : ""}` : `-`}`} />
         <InfoDisplay placeholder="Discount" info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(data.discount, "-")}`} />
         <InfoDisplay placeholder="Total" info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(data.total_payable, "-")}`} />
         <InfoDisplay placeholder="Amount Received" info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(data.amount_received, "-")}`} />
@@ -106,7 +123,7 @@ const CreateReceiptSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 
 
       <View style={tailwind("mt-10")} >
-        <RegularButton text="Submit" operation={() => { setModalOpen(true) }} />
+        <RegularButton text="Submit" loading={loading} operation={() => { setModalOpen(true) }} />
       </View>
 
 

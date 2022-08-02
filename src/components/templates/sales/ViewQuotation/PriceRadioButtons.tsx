@@ -63,7 +63,14 @@ const PriceRadioButtons: React.FC<InfoProps> = ({
             </View>
             <View style={tailwind("ml-2 w-[50%]")}>
               <TextLabel content={`${currency} ${item.value} per ${item.unit}`} />
-              <TextLabel content={`${item.remarks}`} />
+              {
+                item.remarks
+                  ?
+                  <TextLabel content={`${item.remarks}`} />
+                  :
+                  <></>
+              }
+
             </View>
           </View>
         ), value: item.value

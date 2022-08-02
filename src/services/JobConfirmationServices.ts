@@ -5,6 +5,7 @@ import { DATE, JOB_CONFIRMATION_CODE, SALES_CODE } from "../types/Common";
 import { addLog } from "./LogServices";
 import { JOB_CONFIRMATIONS } from "../constants/Firebase";
 import { CREATE_ACTION, UPDATE_ACTION } from "../constants/Action";
+import { emailToAccountAssistants } from "./SalesConfirmationServices";
 
 const to_replace_string = SALES_CODE;
 const current_time = new Date();
@@ -71,6 +72,8 @@ export const createJobConfirmation = (salesConfirmation: SalesConfirmation, user
         }, (error) => {
           onError(`Something went wrong in recreateSalesConfirmation ${error}`);
         });
+
+        emailToAccountAssistants(docRef.id);
       }
     )
     .catch(

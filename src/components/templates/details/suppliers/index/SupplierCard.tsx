@@ -16,7 +16,7 @@ const SupplierCard: React.FC<cardProps> = ({
   const tailwind = useTailwind();
 
   var color;
-  if (status.toLowerCase() == "in-active") {
+  if (status.toLowerCase() == "inactive") {
     color = "#fa8e8e";
   } else if (status.toLowerCase() == "active") {
     color = "#c1ffa6";

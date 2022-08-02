@@ -106,7 +106,7 @@ const PricesField: React.FC<inputProps> = ({
                     </View>
                   </View>
                   <TextInputField
-                    placeholder={"Remarks..."}
+                    placeholder={"Price remarks..."}
                     value={localList[index].remarks}
                     editable={true}
                     shadow={true}

@@ -15,6 +15,8 @@ import { UserSelector } from '../../../../redux/reducers/Auth';
 import { CREATE_SPARES_PURCHASE_ORDER, REVIEW_SPARES_PROCUREMENT } from '../../../../permissions/Permissions';
 import { User } from '../../../../types/User';
 import { sendNotifications } from '../../../../services/NotificationServices';
+import { useRefreshContext } from '../../../../providers/RefreshProvider';
+import { loadingDelay } from '../../../../helpers/GenericHelper';
 
 interface Props {
   docID: string,
@@ -40,6 +42,8 @@ const ViewSparesProcurementButtons: React.FC<Props> = ({
   const tailwind = useTailwind();
   const user = useSelector(UserSelector);
   const permissions = user?.permission;
+  const [loading, setLoading] = useState(false);
+  const refreshContext = useRefreshContext();
 
   // Form data
   const [rejectNotes, setRejectNotes] = useState("");
@@ -60,19 +64,29 @@ const ViewSparesProcurementButtons: React.FC<Props> = ({
         visible={modalOpen}
         setModalClose={() => { setModalOpen(false) }}
         nextAction={() => {
+          setLoading(true);
+
           switch (action) {
             case "reject":
               rejectSparesProcurement(docID, rejectNotes, user!, () => {
-                navigation.navigate("ViewAllSparesProcurement");
-                revalidateCollection(SPARES_PROCUREMENTS);
 
                 sendNotifications(
                   [SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE],
                   `Procurement ${displayID} has been rejected by ${user?.name}.`,
                   { screen: "ViewSparesProcurementSummary", docID: docID });
+
+                loadingDelay(() => {
+                  setStatus("Rejected");
+                  setRejectNotes("");
+                  navigation.navigate("ViewAllSparesProcurement");
+                  setLoading(false);
+                  revalidateCollection(SPARES_PROCUREMENTS);
+                })
+
+                refreshContext?.refreshList(SPARES_PROCUREMENTS)
               }, (error) => { console.error(error); });
-              setStatus("Rejected");
-              setRejectNotes("");
+
+              refreshContext?.refreshList(SPARES_PROCUREMENTS);
               break;
           }
         }
@@ -147,8 +161,8 @@ const ViewSparesProcurementButtons: React.FC<Props> = ({
           multiline={true}
         />
 
-        <RegularButton text="Submit" operation={() => { setAction("reject"), setModalOpen(true) }} />
-        <RegularButton text="Cancel" type="secondary" operation={() => { setStatus("In Review"); setRejectNotes(""); }} />
+        <RegularButton text="Submit" loading={loading} operation={() => { setAction("reject"), setModalOpen(true) }} />
+        <RegularButton text="Cancel" loading={loading} type="secondary" operation={() => { setStatus("In Review"); setRejectNotes(""); }} />
       </View>
     );
 

@@ -19,14 +19,16 @@ import { cloneDeep } from 'lodash';
 import moment from 'moment';
 import Header from '../../../components/atoms/typography/Header';
 import { APPROVED, ARCHIVED, CONFIRMED, DRAFT, IN_REVIEW, REJECTED } from '../../../types/Common';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { QUOTATIONS } from '../../../constants/Firebase';
+import RegularButton from '../../../components/atoms/buttons/RegularButton';
+import { actionDelay } from '../../../helpers/GenericHelper';
 
 const ViewAllQuotationScreen = ({ navigation }: RootNavigationProps<"ViewAllQuotation">) => {
 
 	const [filterBy, setFilterBy] = useState<string>("");
 	const [filterString, setFilterString] = useState('');
-
 	const [filteredQuotations, setFilteredQuotations] = useState<[]>([]);
-
 	const [cursor, setCursor] = useState<number | undefined>(undefined);
 	const [isPaginating, setIsPaginating] = useState<boolean>(false);
 	const [searchToggle, setSearchToggle] = useState(false);
@@ -35,6 +37,29 @@ const ViewAllQuotationScreen = ({ navigation }: RootNavigationProps<"ViewAllQuot
 	const tailwind = useTailwind();
 	const dispatch = useDispatch();
 	const LIMIT = 20;
+
+	const refreshContext = useRefreshContext();
+
+	useEffect(() => {
+		if (refreshContext?.toRefresh == QUOTATIONS) {
+			
+			let filters = "";
+			setFilterString("item: null");
+
+			AlgoliaHelper.clearCache();
+			
+			setTimeout(() => {
+				[DRAFT, CONFIRMED, APPROVED, REJECTED, IN_REVIEW].map((status, index) => {
+					if (index == 0) {
+						filters = ` AND status:'${status}'`;
+					} else {
+						filters = filters + ` OR status:'${status}'`;
+					}
+				});
+				setFilterString("deleted:false" + filters);
+			}, actionDelay);
+		}
+	}, [refreshContext?.refresh])
 
 	useEffect(() => {
 		if (filterBy == "") {
@@ -47,9 +72,10 @@ const ViewAllQuotationScreen = ({ navigation }: RootNavigationProps<"ViewAllQuot
 					filters = filters + ` OR status:'${status}'`;
 				}
 			});
-			setFilterString(filters);
+			setFilterString("deleted:false" + filters);
+
 		} else {
-			setFilterString(` AND status:'${filterBy}'`);
+			setFilterString(`deleted:false AND status:'${filterBy}'`);
 		}
 	}, [filterBy])
 
@@ -62,15 +88,16 @@ const ViewAllQuotationScreen = ({ navigation }: RootNavigationProps<"ViewAllQuot
 	}, [search]);
 
 	const getData = async () => {
+
 		try {
 			if (filterString !== "") {
 				const result = await AlgoliaHelper.quotationIndexRef.search<Quotation>(search, {
-					filters: "deleted:false" +  filterString,
+					filters: filterString,
 					cacheable: true,
 					hitsPerPage: LIMIT
 				});
-		
-				
+
+
 				if (result.page + 1 > result.nbPages) {
 					setCursor(undefined);
 				} else {
@@ -119,12 +146,14 @@ const ViewAllQuotationScreen = ({ navigation }: RootNavigationProps<"ViewAllQuot
 		dispatch(setRefresh(false));
 	}
 
+
+
 	const onPaginate = async () => {
 		if (isPaginating || !cursor) return;
 		setIsPaginating(true);
 
 		const result = await AlgoliaHelper.quotationIndexRef.search<Quotation>(search, {
-			filters: "deleted:false" + filterString,
+			filters: filterString,
 			page: cursor,
 			hitsPerPage: LIMIT
 		});
@@ -207,7 +236,7 @@ const ViewAllQuotationScreen = ({ navigation }: RootNavigationProps<"ViewAllQuot
 								?
 								<SearchIcon width={25} height={25} />
 								:
-								<View style={tailwind('mx-2 mb-3')}>
+								<View style={tailwind('mx-2 mb-5')}>
 									<XSimpleIcon width={25} height={25} />
 								</View>
 						}

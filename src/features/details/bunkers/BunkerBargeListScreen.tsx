@@ -14,6 +14,9 @@ import { setRefresh } from '../../../redux/reducers/Refresh';
 import { FlatList, View } from 'react-native';
 import * as AlgoliaHelper from "../../../helpers/AlgoliaHelper";
 import { getListStyle } from '../../../constants/Style';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { BUNKERS } from '../../../constants/Firebase';
+import { actionDelay } from '../../../helpers/GenericHelper';
 
 const BunkerBargeListScreen = ({ navigation }: RootNavigationProps<"BunkerBargeList">) => {
   const [search, setSearch] = useState('');
@@ -25,6 +28,18 @@ const BunkerBargeListScreen = ({ navigation }: RootNavigationProps<"BunkerBargeL
   const [cursor, setCursor] = useState<number | undefined>(undefined);
   const [isPaginating, setIsPaginating] = useState<boolean>(false);
   const LIMIT = 20;
+
+  const refreshContext = useRefreshContext();
+
+  useEffect(() => {
+    if (refreshContext?.toRefresh == BUNKERS) {
+      setSearch("item: null, item: null, item: null");
+      AlgoliaHelper.clearCache();
+      setTimeout(() => {
+        setSearch("");
+      }, actionDelay);
+    }
+  }, [refreshContext?.refresh])
 
   useEffect(() => {
     getData()

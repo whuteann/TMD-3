@@ -19,6 +19,8 @@ import { createBunker, deleteBunker, updateBunker } from '../../../services/Bunk
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
 import { UPDATE_ACTION } from '../../../constants/Action';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { loadingDelay } from '../../../helpers/GenericHelper';
 
 
 const formSchema = Yup.object().shape({
@@ -43,6 +45,7 @@ const BunkerFormScreen = ({ navigation, route }: RootNavigationProps<"CreateBunk
   const [isDelete, setDelete] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const user = useSelector(UserSelector);
+  const refreshContext = useRefreshContext();
 
   const tailwind = useTailwind();
 
@@ -75,7 +78,13 @@ const BunkerFormScreen = ({ navigation, route }: RootNavigationProps<"CreateBunk
 
   const onCloseModal = () => {
     setModalVisible(false);
-    navigation.navigate("BunkerBargeList");
+    setLoading(true);
+    loadingDelay(()=>{
+      setLoading(false);
+      navigation.navigate("BunkerBargeList");
+    });
+    
+    refreshContext?.refreshList(BUNKERS);
   }
 
   const handleDelete = () => {

@@ -34,6 +34,8 @@ import { updateSales } from '../../../services/SalesServices';
 import { convertCurrency } from '../../../constants/Currency';
 import { Customer } from '../../../types/Customer';
 import { sendNotifications } from '../../../services/NotificationServices';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { loadingDelay } from '../../../helpers/GenericHelper';
 
 
 const ProceedSalesConfirmationFinalScreen = ({ navigation, route }: RootNavigationProps<"ProceedSalesConfirmationFinal">) => {
@@ -43,9 +45,11 @@ const ProceedSalesConfirmationFinalScreen = ({ navigation, route }: RootNavigati
 	const user = useSelector(UserSelector);
 	const [submitValues, setSubmitValues] = useState<any>();
 	const allowedStatuses = [NOT_CONFIRMED];
+	const [loading, setLoading] = useState(false);
 	const docID = route.params.docID;
 	let attentionPICList: Array<string> = [];
 	const linkTo = useLinkTo();
+	const refreshContext = useRefreshContext();
 
 	let modal;
 
@@ -68,6 +72,8 @@ const ProceedSalesConfirmationFinalScreen = ({ navigation, route }: RootNavigati
 	const products = data?.products || [];
 
 	const completeProceedSales = (values) => {
+		setLoading(true);
+
 		updateSalesConfirmation(docID, { ...values, status: CONFIRMED }, user!, SUBMIT_ACTION, () => {
 			createJobConfirmation({ ...data, ...values }, user!, (val) => {
 				const { id, displayID } = val;
@@ -82,8 +88,15 @@ const ProceedSalesConfirmationFinalScreen = ({ navigation, route }: RootNavigati
 						user!,
 						UPDATE_ACTION,
 						() => {
-							revalidateCollection(SALES_CONFIRMATIONS);
-							linkTo("/dashboard");
+							
+							refreshContext?.refreshList(SALES_CONFIRMATIONS);
+
+							loadingDelay(()=>{
+								setLoading(false);
+								revalidateCollection(SALES_CONFIRMATIONS);
+								linkTo("/dashboard");
+							});
+							
 						}, (error) => {
 							console.error(error);
 						});
@@ -245,6 +258,7 @@ const ProceedSalesConfirmationFinalScreen = ({ navigation, route }: RootNavigati
 						<View style={tailwind("mt-5")}>
 							<RegularButton
 								text="Confirm"
+								loading={loading}
 								operation={() => { handleSubmit() }}
 							/>
 						</View>

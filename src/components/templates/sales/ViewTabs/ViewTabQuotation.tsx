@@ -12,7 +12,8 @@ import { revalidateCollection } from '@nandorojo/swr-firestore';
 import { QUOTATIONS } from '../../../../constants/Firebase';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../../redux/reducers/Auth';
-import { APPROVED, ARCHIVED, CONFIRMED, DRAFT, IN_REVIEW, REJECTED } from '../../../../types/Common';
+import { APPROVED, ARCHIVED, CONFIRMED, DRAFT, IN_REVIEW, REJECTED, SUPER_ADMIN_ROLE } from '../../../../types/Common';
+import { useRefreshContext } from '../../../../providers/RefreshProvider';
 
 interface inputProps {
   id: string,
@@ -32,6 +33,7 @@ const ViewTabQuotation: React.FC<inputProps> = ({
   const [dropdown, setDropdown] = useState(false);
   const linkTo = useLinkTo();
   const user = useSelector(UserSelector);
+  const refreshContext = useRefreshContext();
 
   let route: any;
   let path: () => void;
@@ -54,11 +56,11 @@ const ViewTabQuotation: React.FC<inputProps> = ({
       <View>
         <ViewTabDropdown icon={<PreviewIcon height={24} width={24} />} text="Preview Quotation" setDropdown={path} navigation={() => { linkTo(`/quotations/${nav_id}/show`); }} />
         {
-          user?.id == data.created_by.id
+          user?.id == data.created_by.id || user?.role == SUPER_ADMIN_ROLE
             ?
             <View>
               <ViewTabDropdown icon={<CreateIcon height={24} width={24} />} text="Edit Quotation" setDropdown={path} navigation={() => { linkTo(`/quotations/${nav_id}/edit`); }} />
-              <ViewTabDropdown icon={<TrashIcon height={24} width={24} />} text="Delete Quotation" setDropdown={path} navigation={() => { deleteQuotation(nav_id || "", user, () => { linkTo(`/quotations`); revalidateCollection(QUOTATIONS) }, () => { }) }} />
+              <ViewTabDropdown icon={<TrashIcon height={24} width={24} />} text="Delete Quotation" setDropdown={path} navigation={() => { deleteQuotation(nav_id || "", user, () => { linkTo(`/quotations`); revalidateCollection(QUOTATIONS); refreshContext?.refreshList(QUOTATIONS); }, () => { }) }} />
             </View>
             :
             <></>

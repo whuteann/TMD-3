@@ -19,6 +19,9 @@ import * as AlgoliaHelper from "../../../helpers/AlgoliaHelper";
 import FormDropdownInputField from '../../../components/molecules/input/FormDropdownInputField';
 import { CONFIRMED, NOT_CONFIRMED } from '../../../types/Common';
 import ViewTabSalesConfirmation from '../../../components/templates/sales/ViewTabs/ViewTabSales';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { SALES_CONFIRMATIONS } from '../../../constants/Firebase';
+import { actionDelay } from '../../../helpers/GenericHelper';
 
 
 export const ViewAllSalesConfirmationScreen = ({ navigation }: RootNavigationProps<"ViewAllSalesConfirmation">) => {
@@ -36,6 +39,29 @@ export const ViewAllSalesConfirmationScreen = ({ navigation }: RootNavigationPro
 	const tailwind = useTailwind();
 	const dispatch = useDispatch();
 	const LIMIT = 20;
+
+	const refreshContext = useRefreshContext();
+
+	useEffect(() => {
+		if (refreshContext?.toRefresh == SALES_CONFIRMATIONS) {
+			
+			let filters = "";
+			setFilterString("item: null");
+
+			AlgoliaHelper.clearCache();
+			
+			setTimeout(() => {
+				[CONFIRMED, NOT_CONFIRMED].map((status, index) => {
+					if (index == 0) {
+						filters = `status:'${status}'`;
+					} else {
+						filters = filters + ` OR status:'${status}'`;
+					}
+				});
+				setFilterString(filters);
+			}, actionDelay);
+		}
+	}, [refreshContext?.refresh])
 
 	useEffect(() => {
 		if (filterBy == "") {
@@ -204,7 +230,7 @@ export const ViewAllSalesConfirmationScreen = ({ navigation }: RootNavigationPro
 								?
 								<SearchIcon width={25} height={25} />
 								:
-								<View style={tailwind('mx-2 mb-3')}>
+								<View style={tailwind('mx-2 mb-5')}>
 									<XSimpleIcon width={25} height={25} />
 								</View>
 						}

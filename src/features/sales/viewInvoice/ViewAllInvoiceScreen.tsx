@@ -20,6 +20,9 @@ import { cloneDeep } from 'lodash';
 import * as AlgoliaHelper from "../../../helpers/AlgoliaHelper";
 import moment from 'moment';
 import { Invoice } from '../../../types/Invoice';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { INVOICES } from '../../../constants/Firebase';
+import { actionDelay } from '../../../helpers/GenericHelper';
 
 const ViewAllInvoiceScreen = ({ navigation }: RootNavigationProps<"ViewAllInvoice">) => {
 
@@ -36,6 +39,29 @@ const ViewAllInvoiceScreen = ({ navigation }: RootNavigationProps<"ViewAllInvoic
 	const tailwind = useTailwind();
 	const dispatch = useDispatch();
 	const LIMIT = 20;
+
+	const refreshContext = useRefreshContext();
+
+	useEffect(() => {
+		if (refreshContext?.toRefresh == INVOICES) {
+
+			AlgoliaHelper.clearCache();
+			let filters = "";
+
+			setFilterString("item: null");
+
+			setTimeout(() => {
+				[DRAFT, APPROVED, REJECTED, IN_REVIEW].map((status, index) => {
+					if (index == 0) {
+						filters = `status:'${status}'`;
+					} else {
+						filters = filters + `OR status:'${status}'`;
+					}
+				});
+				setFilterString(filters);
+			}, actionDelay);
+		}
+	}, [refreshContext?.refresh])
 
 	useEffect(() => {
 		if (filterBy == "") {
@@ -208,7 +234,7 @@ const ViewAllInvoiceScreen = ({ navigation }: RootNavigationProps<"ViewAllInvoic
 								?
 								<SearchIcon width={25} height={25} />
 								:
-								<View style={tailwind('mx-2 mb-3')}>
+								<View style={tailwind('mx-2 mb-5')}>
 									<XSimpleIcon width={25} height={25} />
 								</View>
 						}

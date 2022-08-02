@@ -20,6 +20,9 @@ import { getListStyle } from '../../../constants/Style';
 import SearchBar from '../../../components/atoms/input/searchbar/SearchBar';
 import { cloneDeep } from 'lodash';
 import * as AlgoliaHelper from "../../../helpers/AlgoliaHelper";
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { PROCUREMENTS } from '../../../constants/Firebase';
+import { actionDelay } from '../../../helpers/GenericHelper';
 
 
 
@@ -37,6 +40,29 @@ const ViewAllProcurementSearchScreen = ({ navigation }: RootNavigationProps<"Vie
 	const tailwind = useTailwind();
 	const dispatch = useDispatch();
 	const LIMIT = 20;
+
+	const refreshContext = useRefreshContext();
+
+	useEffect(() => {
+		if (refreshContext?.toRefresh == PROCUREMENTS) {
+
+			AlgoliaHelper.clearCache();
+			let filters = "";
+
+			setFilterString("item: null");
+
+			setTimeout(() => {
+				[SUBMITTED, PENDING, REQUESTING].map((status, index) => {
+					if (index == 0) {
+						filters = `status:'${status}'`;
+					} else {
+						filters = filters + `OR status:'${status}'`;
+					}
+				});
+				setFilterString(filters);
+			}, actionDelay);
+		}
+	}, [refreshContext?.refresh])
 
 	useEffect(() => {
 		if (filterBy == "") {
@@ -172,7 +198,7 @@ const ViewAllProcurementSearchScreen = ({ navigation }: RootNavigationProps<"Vie
 
 	return (
 		<Body
-			header={<HeaderStack title={`View All Procurements`} navigateProp={navigation} navigateToDashboard={true}/>}
+			header={<HeaderStack title={`View All Procurements`} navigateProp={navigation} navigateToDashboard={true} />}
 			style={tailwind("mt-5")}
 			onRefresh={onRefresh}
 			fixedScroll={false}>
@@ -209,7 +235,7 @@ const ViewAllProcurementSearchScreen = ({ navigation }: RootNavigationProps<"Vie
 								?
 								<SearchIcon width={25} height={25} />
 								:
-								<View style={tailwind('mx-2 mb-3')}>
+								<View style={tailwind('mx-2 mb-5')}>
 									<XSimpleIcon width={25} height={25} />
 								</View>
 						}

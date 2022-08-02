@@ -4,7 +4,9 @@ import { View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { TickIcon } from '../../../../../assets/svg/SVG';
 import { PURCHASE_VOUCHERS } from '../../../../constants/Firebase';
+import { loadingDelay } from '../../../../helpers/GenericHelper';
 import { REVIEW_PURCHASE_VOUCHER } from '../../../../permissions/Permissions';
+import { useRefreshContext } from '../../../../providers/RefreshProvider';
 import { UserSelector } from '../../../../redux/reducers/Auth';
 import { sendNotifications } from '../../../../services/NotificationServices';
 import { approvePurchaseVoucher, rejectPurchaseVoucher } from '../../../../services/PurchaseVoucherServices';
@@ -32,9 +34,11 @@ const PurchaseVoucherButtons: React.FC<Props> = ({
 	let bottom;
 	const [modalOpen, setModalOpen] = useState(false);
 	const [rejectNotes, setRejectNotes] = useState("");
+	const [loading, setLoading] = useState(false);
 	const [action, setAction] = useState<"approve" | "reject" | "archive">("approve");
 	const user = useSelector(UserSelector);
 	const permissions = user?.permission;
+	const refreshContext = useRefreshContext();
 
 	let modal = <ConfirmModal
 		cancelAction={() => { setModalOpen(false) }}
@@ -47,31 +51,43 @@ const PurchaseVoucherButtons: React.FC<Props> = ({
 		visible={modalOpen}
 		setModalClose={() => { setModalOpen(false) }}
 		nextAction={() => {
+			setLoading(true);
+
 			switch (action) {
 				case "approve":
-					setStatus("Approved");
 					approvePurchaseVoucher(navID, user!, () => {
-						navigation.navigate("ViewAllPurchaseVoucher");
-						revalidateCollection(PURCHASE_VOUCHERS);
+
+						loadingDelay(() => {
+							setLoading(false);
+							setStatus("Approved");
+							navigation.navigate("ViewAllPurchaseVoucher");
+							revalidateCollection(PURCHASE_VOUCHERS);
+						})
 
 						sendNotifications(
 							[ACCOUNT_ASSISTANT_ROLE, SUPER_ADMIN_ROLE],
 							`Purchase voucher ${displayID} has been approved by ${user?.name}.`,
 							{ screen: "ViewPurchaseVoucherSummary", docID: navID });
 
+						refreshContext?.refreshList(PURCHASE_VOUCHERS);
 					}, (error) => { console.error(error); })
 					break;
 				case "reject":
-					setStatus("Rejected");
 					rejectPurchaseVoucher(navID, rejectNotes, user!, () => {
-						navigation.navigate("ViewAllPurchaseVoucher");
-						revalidateCollection(PURCHASE_VOUCHERS);
+
+						loadingDelay(() => {
+							setLoading(false);
+							setStatus("Rejected");
+							navigation.navigate("ViewAllPurchaseVoucher");
+							revalidateCollection(PURCHASE_VOUCHERS);
+						})
 
 						sendNotifications(
 							[ACCOUNT_ASSISTANT_ROLE, SUPER_ADMIN_ROLE],
 							`Purchase voucher ${displayID} has been rejected by ${user?.name}.`,
 							{ screen: "ViewPurchaseVoucherSummary", docID: navID });
 
+						refreshContext?.refreshList(PURCHASE_VOUCHERS);
 					}, (error) => { console.error(error); })
 					break;
 			}
@@ -123,8 +139,8 @@ const PurchaseVoucherButtons: React.FC<Props> = ({
 					multiline={true}
 				/>
 
-				<RegularButton text="Submit" operation={() => { setAction("reject"), setModalOpen(true) }} />
-				<RegularButton text="Cancel" type="secondary" operation={() => { setStatus("In Review"); setRejectNotes(""); }} />
+				<RegularButton text="Submit" loading={loading} operation={() => { setAction("reject"), setModalOpen(true) }} />
+				<RegularButton text="Cancel" loading={loading} type="secondary" operation={() => { setStatus("In Review"); setRejectNotes(""); }} />
 			</View>
 		);
 

@@ -18,6 +18,7 @@ import departments from "../../../Lists/DrawerItemsList/Departments";
 import sales from "../../../Lists/DrawerItemsList/Sales";
 import procurements from "../../../Lists/DrawerItemsList/Procurements";
 import { removePushNotification } from "../../../services/NotificationServices";
+import { updateUserLocal } from "../../../services/UserServices";
 
 const Drawer = ({ navigation }: DrawerNavigationProps<"Dashboard">) => {
   const user: User | null = useSelector(UserSelector);
@@ -30,8 +31,11 @@ const Drawer = ({ navigation }: DrawerNavigationProps<"Dashboard">) => {
 
   const handleSignOut = async () => {
     await removePushNotification(user?.id!, token!, () => {
-      auth.signOut().then(() => {
-      }).catch((error) => {
+      updateUserLocal(user?.id!, {remember_me: false}, ()=>{
+        auth.signOut().then(() => {
+        
+        }).catch((error) => {
+        });
       });
     }, () => { });
   }
@@ -68,9 +72,9 @@ const Drawer = ({ navigation }: DrawerNavigationProps<"Dashboard">) => {
           <View style={tailwind("mb-3")}>
             <TextLabel content="Apps" color="text-gray-primary" style={tailwind("font-bold")} />
           </View>
-          
+
           {/* <DrawerItem icon={<SettingsIcon height={25} width={25} />} text="Settings" onPress={()=>{navigation.navigate("Settings")}}/> */}
-          <DrawerItem icon={<LogoutIcon height={25} width={25} />} text="Log out" onPress={()=>{handleSignOut()}}/>
+          <DrawerItem icon={<LogoutIcon height={25} width={25} />} text="Log out" onPress={() => { handleSignOut() }} />
 
         </View>
 

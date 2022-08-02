@@ -5,7 +5,9 @@ import { useSelector } from 'react-redux';
 import { TickIcon } from '../../../../../assets/svg/SVG';
 import { UPDATE_ACTION } from '../../../../constants/Action';
 import { SPARES_PURCHASE_VOUCHERS } from '../../../../constants/Firebase';
+import { loadingDelay } from '../../../../helpers/GenericHelper';
 import { REVIEW_PURCHASE_VOUCHER } from '../../../../permissions/Permissions';
+import { useRefreshContext } from '../../../../providers/RefreshProvider';
 import { UserSelector } from '../../../../redux/reducers/Auth';
 import { sendNotifications } from '../../../../services/NotificationServices';
 import { updateShipSpare } from '../../../../services/ShipSpareServices';
@@ -36,10 +38,12 @@ const ViewSparesPurchaseVoucherButtons: React.FC<Props> = ({
 
 	let bottom;
 	const [modalOpen, setModalOpen] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [rejectNotes, setRejectNotes] = useState("");
 	const [action, setAction] = useState<"approve" | "reject" | "archive">("approve");
 	const user = useSelector(UserSelector);
 	const permissions = user?.permission;
+	const refreshContext = useRefreshContext();
 
 	let modal = <ConfirmModal
 		cancelAction={() => { setModalOpen(false) }}
@@ -52,13 +56,19 @@ const ViewSparesPurchaseVoucherButtons: React.FC<Props> = ({
 		visible={modalOpen}
 		setModalClose={() => { setModalOpen(false) }}
 		nextAction={() => {
+			setLoading(true);
+
 			switch (action) {
 				case "approve":
-					setStatus("Approved");
 					approveSparesPurchaseVoucher(navID, user!, () => {
 						updateShipSpare(product.id, product.product_code, { product_code: product.product_code, ref_price: unit_price }, user!, UPDATE_ACTION, () => {
-							navigation.navigate("ViewAllSparesPurchaseVoucher");
-							revalidateCollection(SPARES_PURCHASE_VOUCHERS);
+							loadingDelay(() => {
+								setLoading(false);
+								navigation.navigate("ViewAllSparesPurchaseVoucher");
+								revalidateCollection(SPARES_PURCHASE_VOUCHERS);
+								setStatus("Approved");
+							})
+
 
 							sendNotifications(
 								[SUPER_ADMIN_ROLE, ACCOUNT_ASSISTANT_ROLE],
@@ -70,12 +80,17 @@ const ViewSparesPurchaseVoucherButtons: React.FC<Props> = ({
 					}, (error) => {
 						console.error(error);
 					})
+
+					refreshContext?.refreshList(SPARES_PURCHASE_VOUCHERS);
 					break;
 				case "reject":
-					setStatus("Rejected");
 					rejectSparesPurchaseVoucher(navID, rejectNotes, user!, () => {
-						navigation.navigate("ViewAllSparesPurchaseVoucher");
-						revalidateCollection(SPARES_PURCHASE_VOUCHERS);
+						loadingDelay(() => {
+							setLoading(false);
+							navigation.navigate("ViewAllSparesPurchaseVoucher");
+							revalidateCollection(SPARES_PURCHASE_VOUCHERS);
+							setStatus("Rejected");
+						})
 
 						sendNotifications(
 							[SUPER_ADMIN_ROLE, ACCOUNT_ASSISTANT_ROLE],
@@ -84,6 +99,8 @@ const ViewSparesPurchaseVoucherButtons: React.FC<Props> = ({
 					}, (error) => {
 						console.error(error);
 					})
+
+					refreshContext?.refreshList(SPARES_PURCHASE_VOUCHERS);
 					break;
 			}
 		}
@@ -97,8 +114,8 @@ const ViewSparesPurchaseVoucherButtons: React.FC<Props> = ({
 					permissions?.includes(REVIEW_PURCHASE_VOUCHER)
 						?
 						<View>
-							<RegularButton text="Approve" operation={() => { setModalOpen(true) }} />
-							<RegularButton type="secondary" text="Reject" operation={() => { setStatus("Rejecting") }} />
+							<RegularButton text="Approve" loading={loading} operation={() => { setModalOpen(true) }} />
+							<RegularButton type="secondary" loading={loading} text="Reject" operation={() => { setStatus("Rejecting") }} />
 						</View>
 						:
 						<RegularButton text="Download" operation={() => { onDownload(); }} />
@@ -134,8 +151,8 @@ const ViewSparesPurchaseVoucherButtons: React.FC<Props> = ({
 					multiline={true}
 				/>
 
-				<RegularButton text="Submit" operation={() => { setAction("reject"), setModalOpen(true) }} />
-				<RegularButton text="Cancel" type="secondary" operation={() => { setStatus("In Review"); setRejectNotes(""); }} />
+				<RegularButton text="Submit" loading={loading} operation={() => { setAction("reject"), setModalOpen(true) }} />
+				<RegularButton text="Cancel" loading={loading} type="secondary" operation={() => { setStatus("In Review"); setRejectNotes(""); }} />
 			</View>
 		);
 

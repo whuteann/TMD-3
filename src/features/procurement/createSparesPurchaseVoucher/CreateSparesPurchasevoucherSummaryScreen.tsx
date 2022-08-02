@@ -23,16 +23,20 @@ import { UserSelector } from '../../../redux/reducers/Auth';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { convertCurrency } from '../../../constants/Currency';
 import { sendNotifications } from '../../../services/NotificationServices';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { loadingDelay } from '../../../helpers/GenericHelper';
 
 
 const CreateSparesPurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavigationProps<"CreateSparesPurchaseVoucherSummary">) => {
 
 	const [modalOpen, setModalOpen] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const tailwind = useTailwind();
 	const linkTo = useLinkTo();
 	const user = useSelector(UserSelector);
 	const { docID } = route.params;
 	const allowedStatuses = [DRAFT, REJECTED];
+	const refreshContext = useRefreshContext();
 	let displayID = "";
 	let revisedCode;
 
@@ -61,10 +65,15 @@ const CreateSparesPurchaseVoucherSummaryScreen = ({ navigation, route }: RootNav
 			visible={modalOpen}
 			setModalClose={() => { setModalOpen(false) }}
 			nextAction={() => {
+				setLoading(true);
+
 				confirmSparesPurchaseVoucher(data.spares_purchase_order_id, data.id, displayID, revisedCode, user!, () => {
-					revalidateCollection(SPARES_PURCHASE_ORDERS);
-					revalidateCollection(SPARES_PURCHASE_VOUCHERS);
-					navigation.navigate("Dashboard");
+					loadingDelay(() => {
+						revalidateCollection(SPARES_PURCHASE_ORDERS);
+						setLoading(false);
+						revalidateCollection(SPARES_PURCHASE_VOUCHERS);
+						navigation.navigate("Dashboard");
+					})
 
 					sendNotifications(
 						[SUPER_ADMIN_ROLE, HEAD_OF_ACCOUNTS_ROLE],
@@ -75,6 +84,7 @@ const CreateSparesPurchaseVoucherSummaryScreen = ({ navigation, route }: RootNav
 							`Purchase voucher ${data.display_id} has been submitted for approval by ${user?.name}.`,
 						{ screen: "ViewSparesPurchaseVoucherSummary", docID: data.id });
 
+					refreshContext?.refreshList(SPARES_PURCHASE_VOUCHERS);
 				}, () => {
 					console.error("error");
 				});
@@ -117,8 +127,8 @@ const CreateSparesPurchaseVoucherSummaryScreen = ({ navigation, route }: RootNav
 				<InfoDisplay placeholder="Paid Amount" info={data.paid_amount ? `${convertCurrency(data.currency_rate)} ${addCommaNumber(data.paid_amount, "-")}` : "-"} />
 
 				<View style={tailwind("mt-7")}>
-					<RegularButton text="Submit" operation={() => { setModalOpen(true) }} />
-					<RegularButton text="Cancel" type="secondary" operation={() => { navigation.navigate("Dashboard") }} />
+					<RegularButton text="Submit" loading={loading} operation={() => { setModalOpen(true) }} />
+					<RegularButton text="Cancel" loading={loading} type="secondary" operation={() => { navigation.navigate("Dashboard") }} />
 				</View>
 			</View>
 		</Body>

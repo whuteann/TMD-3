@@ -19,6 +19,10 @@ export const KEYS: AlgoliaKey = {
 export const client = algoliasearch(KEYS.id, KEYS.searchKey);
 export const admin = algoliasearch(KEYS.id, KEYS.apiKey);
 
+export const clearCache = () =>{
+  client.clearCache();
+}
+
 export const quotationIndexRef = client.initIndex(QUOTATIONS);
 export const invoiceIndexRef = client.initIndex(INVOICES);
 export const jobConfirmationIndexRef = client.initIndex(JOB_CONFIRMATIONS);

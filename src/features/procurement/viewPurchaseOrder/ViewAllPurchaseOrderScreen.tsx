@@ -21,6 +21,9 @@ import { cloneDeep } from 'lodash';
 import * as AlgoliaHelper from "../../../helpers/AlgoliaHelper";
 import { PurchaseOrder } from '../../../types/PurchaseOrder';
 import ViewTabPO from '../../../components/templates/procurement/ViewTabs/ViewTabPO';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { PURCHASE_ORDERS } from '../../../constants/Firebase';
+import { actionDelay } from '../../../helpers/GenericHelper';
 
 const ViewAllPurchaseOrderScreen = ({ navigation }: RootNavigationProps<"ViewPurchaseOrderSummary">) => {
 	const [filterBy, setFilterBy] = useState<string>("");
@@ -36,6 +39,30 @@ const ViewAllPurchaseOrderScreen = ({ navigation }: RootNavigationProps<"ViewPur
 	const tailwind = useTailwind();
 	const dispatch = useDispatch();
 	const LIMIT = 20;
+
+	const refreshContext = useRefreshContext();
+
+	useEffect(() => {
+		if (refreshContext?.toRefresh == PURCHASE_ORDERS) {
+
+			AlgoliaHelper.clearCache();
+			let filters = "";
+
+			setFilterString("item: null");
+
+			setTimeout(() => {
+				[NO_PURCHASE_VOUCHER, PV_ISSUED, PV_PENDING, APPROVED, IN_REVIEW, REJECTED, DRAFT].map((status, index) => {
+					if (index == 0) {
+						filters = `status:'${status}'`;
+					} else {
+						filters = filters + `OR status:'${status}'`;
+					}
+				});
+				setFilterString(filters);
+			}, actionDelay);
+		}
+	}, [refreshContext?.refresh])
+	
 
 	useEffect(() => {
 		if (filterBy == "") {
@@ -207,7 +234,7 @@ const ViewAllPurchaseOrderScreen = ({ navigation }: RootNavigationProps<"ViewPur
 								?
 								<SearchIcon width={25} height={25} />
 								:
-								<View style={tailwind('mx-2 mb-3')}>
+								<View style={tailwind('mx-2 mb-5')}>
 									<XSimpleIcon width={25} height={25} />
 								</View>
 						}

@@ -14,8 +14,8 @@ import Body from '../../../components/atoms/display/Body';
 import HeaderStack from '../../../components/atoms/display/HeaderStack';
 import RegularButton from '../../../components/atoms/buttons/RegularButton';
 import * as Yup from 'yup';
-import { useCollection } from '@nandorojo/swr-firestore';
-import { CUSTOMERS, PORTS, PRODUCTS } from '../../../constants/Firebase';
+import { revalidateCollection, useCollection } from '@nandorojo/swr-firestore';
+import { CUSTOMERS, PORTS, PRODUCTS, QUOTATIONS } from '../../../constants/Firebase';
 import { Product } from '../../../types/Product';
 import { Port } from '../../../types/Port';
 import { getCustomerNameAndContactPerson } from '../../../helpers/CustomerHelper';
@@ -32,6 +32,7 @@ import ModeOfDeliveryField from '../../../components/templates/sales/CreateQuota
 import { createSales } from '../../../services/SalesServices';
 import { UPDATE_ACTION } from '../../../constants/Action';
 import FormDateInputField from '../../../components/molecules/input/FormDateInputField';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
 
 const formSchema = Yup.object().shape({
   customer: Yup.string().required("Required"),
@@ -79,6 +80,7 @@ const CreateQuotationFormScreen = ({ navigation }: RootNavigationProps<"CreateQu
   const [errorLocations, setErrorLocations] = useState(false);
   const [errorDeliveryMode, setErrorDeliveryMode] = useState(false);
   const [address, setAddress] = useState<string>("");
+  const refreshContext = useRefreshContext();
   let displayID: string = "";
 
   const linkTo = useLinkTo();
@@ -148,7 +150,8 @@ const CreateQuotationFormScreen = ({ navigation }: RootNavigationProps<"CreateQu
           }, () => {
           })
 
-
+          revalidateCollection(QUOTATIONS);
+          refreshContext?.refreshList(QUOTATIONS);
       }, (error) => {
         console.error(error);
       })

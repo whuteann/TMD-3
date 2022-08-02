@@ -20,6 +20,8 @@ import StatusModal from '../../../components/atoms/modal/StatusModal';
 import { revalidateCollection } from '@nandorojo/swr-firestore';
 import { CUSTOMERS } from '../../../constants/Firebase';
 import { WarningIcon } from '../../../../assets/svg/SVG';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { actionDelay } from '../../../helpers/GenericHelper';
 
 const CustomerListScreen = ({ navigation }: RootNavigationProps<"CustomerList">) => {
   const [search, setSearch] = useState('');
@@ -33,6 +35,18 @@ const CustomerListScreen = ({ navigation }: RootNavigationProps<"CustomerList">)
   const [isPaginating, setIsPaginating] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const LIMIT = 20;
+
+  const refreshContext = useRefreshContext();
+
+  useEffect(() => {
+    if (refreshContext?.toRefresh == CUSTOMERS) {
+      setSearch("item: null, item: null, item: null");
+      AlgoliaHelper.clearCache();
+      setTimeout(() => {
+        setSearch("");
+      }, actionDelay);
+    }
+  }, [refreshContext?.refresh])
 
   useEffect(() => {
     getData()

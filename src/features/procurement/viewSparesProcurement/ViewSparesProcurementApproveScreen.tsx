@@ -24,6 +24,8 @@ import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { sendNotifications } from '../../../services/NotificationServices';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { loadingDelay } from '../../../helpers/GenericHelper';
 
 
 const ViewSparesProcurementApproveScreen = ({ navigation, route }: RootNavigationProps<"ViewSparesProcurementSummary">) => {
@@ -31,9 +33,12 @@ const ViewSparesProcurementApproveScreen = ({ navigation, route }: RootNavigatio
 	const { docID } = route.params;
 	const [modalOpen, setModalOpen] = useState(false);
 	const [pickedIndex, setPickedIndex] = useState<number | undefined>(0);
+	const [loading, setLoading] = useState(false);
+
 	const allowedStatuses = [IN_REVIEW];
 	let supplierDisplayItems: Array<{ content: any, value: string }> = [];
 	const user = useSelector(UserSelector);
+	const refreshContext = useRefreshContext();
 
 	const { data } = useDocument<SparesProcurement>(`${SPARES_PROCUREMENTS}/${docID}`, {
 		ignoreFirestoreDocumentSnapshotField: false,
@@ -58,6 +63,8 @@ const ViewSparesProcurementApproveScreen = ({ navigation, route }: RootNavigatio
 			visible={modalOpen}
 			setModalClose={() => { setModalOpen(false) }}
 			nextAction={() => {
+				setLoading(true);
+
 				let pickedSupplier = data.suppliers[pickedIndex || 0];
 				updateSparesProcurement(data.id, { suppliers: [pickedSupplier] }, user!, UPDATE_ACTION, () => {
 					data.suppliers.map((item) => {
@@ -65,14 +72,19 @@ const ViewSparesProcurementApproveScreen = ({ navigation, route }: RootNavigatio
 							deleteFile(SPARES_PROCUREMENTS, item.filename_storage, () => { })
 					})
 					approveSparesProcurement(data.id, user!, () => {
-						revalidateCollection(SPARES_PROCUREMENTS);
-						navigation.navigate("ViewAllSparesProcurement");
+
+						loadingDelay(() => {
+							revalidateCollection(SPARES_PROCUREMENTS);
+							setLoading(false);
+							navigation.navigate("ViewAllSparesProcurement");
+						})
 
 						sendNotifications(
 							[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE],
 							`Procurement ${data.display_id} has been approved by ${user?.name}.`,
 							{ screen: "ViewSparesProcurementSummary", docID: docID });
 
+						refreshContext?.refreshList(SPARES_PROCUREMENTS);
 					}, (error) => {
 						console.error(error);
 					})
@@ -101,19 +113,19 @@ const ViewSparesProcurementApproveScreen = ({ navigation, route }: RootNavigatio
 			<View>
 				<ViewPageHeaderText doc="Spares Procurement" id={data.display_id} />
 				<InfoDisplay placeholder={`Procurement Date`} info={`${data.procurement_date}`} />
-				
+
 				<InfoDisplay placeholder={`Proposed Date`} info={
-						data.proposed_date?.startDate
+					data.proposed_date?.startDate
+						?
+						data.proposed_date.endDate
 							?
-							data.proposed_date.endDate
-								?
-								`${data.proposed_date?.startDate} to ${data.proposed_date?.endDate}`
-								:
-								`${data.proposed_date.startDate}`
+							`${data.proposed_date?.startDate} to ${data.proposed_date?.endDate}`
 							:
-							"-"}
-					/>
-				
+							`${data.proposed_date.startDate}`
+						:
+						"-"}
+				/>
+
 				<RadioButtonGroup displayItem={supplierDisplayItems} onPicked={(picked) => setPickedIndex(picked)} />
 
 				<View style={tailwind("mt-3")}>
@@ -129,7 +141,7 @@ const ViewSparesProcurementApproveScreen = ({ navigation, route }: RootNavigatio
 			</View>
 			<View>
 				<View style={tailwind("mt-10")}>
-					<RegularButton text="Approve" type={pickedIndex == undefined ? "disabled" : "primary"} operation={() => { setModalOpen(true); }} />
+					<RegularButton text="Approve" loading={loading} type={pickedIndex == undefined ? "disabled" : "primary"} operation={() => { setModalOpen(true); }} />
 				</View>
 			</View>
 

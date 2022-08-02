@@ -6,7 +6,9 @@ import { useTailwind } from 'tailwind-rn/dist';
 import { TickIcon } from '../../../../../assets/svg/SVG';
 import { APPROVE_ACTION, UPDATE_ACTION, VERIFY_ACTION } from '../../../../constants/Action';
 import { SPARES_PURCHASE_ORDERS } from '../../../../constants/Firebase';
+import { loadingDelay } from '../../../../helpers/GenericHelper';
 import { CREATE_PURCHASE_VOUCHER, CREATE_SPARES_PURCHASE_ORDER, FINAL_REVIEW_SPARES_PURCHASE_ORDER, REVIEW_SPARES_PURCHASE_ORDER } from '../../../../permissions/Permissions';
+import { useRefreshContext } from '../../../../providers/RefreshProvider';
 import { UserSelector } from '../../../../redux/reducers/Auth';
 import { sendNotifications } from '../../../../services/NotificationServices';
 import { approveSparesPurchaseOrder, rejectSparesPurchaseOrder, updateSparesPurchaseOrder, verifySparesPurchaseOrder } from '../../../../services/SparesPurchaseOrderServices';
@@ -51,11 +53,13 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 	const [doFileNo, setDoFileNo] = useState("");
 	const [doFileError, setDoFileError] = useState("");
 	const [invFileNo, setInvFileNo] = useState("");
+	const [invFileUploaded, setInvFileUploaded] = useState(false);
 	const [invFileError, setInvFileError] = useState("");
 	const [prevStatus, setPrevStatus] = useState<sparesPurchaseOrderStatuses>(IN_REVIEW);
 	const user = useSelector(UserSelector);
 	const tailwind = useTailwind();
 	const permissions = user?.permission;
+	const refreshContext = useRefreshContext();
 
 	let modal;
 	let bottom;
@@ -73,11 +77,18 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 				visible={modalOpen}
 				setModalClose={() => { setModalOpen(false) }}
 				nextAction={() => {
+					setLoading(true);
+
 					switch (action) {
 						case "approve":
 							approveSparesPurchaseOrder(nav_id, user!, () => {
-								navigation.navigate("ViewAllSparesPurchaseOrder");
-								revalidateCollection(SPARES_PURCHASE_ORDERS);
+
+								loadingDelay(() => {
+									navigation.navigate("ViewAllSparesPurchaseOrder");
+									revalidateCollection(SPARES_PURCHASE_ORDERS);
+									setStatus("Approved");
+									setLoading(false);
+								});
 
 								sendNotifications(
 									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE, GENERAL_MANAGER_ROLE],
@@ -86,23 +97,33 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 							}, (error) => {
 								console.error(error);
 							})
-							setStatus("Approved");
+
+							refreshContext?.refreshList(SPARES_PURCHASE_ORDERS);
 							break;
 						case "reject":
+
 							if (filename_storage_do) {
 								deleteFile(SPARES_PURCHASE_ORDERS, filename_storage_do, () => {
 									updateSparesPurchaseOrder(nav_id, { doFile: "", doNumber: "", filename_storage_do: "" }, user!, UPDATE_ACTION, () => {
 									}, (error) => { console.error(error); });
 								});
 							}
+
 							if (filename_storage_inv) {
 								deleteFile(SPARES_PURCHASE_ORDERS, filename_storage_inv, () => {
 									updateSparesPurchaseOrder(nav_id, { invFile: "", invNumber: "", filename_storage_inv: "" }, user!, UPDATE_ACTION, () => { }, (error) => { console.error(error); });
 								});
 							}
 							rejectSparesPurchaseOrder(nav_id, rejectNotes, user!, () => {
-								navigation.navigate("ViewAllSparesPurchaseOrder");
-								revalidateCollection(SPARES_PURCHASE_ORDERS);
+
+								loadingDelay(() => {
+									navigation.navigate("ViewAllSparesPurchaseOrder");
+									revalidateCollection(SPARES_PURCHASE_ORDERS);
+									setLoading(false);
+									setStatus("Rejected");
+									setRejectNotes("");
+								})
+
 
 								sendNotifications(
 									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE, HEAD_OF_PROCUREMENT_ROLE],
@@ -111,13 +132,19 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 							}, (error) => {
 								console.error(error);
 							});
-							setStatus("Rejected");
-							setRejectNotes("");
+
+							refreshContext?.refreshList(SPARES_PURCHASE_ORDERS);
 							break;
 						case "verify":
 							verifySparesPurchaseOrder(nav_id, user!, () => {
-								navigation.navigate("ViewAllSparesPurchaseOrder");
-								revalidateCollection(SPARES_PURCHASE_ORDERS);
+
+
+								loadingDelay(() => {
+									navigation.navigate("ViewAllSparesPurchaseOrder");
+									revalidateCollection(SPARES_PURCHASE_ORDERS);
+									setStatus(VERIFIED);
+									setLoading(false);
+								})
 
 								sendNotifications(
 									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE, GENERAL_MANAGER_ROLE],
@@ -126,29 +153,44 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 							}, (error) => {
 								console.error(error);
 							})
+
+							refreshContext?.refreshList(SPARES_PURCHASE_ORDERS);
 							break;
 						case "submit":
 							updateSparesPurchaseOrder(nav_id, { status: DOC_SUBMITTED, doNumber: doFileNo, invNumber: invFileNo }, user!, VERIFY_ACTION, () => {
-								navigation.navigate("ViewAllSparesPurchaseOrder");
-								setDoFileNo("");
-								setInvFileNo("");
-								revalidateCollection(SPARES_PURCHASE_ORDERS);
+
+
+								loadingDelay(() => {
+									navigation.navigate("ViewAllSparesPurchaseOrder");
+									revalidateCollection(SPARES_PURCHASE_ORDERS);
+									setLoading(false);
+									setStatus(DOC_SUBMITTED)
+									setDoFileNo("");
+									setInvFileNo("");
+								})
 
 								sendNotifications(
 									totalAmount < 5000 ? [SUPER_ADMIN_ROLE, HEAD_OF_PROCUREMENT_ROLE] : [SUPER_ADMIN_ROLE, HEAD_OF_PROCUREMENT_ROLE, GENERAL_MANAGER_ROLE],
-									`Purchase order files for ${display_id} has been submitted by ${user?.name}.`,
+									`${invFileUploaded ? "DO and Invoice" : "DO"} of ${display_id} has been submitted by ${user?.name}.`,
 									{ screen: "ViewSparesPurchaseOrderSummary", docID: nav_id });
+
 
 							}, (error) => {
 								console.error(error);
 							})
+
+							refreshContext?.refreshList(SPARES_PURCHASE_ORDERS);
 							break;
 						case "verifyFinal":
 							updateSparesPurchaseOrder(nav_id, invFileNo ? { status: VERIFIED_DOC, invNumber: invFileNo } : { status: VERIFIED_DOC }, user!, VERIFY_ACTION, () => {
-								navigation.navigate("ViewAllSparesPurchaseOrder");
-								setDoFileNo("");
-								setInvFileNo("");
-								revalidateCollection(SPARES_PURCHASE_ORDERS);
+								loadingDelay(() => {
+									navigation.navigate("ViewAllSparesPurchaseOrder");
+									setLoading(false);
+									setDoFileNo("");
+									setInvFileNo("");
+									setStatus(VERIFIED_DOC)
+									revalidateCollection(SPARES_PURCHASE_ORDERS);
+								})
 
 								sendNotifications(
 									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE, GENERAL_MANAGER_ROLE, HEAD_OF_PROCUREMENT_ROLE],
@@ -157,13 +199,20 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 							}, (error) => {
 								console.error(error);
 							})
+
+							refreshContext?.refreshList(SPARES_PURCHASE_ORDERS);
 							break;
 						case "approveFinal":
 							updateSparesPurchaseOrder(nav_id, invFileNo ? { status: APPROVED_DOC, invNumber: invFileNo } : { status: APPROVED_DOC }, user!, APPROVE_ACTION, () => {
-								navigation.navigate("ViewAllSparesPurchaseOrder");
-								setDoFileNo("");
-								setInvFileNo("");
-								revalidateCollection(SPARES_PURCHASE_ORDERS);
+
+								loadingDelay(() => {
+									navigation.navigate("ViewAllSparesPurchaseOrder");
+									setDoFileNo("");
+									setInvFileNo("");
+									setLoading(false);
+									setStatus(APPROVED_DOC)
+									revalidateCollection(SPARES_PURCHASE_ORDERS);
+								})
 
 								sendNotifications(
 									[SUPER_ADMIN_ROLE, PURCHASING_ASSISTANT_ROLE, ACCOUNT_ASSISTANT_ROLE, GENERAL_MANAGER_ROLE, HEAD_OF_PROCUREMENT_ROLE],
@@ -172,6 +221,8 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 							}, (error) => {
 								console.error(error);
 							})
+
+							refreshContext?.refreshList(SPARES_PURCHASE_ORDERS);
 							break;
 					}
 				}}
@@ -191,11 +242,11 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 								{
 									totalAmount < 5000
 										?
-										<RegularButton text={"Approve"} operation={() => { setModalOpen(true); setAction("approve"); }} />
+										<RegularButton text={"Approve"} loading={loading} operation={() => { setModalOpen(true); setAction("approve"); }} />
 										:
-										<RegularButton text={"Verify"} operation={() => { setModalOpen(true); setAction("verify"); }} />
+										<RegularButton text={"Verify"} loading={loading} operation={() => { setModalOpen(true); setAction("verify"); }} />
 								}
-								<RegularButton type="secondary" text="Reject" operation={() => { setStatus(REJECTING); setPrevStatus(status); }} />
+								<RegularButton type="secondary" loading={loading} text="Reject" operation={() => { setStatus(REJECTING); setPrevStatus(status); }} />
 							</View>
 						)
 						:
@@ -206,7 +257,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 		)
 
 	} else if (status == APPROVED) {
-		setModal(`Purchase Order “${display_id}” has been submitted to GM`);
+		setModal(`Purchase Order “${display_id}” has been submitted to ${totalAmount < 5000 ? "HP" : "GM"}`);
 		bottom = (
 			<View>
 				{
@@ -252,6 +303,12 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 					buttonText="Upload Invoice"
 					path={SPARES_PURCHASE_ORDERS}
 					updateDoc={(filename, filename_storage_output) => {
+						if (filename == "") {
+							setInvFileUploaded(false);
+						} else {
+							setInvFileUploaded(true);
+						}
+
 						updateSparesPurchaseOrder(nav_id, { invFile: filename, filename_storage_inv: filename_storage_output }, user!, UPDATE_ACTION, () => {
 							revalidateDocument(`${SPARES_PURCHASE_ORDERS}/${nav_id}`)
 						}, (error) => {
@@ -261,7 +318,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 					setUploaded={setUploadedINV}
 				/>
 				<View style={tailwind("mb-4")} />
-				<RegularButton text="Submit" type={uploadedDO ? "primary" : "disabled"} operation={() => {
+				<RegularButton text="Submit" loading={loading} type={uploadedDO ? "primary" : "disabled"} operation={() => {
 					if (!doFileNo) {
 						setDoFileError(doFileNo ? "" : "Required");
 					} else if (uploadedINV && !invFileNo) {
@@ -282,8 +339,8 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 					permissions?.includes(FINAL_REVIEW_SPARES_PURCHASE_ORDER)
 						?
 						<View>
-							<RegularButton text="Approve" operation={() => { setModalOpen(true); setAction("approve"); }} />
-							<RegularButton type="secondary" text="Reject" operation={() => { setStatus(REJECTING); setPrevStatus(status); }} />
+							<RegularButton text="Approve" loading={loading} operation={() => { setModalOpen(true); setAction("approve"); }} />
+							<RegularButton type="secondary" loading={loading} text="Reject" operation={() => { setStatus(REJECTING); setPrevStatus(status); }} />
 						</View>
 						:
 						<RegularButton text="Download" operation={() => { onDownload(); }} />
@@ -333,7 +390,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 								{
 									totalAmount < 5000
 										?
-										<RegularButton text={"Approve"} operation={() => {
+										<RegularButton text={"Approve"} loading={loading} operation={() => {
 											if (invUploaded) {
 												setLoading(true);
 												if (Platform.OS == "web") {
@@ -367,7 +424,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 											}
 										}} />
 										:
-										<RegularButton text={"Verify"} operation={() => {
+										<RegularButton text={"Verify"} loading={loading} operation={() => {
 											if (invUploaded) {
 												setLoading(true);
 												if (Platform.OS == "web") {
@@ -402,7 +459,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 
 										}} />
 								}
-								<RegularButton type="secondary" text="Reject" operation={() => { setStatus(REJECTING); setPrevStatus(status); }} />
+								<RegularButton type="secondary" loading={loading} text="Reject" operation={() => { setStatus(REJECTING); setPrevStatus(status); }} />
 							</View>
 						)
 						:
@@ -449,7 +506,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 					permissions?.includes(FINAL_REVIEW_SPARES_PURCHASE_ORDER)
 						?
 						<View>
-							<RegularButton text="Approve" operation={() => {
+							<RegularButton text="Approve" loading={loading} operation={() => {
 								if (invUploaded) {
 									setLoading(true);
 									if (Platform.OS == "web") {
@@ -482,7 +539,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 									setAction("approveFinal");
 								}
 							}} />
-							<RegularButton type="secondary" text="Reject" operation={() => { setStatus(REJECTING); setPrevStatus(status); }} />
+							<RegularButton type="secondary" loading={loading} text="Reject" operation={() => { setStatus(REJECTING); setPrevStatus(status); }} />
 						</View>
 						:
 						<RegularButton text="Download" operation={() => { onDownload(); }} />
@@ -500,8 +557,8 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 					multiline={true}
 				/>
 
-				<RegularButton text="Submit" operation={() => { setAction("reject"), setModalOpen(true) }} />
-				<RegularButton text="Cancel" type="secondary" operation={() => { setStatus(prevStatus); setRejectNotes(""); }} />
+				<RegularButton text="Submit" loading={loading} operation={() => { setAction("reject"), setModalOpen(true) }} />
+				<RegularButton text="Cancel" loading={loading} type="secondary" operation={() => { setStatus(prevStatus); setRejectNotes(""); }} />
 			</View>
 		)
 	} else if (status == REJECTED) {
@@ -572,6 +629,7 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 									<View>
 										<RegularButton type={invFile || invUploaded ? "secondary" : "disabled"} text="Create Purchase Voucher" operation={() => {
 											if (invFile && invNo) {
+												console.log("hit");
 												navigation.navigate("CreateSparesPurchaseVoucherForm", { docID: nav_id })
 											} else {
 												if (!invFileNo && !invNo) {

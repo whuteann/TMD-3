@@ -20,6 +20,8 @@ import StatusModal from '../../../components/atoms/modal/StatusModal';
 import { revalidateCollection } from '@nandorojo/swr-firestore';
 import { SUPPLIERS } from '../../../constants/Firebase';
 import { WarningIcon } from '../../../../assets/svg/SVG';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { actionDelay } from '../../../helpers/GenericHelper';
 
 const SupplierListScreen = ({ navigation }: RootNavigationProps<"SupplierList">) => {
   const [search, setSearch] = useState('');
@@ -33,6 +35,18 @@ const SupplierListScreen = ({ navigation }: RootNavigationProps<"SupplierList">)
   const [cursor, setCursor] = useState<number | undefined>(undefined);
   const [isPaginating, setIsPaginating] = useState<boolean>(false);
   const LIMIT = 20;
+
+  const refreshContext = useRefreshContext();
+
+  useEffect(() => {
+    if (refreshContext?.toRefresh == SUPPLIERS) {
+      setSearch("item: null, item: null, item: null");
+      AlgoliaHelper.clearCache();
+      setTimeout(() => {
+        setSearch("");
+      }, actionDelay);
+    }
+  }, [refreshContext?.refresh])
 
   useEffect(() => {
     getData()

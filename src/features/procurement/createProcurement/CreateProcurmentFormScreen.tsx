@@ -28,6 +28,8 @@ import { CurrenciesList } from '../../../constants/Currency';
 import { DeliveryModes } from '../../../types/DeliveryModes';
 import { sendNotifications } from '../../../services/NotificationServices';
 import { MARKETING_EXECUTIVE_ROLE, SUPER_ADMIN_ROLE } from '../../../types/Common';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { loadingDelay } from '../../../helpers/GenericHelper';
 
 const formSchema = Yup.object().shape({
   procurement_date: Yup.string().required("Required"),
@@ -64,6 +66,7 @@ const CreateProcurementFormScreen = ({ navigation }: RootNavigationProps<"Create
   const [openCreateProduct, setOpenCreateProduct] = useState(false);
   const [loading, setLoading] = useState(false);
   const user = useSelector(UserSelector);
+  const refreshContext = useRefreshContext();
 
   const { data: suppliers } = useCollection<Supplier>(`${SUPPLIERS}`, {
     ignoreFirestoreDocumentSnapshotField: false,
@@ -118,20 +121,26 @@ const CreateProcurementFormScreen = ({ navigation }: RootNavigationProps<"Create
             }
 
             setLoading(true);
-            createProcurement({ ...values, supplier: supplier_data, product: product_data, total_amount: `${(Number(values.unit_price) * Number(values.quantity)).toFixed(2)}` }, user!, (val) => {
-              const { displayID, newID } = val;
-              navigation.navigate("ViewAllProcurement");
-              setLoading(false);
-              revalidateCollection(PROCUREMENTS);
 
-              sendNotifications(
-                [SUPER_ADMIN_ROLE, MARKETING_EXECUTIVE_ROLE],
-                `New procurement ${displayID} submitted by ${user?.name}.`,
-                { screen: "ViewProcurementSummary", docID: newID });
+            createProcurement({ ...values, supplier: supplier_data, product: product_data, total_amount: `${(Number(values.unit_price) * Number(values.quantity)).toFixed(2)}` }, user!
+              , (val) => {
+                const { displayID, newID } = val;
 
-            }, (error) => {
-              console.error(error);
-            });
+                loadingDelay(() => {
+                  navigation.navigate("ViewAllProcurement");
+                  setLoading(false);
+                  revalidateCollection(PROCUREMENTS);
+                })
+
+                sendNotifications(
+                  [SUPER_ADMIN_ROLE, MARKETING_EXECUTIVE_ROLE],
+                  `New procurement ${displayID} submitted by ${user?.name}.`,
+                  { screen: "ViewProcurementSummary", docID: newID });
+
+                refreshContext?.refreshList(PROCUREMENTS);
+              }, (error) => {
+                console.error(error);
+              });
           }}
         validationSchema={formSchema}
       >

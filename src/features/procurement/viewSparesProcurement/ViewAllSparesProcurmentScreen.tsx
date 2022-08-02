@@ -20,6 +20,9 @@ import SearchBar from '../../../components/atoms/input/searchbar/SearchBar';
 import { cloneDeep } from 'lodash';
 import * as AlgoliaHelper from "../../../helpers/AlgoliaHelper";
 import { APPROVED, DRAFT, IN_REVIEW, PENDING, REJECTED, REJECTING, SUBMITTED } from '../../../types/Common';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { SPARES_PROCUREMENTS } from '../../../constants/Firebase';
+import { actionDelay } from '../../../helpers/GenericHelper';
 
 const ViewAllSparesProcurementSearchScreen = ({ navigation }: RootNavigationProps<"ViewAllSparesProcurement">) => {
 
@@ -36,6 +39,29 @@ const ViewAllSparesProcurementSearchScreen = ({ navigation }: RootNavigationProp
 	const tailwind = useTailwind();
 	const dispatch = useDispatch();
 	const LIMIT = 20;
+
+	const refreshContext = useRefreshContext();
+
+	useEffect(() => {
+		if (refreshContext?.toRefresh == SPARES_PROCUREMENTS) {
+
+			AlgoliaHelper.clearCache();
+			let filters = "";
+
+			setFilterString("item: null");
+
+			setTimeout(() => {
+				[IN_REVIEW, DRAFT, APPROVED, REJECTED, PENDING, SUBMITTED].map((status, index) => {
+					if (index == 0) {
+						filters = `status:'${status}'`;
+					} else {
+						filters = filters + `OR status:'${status}'`;
+					}
+				});
+				setFilterString(filters);
+			}, actionDelay);
+		}
+	}, [refreshContext?.refresh])
 
 	useEffect(() => {
 		if (filterBy == "") {
@@ -207,7 +233,7 @@ const ViewAllSparesProcurementSearchScreen = ({ navigation }: RootNavigationProp
 								?
 								<SearchIcon width={25} height={25} />
 								:
-								<View style={tailwind('mx-2 mb-3')}>
+								<View style={tailwind('mx-2 mb-5')}>
 									<XSimpleIcon width={25} height={25} />
 								</View>
 						}

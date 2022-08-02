@@ -23,6 +23,8 @@ import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
 import { UPDATE_ACTION } from '../../../constants/Action';
 import LoadingData from '../../../components/atoms/loading/loadingData';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { loadingDelay } from '../../../helpers/GenericHelper';
 
 
 const formSchema = Yup.object().shape({
@@ -53,6 +55,7 @@ const SupplierFormScreen = ({ navigation, route }: RootNavigationProps<"CreateSu
   const [modalVisible, setModalVisible] = useState(false);
   const user = useSelector(UserSelector);
   const tailwind = useTailwind();
+  const refreshContext = useRefreshContext();
 
   const { data: supplier } = useDocument<Supplier>(`${SUPPLIERS}/${docID}`, {
     revalidateOnFocus: true
@@ -98,7 +101,13 @@ const SupplierFormScreen = ({ navigation, route }: RootNavigationProps<"CreateSu
 
   const onCloseModal = () => {
     setModalVisible(false);
-    navigation.navigate("SupplierList");
+    setLoading(true);
+    loadingDelay(() => {
+      setLoading(false);
+      navigation.navigate("SupplierList");
+    })
+
+    refreshContext?.refreshList(SUPPLIERS);
   }
 
   if (!supplier) {
@@ -231,7 +240,7 @@ const SupplierFormScreen = ({ navigation, route }: RootNavigationProps<"CreateSu
                 <FormDropdownInputField
                   label="Status"
                   value={values.status}
-                  items={["Active", "In-Active"]}
+                  items={["Active", "Inactive"]}
                   onChangeValue={(val) => { setFieldValue("status", val) }}
                   required={true}
                   hasError={errors.status && touched.status ? true : false}
@@ -244,6 +253,7 @@ const SupplierFormScreen = ({ navigation, route }: RootNavigationProps<"CreateSu
               <RegularButton
                 type="secondary"
                 text="Cancel"
+                loading={loading}
                 operation={() => { navigation.navigate("SupplierList") }} />
 
               <RegularButton

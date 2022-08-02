@@ -7,6 +7,8 @@ export type User = {
 	email: string,
 	name?: string
 	role?: UserRole,
+	remember_me?: boolean,
+	last_login?: any,
 	permission?: string[],
 	expoTokens?: string[],
 	joinedAt?: string,

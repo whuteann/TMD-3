@@ -43,10 +43,10 @@ const UserProvider = ({ children }: UserProviderProps) => {
 
   const sessionChanged = async () => {
     updateState(AUTH_LOADING);
+    const current_time = new Date;
 
     if (isSessionAlive === true) {
       let _user = user;
-      let _token = token;
 
       if (Validate.isEmpty(_user)) {
         getUserDetail(session.uid, (user: User) => {
@@ -54,6 +54,12 @@ const UserProvider = ({ children }: UserProviderProps) => {
 
           if (Validate.isEmpty(_user)) {
             return logout();
+          }
+
+          if (!_user.remember_me) {
+            if (current_time.getTime() > (_user.last_login?.toDate().getTime() + (24 * 60 * 60 * 1000))) {
+              return logout();
+            }
           }
 
           login(_user!);
@@ -78,7 +84,6 @@ const UserProvider = ({ children }: UserProviderProps) => {
 
   const logout = useCallback(async () => {
     await clearSession();
-
     updateState(AUTH_LOGGED_OUT);
   }, [clearSession]);
 

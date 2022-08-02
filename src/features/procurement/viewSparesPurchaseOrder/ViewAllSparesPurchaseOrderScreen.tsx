@@ -21,6 +21,9 @@ import SearchBar from '../../../components/atoms/input/searchbar/SearchBar';
 import { cloneDeep } from 'lodash';
 import * as AlgoliaHelper from "../../../helpers/AlgoliaHelper";
 import { APPROVED, APPROVED_DOC, DOC_SUBMITTED, DRAFT, IN_REVIEW, NO_PURCHASE_VOUCHER, PV_ISSUED, PV_PENDING, REJECTED, VERIFIED, VERIFIED_DOC } from '../../../types/Common';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { SPARES_PURCHASE_ORDERS } from '../../../constants/Firebase';
+import { actionDelay } from '../../../helpers/GenericHelper';
 
 const ViewAllSparesPurchaseOrderScreen = ({ navigation }: RootNavigationProps<"ViewPurchaseOrderSummary">) => {
 	const [filterBy, setFilterBy] = useState<string>("");
@@ -36,6 +39,29 @@ const ViewAllSparesPurchaseOrderScreen = ({ navigation }: RootNavigationProps<"V
 	const tailwind = useTailwind();
 	const dispatch = useDispatch();
 	const LIMIT = 20;
+
+	const refreshContext = useRefreshContext();
+
+	useEffect(() => {
+		if (refreshContext?.toRefresh == SPARES_PURCHASE_ORDERS) {
+
+			AlgoliaHelper.clearCache();
+			let filters = "";
+
+			setFilterString("item: null");
+
+			setTimeout(() => {
+				[IN_REVIEW,  DRAFT,  APPROVED,  REJECTED, VERIFIED,  DOC_SUBMITTED,  VERIFIED_DOC,  APPROVED_DOC,  NO_PURCHASE_VOUCHER,  PV_ISSUED,  PV_PENDING].map((status, index) => {
+					if (index == 0) {
+						filters = `status:'${status}'`;
+					} else {
+						filters = filters + `OR status:'${status}'`;
+					}
+				});
+				setFilterString(filters);
+			}, actionDelay);
+		}
+	}, [refreshContext?.refresh])
 
 	useEffect(() => {
 		if (filterBy == "") {
@@ -207,7 +233,7 @@ const ViewAllSparesPurchaseOrderScreen = ({ navigation }: RootNavigationProps<"V
 								?
 								<SearchIcon width={25} height={25} />
 								:
-								<View style={tailwind('mx-2 mb-3')}>
+								<View style={tailwind('mx-2 mb-5')}>
 									<XSimpleIcon width={25} height={25} />
 								</View>
 						}

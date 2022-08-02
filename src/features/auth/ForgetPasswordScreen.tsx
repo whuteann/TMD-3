@@ -34,9 +34,7 @@ const ForgetPasswordScreen = ({ navigation }: AuthNavigationProps<"ForgetPasswor
       })
       .catch((error) => {
         console.error(error.code);
-        if (error.code == "auth/user-not-found") {
-          setError("User does not exist");
-        }
+        
         switch (error.code) {
           case "auth/user-not-found":
             setError("User does not exist");

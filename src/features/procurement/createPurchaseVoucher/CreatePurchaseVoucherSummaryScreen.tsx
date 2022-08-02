@@ -24,6 +24,8 @@ import { UserSelector } from '../../../redux/reducers/Auth';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { convertCurrency } from '../../../constants/Currency';
 import { sendNotifications } from '../../../services/NotificationServices';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { loadingDelay } from '../../../helpers/GenericHelper';
 
 
 const CreatePurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavigationProps<"CreatePurchaseVoucherSummary">) => {
@@ -36,6 +38,8 @@ const CreatePurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavigatio
 	let displayID = "";
 	let revisedCode;
 	const allowedStatuses = [DRAFT, REJECTED];
+	const [loading, setLoading] = useState(false);
+	const refreshContext = useRefreshContext();
 
 	const { data } = useDocument<PurchaseVoucher>(`${PURCHASE_VOUCHERS}/${docID}`, {
 		ignoreFirestoreDocumentSnapshotField: false,
@@ -62,6 +66,8 @@ const CreatePurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavigatio
 			visible={modalOpen}
 			setModalClose={() => { setModalOpen(false) }}
 			nextAction={() => {
+				setLoading(true);
+				
 				confirmPurchaseVoucher(data.purchase_order_id, data.id, displayID, revisedCode, user!, () => {
 
 					sendNotifications(
@@ -73,9 +79,14 @@ const CreatePurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavigatio
 							`Purchase voucher ${data.display_id} submitted for approval by ${user?.name}.`,
 						{ screen: "ViewPurchaseVoucherSummary", docID: docID });
 
-					revalidateCollection(PURCHASE_ORDERS);
-					revalidateCollection(PURCHASE_VOUCHERS);
-					navigation.navigate("Dashboard");
+						loadingDelay(()=>{
+							revalidateCollection(PURCHASE_ORDERS);
+							revalidateCollection(PURCHASE_VOUCHERS);
+							navigation.navigate("Dashboard");
+							setLoading(false);
+						})
+					
+						refreshContext?.refreshList(PURCHASE_VOUCHERS);
 				}, () => {
 					console.error("error");
 				});
@@ -133,8 +144,8 @@ const CreatePurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavigatio
 
 
 				<View style={tailwind("mt-7")}>
-					<RegularButton text="Submit" operation={() => { setModalOpen(true) }} />
-					<RegularButton text="Cancel" type="secondary" operation={() => { navigation.navigate("Dashboard") }} />
+					<RegularButton text="Submit" loading={loading} operation={() => { setModalOpen(true) }} />
+					<RegularButton text="Cancel" loading={loading} type="secondary" operation={() => { navigation.navigate("Dashboard") }} />
 				</View>
 			</View>
 		</Body>

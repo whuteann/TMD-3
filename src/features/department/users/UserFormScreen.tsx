@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RootNavigationProps } from '../../../navigations/NavigationProps/NavigationProps';
 import HeaderStack from '../../../components/atoms/display/HeaderStack';
 import TextLabel from '../../../components/atoms/typography/TextLabel';
@@ -17,8 +17,8 @@ import { useTailwind } from 'tailwind-rn/dist';
 import FormTextInputField from '../../../components/molecules/input/FormTextInputField';
 import FormDropdownInputField from '../../../components/molecules/input/FormDropdownInputField';
 import { View } from 'react-native';
-import { useSelector } from 'react-redux';
-import { UserSelector } from '../../../redux/reducers/Auth';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser, UserSelector } from '../../../redux/reducers/Auth';
 import AddNewButton from '../../../components/molecules/buttons/AddNewButton';
 import ContactNumberInput from '../../../components/templates/departments/users/ContactNumberInput';
 import { CREATE_USER } from '../../../permissions/Permissions';
@@ -35,9 +35,9 @@ const UserFormScreen = ({ navigation, route }: RootNavigationProps<"CreateUser" 
   const [error, setError] = useState("");
   const [isDelete, setDelete] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [editable, ssetEditable] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const currentUser = useSelector(UserSelector);
-
   const tailwind = useTailwind();
 
   const { data: user } = useDocument<User>(`${USERS}/${docID}`);
@@ -91,7 +91,7 @@ const UserFormScreen = ({ navigation, route }: RootNavigationProps<"CreateUser" 
   }
 
   return (
-    <Body header={<HeaderStack title={`${docID ? "Edit": "Create new"} employee profile`} navigateProp={navigation} />} style={tailwind("mt-6")}>
+    <Body header={<HeaderStack title={`${docID ? "Edit" : "Create new"} employee profile`} navigateProp={navigation} />} style={tailwind("mt-6")}>
       <Formik
         initialValues={{
           name: user?.name || '',
@@ -121,7 +121,7 @@ const UserFormScreen = ({ navigation, route }: RootNavigationProps<"CreateUser" 
               required={true}
               hasError={errors.role && touched.role ? true : false}
               errorMessage={errors.role}
-              editable={user?.id == currentUser?.id || currentUser?.permission?.includes(CREATE_USER) ? true : false} />
+              editable={currentUser?.permission?.includes(CREATE_USER) ? true : false} />
 
             <FormTextInputField
               label="Email"

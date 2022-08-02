@@ -19,9 +19,9 @@ export const ImportPermissions = (roles: Array<string>, permissions: Array<strin
 
 
     batch.commit().then(() => {
-      console.log("done");
+      //its done
     }).catch(err => {
-      console.log(err)
+      console.error(err)
     });
 
   })

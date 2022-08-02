@@ -60,13 +60,10 @@ const DropdownField: React.FC<inputProps> = ({
             ?
             <Dropdown
               style={tailwind(`h-12 pl-5 pr-2 rounded-md bg-white ${shadow ? 'border-0 box-card-shadow' : 'border border-gray-secondary'} ${hasError ? 'border border-red-500' : ''}`)}
-              // placeholderStyle={styles.placeholderStyle}
-              // selectedTextStyle={styles.selectedTextStyle}
-              // inputSearchStyle={styles.inputSearchStyle}
-              // iconStyle={styles.iconStyle}
               renderRightIcon={()=><ArrowDownIcon height={20} width={20}/>}
               data={dropdownItems}
               maxHeight={300}
+              disable={!editable}
               labelField="label"
               valueField="value"
               placeholder={placeholder}

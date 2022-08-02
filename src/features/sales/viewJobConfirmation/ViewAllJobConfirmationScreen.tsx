@@ -20,6 +20,9 @@ import { getListStyle } from '../../../constants/Style';
 import SearchBar from '../../../components/atoms/input/searchbar/SearchBar';
 import { cloneDeep } from 'lodash';
 import * as AlgoliaHelper from "../../../helpers/AlgoliaHelper";
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { INVOICES } from '../../../constants/Firebase';
+import { actionDelay } from '../../../helpers/GenericHelper';
 
 const ViewAllJobConfirmationScreen = ({ navigation }: RootNavigationProps<"ViewAllJobConfirmation">) => {
 	const [filterBy, setFilterBy] = useState<string>("");
@@ -35,6 +38,29 @@ const ViewAllJobConfirmationScreen = ({ navigation }: RootNavigationProps<"ViewA
 	const tailwind = useTailwind();
 	const dispatch = useDispatch();
 	const LIMIT = 20;
+
+	const refreshContext = useRefreshContext();
+
+	useEffect(() => {
+		if (refreshContext?.toRefresh == INVOICES) {
+
+			AlgoliaHelper.clearCache();
+			let filters = "";
+
+			setFilterString("item: null");
+
+			setTimeout(() => {
+				[NO_INVOICE, ISSUED_INV].map((status, index) => {
+					if (index == 0) {
+						filters = `status:'${status}'`;
+					} else {
+						filters = filters + `OR status:'${status}'`;
+					}
+				});
+				setFilterString(filters);
+			}, actionDelay);
+		}
+	}, [refreshContext?.refresh])
 
 	useEffect(() => {
 		if (filterBy == "") {
@@ -207,7 +233,7 @@ const ViewAllJobConfirmationScreen = ({ navigation }: RootNavigationProps<"ViewA
 								?
 								<SearchIcon width={25} height={25} />
 								:
-								<View style={tailwind('mx-2 mb-3')}>
+								<View style={tailwind('mx-2 mb-5')}>
 									<XSimpleIcon width={25} height={25} />
 								</View>
 						}

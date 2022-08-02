@@ -6,7 +6,9 @@ import { useSelector } from 'react-redux';
 import { TickIcon } from '../../../../../assets/svg/SVG';
 import { INVOICES } from '../../../../constants/Firebase';
 import { createAndDisplayPDF, loadPDFLogo } from '../../../../functions/PDFv2Functions';
+import { loadingDelay } from '../../../../helpers/GenericHelper';
 import { REVIEW_INVOICE } from '../../../../permissions/Permissions';
+import { useRefreshContext } from '../../../../providers/RefreshProvider';
 import { UserSelector } from '../../../../redux/reducers/Auth';
 import { approveInvoice, rejectInvoice } from '../../../../services/InvoiceServices';
 import { updateJobConfirmation } from '../../../../services/JobConfirmationServices';
@@ -41,9 +43,11 @@ const ViewInvoiceButtons: React.FC<Props> = ({
 }) => {
 	const [modalOpen, setModalOpen] = useState(false);
 	const [approve, setApprove] = useState("");
+	const [loading, setLoading] = useState(false);
 	const user = useSelector(UserSelector);
 	const permissions = user?.permission;
 	const [rejectNotes, setRejectNotes] = useState("");
+	const refreshContext = useRefreshContext();
 	let modal;
 	let buttons;
 
@@ -65,30 +69,57 @@ const ViewInvoiceButtons: React.FC<Props> = ({
 			visible={modalOpen}
 			setModalClose={() => { setModalOpen(false) }}
 			nextAction={() => {
+
+				setLoading(true);
+
 				switch (approve) {
 					case "approve":
 						approveInvoice(docID, user!, (error) => { console.error(error); });
-						revalidateCollection(INVOICES);
-						updateJobConfirmation(job_confirmation_id, { invoice_status: "Approved" }, user!, () => { linkTo("/invoices") }, (error) => { console.error(error); });
-						setStatus("Approved");
+						updateJobConfirmation(
+							job_confirmation_id,
+							{ invoice_status: "Approved" },
+							user!,
+							() => {
+								loadingDelay(() => {
+									linkTo("/invoices");
+									setStatus("Approve");
+									revalidateCollection(INVOICES);
+									setLoading(false);
+								});
+							},
+							(error) => { console.error(error); });
 
 						sendNotifications(
 							[SUPER_ADMIN_ROLE, ACCOUNT_ASSISTANT_ROLE],
-							`Invoive ${display_id} has been approved by ${user?.name}.`,
+							`Invoice ${display_id} has been approved by ${user?.name}.`,
 							{ screen: "ViewInvoiceSummary", docID: docID });
+
+						refreshContext?.refreshList(INVOICES);
 						break;
 					case "reject":
 						rejectInvoice(docID, rejectNotes, user!, (error) => { console.error(error); });
-						revalidateCollection(INVOICES);
-						updateJobConfirmation(job_confirmation_id, { invoice_status: "Rejected", reject_notes: rejectNotes }, user!, () => { linkTo("/invoices") }, (error) => { console.error(error); });
-						setStatus("Rejected");
+						updateJobConfirmation(job_confirmation_id,
+							{ invoice_status: "Rejected", reject_notes: rejectNotes },
+							user!,
+							() => {
+								loadingDelay(() => {
+									linkTo("/invoices");
+									setStatus("Rejected");
+									revalidateCollection(INVOICES);
+									setLoading(false);
+								});
+
+							},
+							(error) => { console.error(error); });
+
 
 						sendNotifications(
 							[SUPER_ADMIN_ROLE, ACCOUNT_ASSISTANT_ROLE],
-							`Invoive ${display_id} has been rejected by ${user?.name}.`,
+							`Invoice ${display_id} has been rejected by ${user?.name}.`,
 							{ screen: "ViewInvoiceSummary", docID: docID });
-						break;
-					case "archive":
+
+
+						refreshContext?.refreshList(INVOICES);
 						break;
 				}
 			}
@@ -101,8 +132,8 @@ const ViewInvoiceButtons: React.FC<Props> = ({
 		if (permissions?.includes(REVIEW_INVOICE)) {
 			buttons = (
 				<View>
-					<RegularButton text="Approve" operation={() => { ApprovalAction("approve", (action) => setApprove(action), (open) => setModalOpen(open)) }} />
-					<RegularButton type="secondary" text="Reject" operation={() => { setStatus("Rejecting") }} />
+					<RegularButton text="Approve" loading={loading} operation={() => { ApprovalAction("approve", (action) => setApprove(action), (open) => setModalOpen(open)) }} />
+					<RegularButton type="secondary" loading={loading} text="Reject" operation={() => { setStatus("Rejecting") }} />
 				</View>
 			)
 		} else {
@@ -128,8 +159,8 @@ const ViewInvoiceButtons: React.FC<Props> = ({
 		buttons = (
 			<View>
 				<FormTextInputField label={"Reject Notes"} value={rejectNotes} multiline={true} onChangeValue={(val) => setRejectNotes(val)} />
-				<RegularButton text="Submit" operation={() => { ApprovalAction("reject", setApprove, setModalOpen) }} />
-				<RegularButton text="Cancel" type="secondary" operation={() => { setStatus("In Review") }} />
+				<RegularButton text="Submit" loading={loading} operation={() => { ApprovalAction("reject", setApprove, setModalOpen) }} />
+				<RegularButton text="Cancel" loading={loading} type="secondary" operation={() => { setStatus("In Review") }} />
 			</View>
 		)
 	} else {

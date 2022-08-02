@@ -20,11 +20,13 @@ import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../../redux/reducers/Auth';
 import { ARCHIVE_QUOTATION, CREATE_QUOTATION, REVIEW_QUOTATION } from '../../../../permissions/Permissions';
 import { UPDATE_ACTION } from '../../../../constants/Action';
-import { APPROVED, ARCHIVED, DRAFT, HEAD_OF_MARKETING_ROLE, MARKETING_EXECUTIVE_ROLE, REJECTED, REJECTING, SUPER_ADMIN_ROLE } from '../../../../types/Common';
+import { APPROVED, ARCHIVED, DRAFT, HEAD_OF_MARKETING_ROLE, IN_REVIEW, MARKETING_EXECUTIVE_ROLE, REJECTED, REJECTING, SUPER_ADMIN_ROLE } from '../../../../types/Common';
 import { updateJobConfirmation } from '../../../../services/JobConfirmationServices';
 import { RFQ } from '../../../../types/RFQ';
 import { User } from '../../../../types/User';
 import { sendNotifications } from '../../../../services/NotificationServices';
+import { useRefreshContext } from '../../../../providers/RefreshProvider';
+import { loadingDelay } from '../../../../helpers/GenericHelper';
 
 interface Props {
 	docID: string,
@@ -81,6 +83,8 @@ const ViewQuotationButtons: React.FC<Props> = ({
 	const user = useSelector(UserSelector);
 	const permissions = user?.permission;
 
+	const refreshContext = useRefreshContext();
+
 	const changeStatus = (newStatus: string) => {
 		setPrevStatus(status);
 		setStatus(newStatus);
@@ -95,7 +99,7 @@ const ViewQuotationButtons: React.FC<Props> = ({
 	let modal;
 	let buttons;
 
-	if (status == "archive" || status == "In Review" || status == "Rejecting") {
+	if (status == "archive" || status == IN_REVIEW || status == "Rejecting") {
 		modal = (
 			<ConfirmModal
 				cancelAction={() => { setModalOpen(false) }}
@@ -108,24 +112,29 @@ const ViewQuotationButtons: React.FC<Props> = ({
 				visible={modalOpen}
 				setModalClose={() => { setModalOpen(false) }}
 				nextAction={() => {
+					setLoading(true);
+
 					switch (action) {
 						case "approve":
 							approveQuotation(
 								docID,
 								user!,
 								() => {
-									navigation.navigate("ViewAllQuotation");
-
 									sendNotifications(
 										[SUPER_ADMIN_ROLE, MARKETING_EXECUTIVE_ROLE],
 										`Quotation ${displayID} has been approved by ${user?.name}.`,
 										{ screen: "ViewQuotationSummary", docID: docID });
 
-									revalidateCollection(QUOTATIONS);
+									loadingDelay(() => {
+										navigation.navigate("ViewAllQuotation");
+										setStatus("Approved");
+										revalidateCollection(QUOTATIONS);
+									});									
 								}, (error) => {
 									console.error(error);
 								});
-							setStatus("Approved");
+
+							refreshContext?.refreshList(QUOTATIONS);
 							break;
 						case "reject":
 							rejectQuotation(
@@ -133,41 +142,55 @@ const ViewQuotationButtons: React.FC<Props> = ({
 								rejectNotes,
 								user!,
 								() => {
-									navigation.navigate("ViewAllQuotation");
+
 
 									sendNotifications(
 										[SUPER_ADMIN_ROLE, MARKETING_EXECUTIVE_ROLE],
 										`Quotation ${displayID} has been rejected by ${user?.name}.`,
 										{ screen: "ViewQuotationSummary", docID: docID });
 
-									revalidateCollection(QUOTATIONS);
+
+									loadingDelay(() => {
+										setLoading(false);
+										navigation.navigate("ViewAllQuotation");
+										setStatus("Rejected");
+										revalidateCollection(QUOTATIONS);
+										setRejectNotes("");
+									});
+
 								}, (error) => {
 									console.error(error)
 								});
-							setStatus("Rejected");
-							setRejectReason("1. Pricing Issue");
-							setRejectNotes("");
+
+							refreshContext?.refreshList(QUOTATIONS);
 							break;
 						case "archive":
-							if(rejectReason){
+							if (rejectReason) {
 								setRejectReasonError(false);
 								archiveQuotation(
 									docID,
 									rejectReason,
 									rejectNotes,
 									user!, () => {
-										navigation.navigate("ViewAllQuotation");
-	
+
+
 										sendNotifications(
 											[SUPER_ADMIN_ROLE, HEAD_OF_MARKETING_ROLE],
 											`Quotation ${displayID} has been archived by ${user?.name}.`,
 											{ screen: "ViewQuotationSummary", docID: docID });
-	
+
+										loadingDelay(() => {
+											navigation.navigate("ViewAllQuotation");
+											setLoading(false);
+										})
+
 										revalidateCollection(QUOTATIONS);
 									}, (error) => {
 										console.error(error);
 									});
-							}else{
+
+								refreshContext?.refreshList(QUOTATIONS);
+							} else {
 								setModalOpen(false);
 								setRejectReasonError(true);
 							}
@@ -194,15 +217,15 @@ const ViewQuotationButtons: React.FC<Props> = ({
 			</View>
 		);
 
-	} else if (status == "In Review") {
+	} else if (status == IN_REVIEW) {
 
 		if (permissions?.includes(REVIEW_QUOTATION)) {
 			buttons = (
 				<View>
 					<View>
-						<RegularButton text="Approve" operation={() => { setAction("approve"), setModalOpen(true) }} />
+						<RegularButton text="Approve" loading={loading} operation={() => { setAction("approve"), setModalOpen(true) }} />
 					</View>
-					<RegularButton type="secondary" text="Reject" operation={() => { setStatus("Rejecting") }} />
+					<RegularButton type="secondary" loading={loading} text="Reject" operation={() => { setStatus("Rejecting") }} />
 				</View>
 			);
 		} else {
@@ -334,8 +357,8 @@ const ViewQuotationButtons: React.FC<Props> = ({
 					onChangeValue={(val) => { setRejectNotes(val) }}
 				/>
 
-				<RegularButton text="Confirm" operation={() => { setAction("archive"), setModalOpen(true) }} />
-				<RegularButton text="Cancel" type="secondary" operation={() => { setStatus(prevStatus); setRejectReason('1. Pricing Issue'); setRejectNotes(""); }} />
+				<RegularButton text="Confirm" loading={loading} operation={() => { setAction("archive"), setModalOpen(true) }} />
+				<RegularButton text="Cancel" loading={loading} type="secondary" operation={() => { setStatus(prevStatus); setRejectReason('1. Pricing Issue'); setRejectNotes(""); }} />
 			</View>
 		);
 
@@ -350,8 +373,8 @@ const ViewQuotationButtons: React.FC<Props> = ({
 					multiline={true}
 				/>
 
-				<RegularButton text="Submit" operation={() => { setAction("reject"), setModalOpen(true) }} />
-				<RegularButton text="Cancel" type="secondary" operation={() => { setStatus("In Review"); setRejectNotes(""); }} />
+				<RegularButton text="Submit" loading={loading} operation={() => { setAction("reject"), setModalOpen(true) }} />
+				<RegularButton text="Cancel" loading={loading} type="secondary" operation={() => { setStatus("In Review"); setRejectNotes(""); }} />
 			</View>
 		);
 

@@ -18,6 +18,9 @@ import SearchBar from '../../../components/atoms/input/searchbar/SearchBar';
 import { cloneDeep } from 'lodash';
 import * as AlgoliaHelper from "../../../helpers/AlgoliaHelper";
 import { Invoice } from '../../../types/Invoice';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { RECEIPTS } from '../../../constants/Firebase';
+import { actionDelay } from '../../../helpers/GenericHelper';
 
 
 const ViewAllReceiptScreen = ({ navigation }: RootNavigationProps<"ViewAllReceipt">) => {
@@ -32,6 +35,19 @@ const ViewAllReceiptScreen = ({ navigation }: RootNavigationProps<"ViewAllReceip
 	const tailwind = useTailwind();
 	const dispatch = useDispatch();
 	const LIMIT = 20;
+
+	const refreshContext = useRefreshContext();
+
+	useEffect(() => {
+		if (refreshContext?.toRefresh == RECEIPTS) {
+
+			AlgoliaHelper.clearCache();
+
+			setTimeout(() => {
+				getData();
+			}, actionDelay);
+		}
+	}, [refreshContext?.refresh])
 
 	useEffect(() => {
 		getData()
@@ -169,7 +185,7 @@ const ViewAllReceiptScreen = ({ navigation }: RootNavigationProps<"ViewAllReceip
 								?
 								<SearchIcon width={25} height={25} />
 								:
-								<View style={tailwind('mx-2 mb-3')}>
+								<View style={tailwind('mx-2 mb-5')}>
 									<XSimpleIcon width={25} height={25} />
 								</View>
 						}

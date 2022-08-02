@@ -135,3 +135,14 @@ export const addQuotationCount = (id: string) => {
     }
   })
 }
+
+export const updateUserLocal = (id: string, data: any, onSuccess: ()=>void) => {
+  userRef
+    .doc(id)
+    .update(data)
+    .then(()=>{
+      onSuccess();
+    })
+}
+
+

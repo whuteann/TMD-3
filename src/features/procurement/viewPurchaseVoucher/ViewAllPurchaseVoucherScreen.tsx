@@ -20,6 +20,9 @@ import { getListStyle } from '../../../constants/Style';
 import SearchBar from '../../../components/atoms/input/searchbar/SearchBar';
 import { cloneDeep } from 'lodash';
 import * as AlgoliaHelper from "../../../helpers/AlgoliaHelper";
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { PURCHASE_VOUCHERS } from '../../../constants/Firebase';
+import { actionDelay } from '../../../helpers/GenericHelper';
 
 const ViewAllPurchaseVoucherScreen = ({ navigation }: RootNavigationProps<"ViewAllPurchaseVoucher">) => {
 
@@ -36,6 +39,29 @@ const ViewAllPurchaseVoucherScreen = ({ navigation }: RootNavigationProps<"ViewA
 	const tailwind = useTailwind();
 	const dispatch = useDispatch();
 	const LIMIT = 20;
+
+	const refreshContext = useRefreshContext();
+
+	useEffect(() => {
+		if (refreshContext?.toRefresh == PURCHASE_VOUCHERS) {
+
+			AlgoliaHelper.clearCache();
+			let filters = "";
+
+			setFilterString("item: null");
+
+			setTimeout(() => {
+				[DRAFT, IN_REVIEW, APPROVED, REJECTED].map((status, index) => {
+					if (index == 0) {
+						filters = `status:'${status}'`;
+					} else {
+						filters = filters + `OR status:'${status}'`;
+					}
+				});
+				setFilterString(filters);
+			}, actionDelay);
+		}
+	}, [refreshContext?.refresh])
 
 	useEffect(() => {
 		if (filterBy == "") {
@@ -208,7 +234,7 @@ const ViewAllPurchaseVoucherScreen = ({ navigation }: RootNavigationProps<"ViewA
 								?
 								<SearchIcon width={25} height={25} />
 								:
-								<View style={tailwind('mx-2 mb-3')}>
+								<View style={tailwind('mx-2 mb-5')}>
 									<XSimpleIcon width={25} height={25} />
 								</View>
 						}

@@ -12,7 +12,7 @@ import HeaderStack from '../../../components/atoms/display/HeaderStack';
 import { View } from 'react-native';
 import RegularButton from '../../../components/atoms/buttons/RegularButton';
 import ViewPageHeaderText from '../../../components/molecules/display/ViewPageHeaderText';
-import { SALES, QUOTATIONS, USERS } from '../../../constants/Firebase';
+import { QUOTATIONS, USERS } from '../../../constants/Firebase';
 import { generateProductDisplay } from '../../../helpers/QuotationHelper';
 import { DRAFT, HEAD_OF_MARKETING_ROLE, IN_REVIEW, REVISED_CODE, SUPER_ADMIN_ROLE } from '../../../types/Common';
 import Unauthorized from '../../../components/atoms/unauthorized/Unauthorized';
@@ -23,6 +23,8 @@ import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { convertCurrency } from '../../../constants/Currency';
 import { sendNotifications } from '../../../services/NotificationServices';
 import { addQuotationCount } from '../../../services/UserServices';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { loadingDelay } from '../../../helpers/GenericHelper';
 
 
 const CreateQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"CreateQuotationSummary">) => {
@@ -32,6 +34,8 @@ const CreateQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps
 	const docID = route.params.docID;
 	const allowedStatuses = [DRAFT];
 	const user = useSelector(UserSelector);
+	const refreshContext = useRefreshContext();
+
 	let displayID = "";
 	let revisedCode: number;
 
@@ -50,7 +54,7 @@ const CreateQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps
 		return <Unauthorized />;
 	}
 
-	const productsDisplayList: Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string, remarks:string }> }> = generateProductDisplay(data.products);
+	const productsDisplayList: Array<{ name: string, unit: string, prices: Array<{ value: string, unit: string, remarks: string }> }> = generateProductDisplay(data.products);
 
 	revisedCode = data.revised_code !== undefined ? Number(data.revised_code) + 1 : 0
 	displayID = `${data.secondary_id}${data.revised_code !== undefined ? REVISED_CODE(revisedCode) : ""}`;
@@ -155,7 +159,7 @@ const CreateQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps
 								setLoading(true);
 
 								updateQuotation(docID, { ...data.__snapshot?.data(), revised_code: revisedCode, display_id: displayID, status: IN_REVIEW }, user!, SUBMIT_ACTION, () => {
-									navigation.navigate("Dashboard");
+									
 
 									sendNotifications(
 										[SUPER_ADMIN_ROLE, HEAD_OF_MARKETING_ROLE],
@@ -166,18 +170,24 @@ const CreateQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps
 											`New quotation ${data.secondary_id} submitted by ${user?.name}. `,
 										{ screen: "ViewQuotationSummary", docID: data.id });
 
+									
+
 									if (revisedCode == 0) {
 										addQuotationCount(user?.id!);
 										revalidateDocument(`${USERS}/${user?.id}`);
 									}
 
-									setLoading(false);
-									revalidateCollection(QUOTATIONS);
-									revalidateCollection(SALES);
+									loadingDelay(()=>{
+										revalidateCollection(QUOTATIONS);
+										navigation.navigate("Dashboard");
+										setLoading(false);
+									});
+									
 								}, (error) => {
 									console.error(error)
 								});
 
+								refreshContext?.refreshList(QUOTATIONS);
 							}
 						}
 						loading={loading} />

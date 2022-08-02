@@ -17,6 +17,9 @@ import LinkText from '../../components/molecules/typography/LinkText';
 import { registerForPushNotification } from '../../services/NotificationServices';
 import { useDispatch } from 'react-redux';
 import { setToken } from '../../redux/reducers/Auth';
+import { userRef } from '../../functions/Firebase';
+import { updateUser, updateUserLocal } from '../../services/UserServices';
+import { User } from '../../types/User';
 
 
 const loginSchema = Yup.object().shape({
@@ -61,6 +64,8 @@ const LoginPage = ({ navigation }: AuthNavigationProps<"Login">) => {
 					dispatch(setToken(token));
 				}).catch(err => console.error(err));
 			}
+
+			updateUserLocal(user.id, {remember_me: values.remember, last_login: new Date},()=>{});
 			// This will be handled by firebase onAuthStateChanged()
 		}, (error) => {
 			console.error(error);

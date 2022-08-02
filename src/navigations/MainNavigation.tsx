@@ -110,7 +110,6 @@ import {
   VIEW_SPARES_PURCHASE_VOUCHER,
   CREATE_SPARES_PURCHASE_VOUCHER
 } from "../permissions/Permissions";
-import { Settings } from "react-native";
 import SettingsScreen from "../features/settings/SettingsScreen";
 
 

@@ -76,3 +76,11 @@ export const getRolePermission = (role: string) => {
 
   return permissions;
 }
+
+export const actionDelay = 5000;
+
+export const loadingDelay = (action: ()=>void) =>{
+  setTimeout(() => {
+    action();
+  }, actionDelay);
+} 

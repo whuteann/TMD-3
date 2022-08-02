@@ -180,7 +180,7 @@ const SalesListScreen = ({ navigation }: RootNavigationProps<"SaleList">) => {
 								?
 								<SearchIcon width={25} height={25} />
 								:
-								<View style={tailwind('mx-2 mb-3')}>
+								<View style={tailwind('mx-2 mb-5')}>
 									<XSimpleIcon width={25} height={25} />
 								</View>
 						}

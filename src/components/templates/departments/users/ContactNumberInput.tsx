@@ -60,7 +60,7 @@ const ContactNumberInput: React.FC<inputProps> = ({
 						editable={editable} />
 				</View>
 				<View style={tailwind(`ml-[2%] flex-row items-center w-[66%]`)}>
-					<View style={tailwind(`${listLength > 1 ? 'w-[89%]' : 'w-full'}`)} >
+					<View style={tailwind(`${listLength > 1 && editable ? 'w-[89%]' : 'w-full'}`)} >
 						<TextInputField 
 							placeholder='018 888 8888' 
 							value={infoLocal.number} 

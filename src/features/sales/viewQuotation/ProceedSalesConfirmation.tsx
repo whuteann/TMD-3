@@ -45,7 +45,7 @@ const ProceedSalesConfirmationScreen = ({ navigation, route }: RootNavigationPro
 
 	const [pickedIndex, setPickedIndex] = useState<number | undefined>(undefined);
 	const [pickedIndexDeliveryMode, setPickedIndexDeliveryMode] = useState<number | undefined>(undefined);
-	const [pickedPrices, setPickedPrices] = useState<Array<{ product: Product, unit: string, quantity: string, price: { value: string, unit: string } }>>([]);
+	const [pickedPrices, setPickedPrices] = useState<Array<{ product: Product, unit: string, quantity: string, price: { value: string, unit: string, remarks:string } }>>([]);
 
 	const { data } = useDocument<Quotation>(`${QUOTATIONS}/${docID}`, {
 		ignoreFirestoreDocumentSnapshotField: false,
@@ -75,7 +75,7 @@ const ProceedSalesConfirmationScreen = ({ navigation, route }: RootNavigationPro
 			{
 				content: (
 					<PortRadioButton index={index} port={item.port} delivery_location={item.delivery_location} />
-				), value: item.port
+				), value: item.delivery_location
 			}
 		)
 	))

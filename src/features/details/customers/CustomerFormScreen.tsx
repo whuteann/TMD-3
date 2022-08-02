@@ -26,6 +26,8 @@ import { UPDATE_ACTION } from '../../../constants/Action';
 import AddButtonText from '../../../components/atoms/buttons/AddButtonText';
 import { CustomerSegmentation } from '../../../types/CustomerSegmentation';
 import AddNewSegmentation from '../../../components/templates/add/AddNewSegmentation';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { loadingDelay } from '../../../helpers/GenericHelper';
 
 const formSchema = Yup.object().shape({
   name: Yup.string().required("Required"),
@@ -54,6 +56,7 @@ const CustomerFormScreen = ({ navigation, route }: RootNavigationProps<"CreateCu
   const [error, setError] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
+  const refreshContext = useRefreshContext();
 
   const tailwind = useTailwind();
 
@@ -83,7 +86,13 @@ const CustomerFormScreen = ({ navigation, route }: RootNavigationProps<"CreateCu
 
   const onCloseModal = () => {
     setModalVisible(false);
-    navigation.navigate("CustomerList");
+    setLoading(true);
+    loadingDelay(() => {
+      setLoading(false);
+      navigation.navigate("CustomerList");
+    })
+
+    refreshContext?.refreshList(CUSTOMERS);
   }
 
   if (!customer || !customer_segmentations) {
@@ -103,10 +112,11 @@ const CustomerFormScreen = ({ navigation, route }: RootNavigationProps<"CreateCu
 
     if (docID) {
       return updateCustomer(docID, customer?.name || '', { ...values, segmentation: customerSegData }, user!, UPDATE_ACTION, () => {
-        setLoading(false);
         setModalVisible(true);
         revalidateCollection(CUSTOMERS);
         resetForm();
+        setLoading(false);
+
       }, (error) => {
         setLoading(false);
         setError(error);
@@ -114,11 +124,9 @@ const CustomerFormScreen = ({ navigation, route }: RootNavigationProps<"CreateCu
     }
 
     return createCustomer({ ...values, segmentation: customerSegData }, user!, () => {
-      setLoading(false);
       setModalVisible(true);
-
       revalidateCollection(CUSTOMERS);
-
+      setLoading(false);
     }, (error) => {
       setLoading(false);
       setError(error);
@@ -274,6 +282,7 @@ const CustomerFormScreen = ({ navigation, route }: RootNavigationProps<"CreateCu
             <View style={tailwind('flex flex-row flex-wrap')}>
               <RegularButton
                 type="secondary"
+                loading={loading}
                 text="Cancel"
                 operation={() => { navigation.navigate("CustomerList") }} />
 
@@ -285,7 +294,7 @@ const CustomerFormScreen = ({ navigation, route }: RootNavigationProps<"CreateCu
               {
                 docID
                   ?
-                  <RegularButton
+                  <RegularButton                  
                     text="Delete"
                     type='secondary'
                     operation={() => { handleDelete() }}

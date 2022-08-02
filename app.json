@@ -1,7 +1,7 @@
 {
   "name": "Tumpuan Megah Development",
   "slug": "TMD",
-  "version": "0.0.1",
+  "version": "0.0.7",
   "owner": "studio20",
   "orientation": "portrait",
   "icon": "./assets/images/icon.png",
@@ -37,7 +37,7 @@
   "ios": {
     "supportsTablet": true,
     "bundleIdentifier": "com.tthub.tmd",
-    "buildNumber": "2.5",
+    "buildNumber": "2.6",
     "infoPlist": {
       "NSUserNotificationAlertStyle": "banner"
     }

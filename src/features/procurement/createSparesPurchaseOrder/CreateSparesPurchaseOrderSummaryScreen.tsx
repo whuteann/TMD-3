@@ -15,7 +15,7 @@ import { SparesPurchaseOrder } from '../../../types/SparesPurchaseOrder';
 import { SPARES_PROCUREMENTS, SPARES_PURCHASE_ORDERS } from '../../../constants/Firebase';
 import LoadingData from '../../../components/atoms/loading/loadingData';
 import { updateSparesPurchaseOrder } from '../../../services/SparesPurchaseOrderServices';
-import { DRAFT, HEAD_OF_PROCUREMENT_ROLE, IN_REVIEW, REJECTED, REVISED_CODE, SUBMITTED, SUPER_ADMIN_ROLE } from '../../../types/Common';
+import { DRAFT, GENERAL_MANAGER_ROLE, HEAD_OF_PROCUREMENT_ROLE, IN_REVIEW, REJECTED, REVISED_CODE, SUBMITTED, SUPER_ADMIN_ROLE } from '../../../types/Common';
 import { updateSparesProcurement } from '../../../services/SparesProcurementServices';
 import { View } from 'react-native';
 import Unauthorized from '../../../components/atoms/unauthorized/Unauthorized';
@@ -25,17 +25,21 @@ import { UserSelector } from '../../../redux/reducers/Auth';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { convertCurrency } from '../../../constants/Currency';
 import { sendNotifications } from '../../../services/NotificationServices';
+import { useRefreshContext } from '../../../providers/RefreshProvider';
+import { loadingDelay } from '../../../helpers/GenericHelper';
 
 const CreateSparesPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationProps<"CreateSparesPurchaseOrderSummary">) => {
 
 	const { docID } = route.params;
 	const [modalOpen, setModalOpen] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const tailwind = useTailwind();
 	const linkTo = useLinkTo();
 	const allowedStatuses = [DRAFT, REJECTED];
 	const user = useSelector(UserSelector);
 	let displayID = "";
 	let revisedCode;
+	const refreshContext = useRefreshContext();
 
 	const { data } = useDocument<SparesPurchaseOrder>(`${SPARES_PURCHASE_ORDERS}/${docID}`, {
 		ignoreFirestoreDocumentSnapshotField: false,
@@ -62,14 +66,20 @@ const CreateSparesPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavig
 			visible={modalOpen}
 			setModalClose={() => { setModalOpen(false) }}
 			nextAction={() => {
+				setLoading(true);
+
 				updateSparesPurchaseOrder(docID, { status: IN_REVIEW, display_id: displayID, revised_code: revisedCode, total_amount: `${Number(data.quantity) * Number(data.unit_price)}` }, user!, SUBMIT_ACTION, () => {
 					updateSparesProcurement(data.spares_procurement_id, { status: SUBMITTED, spares_purchase_order_id: data.id, spares_purchase_order_secondary_id: displayID }, user!, UPDATE_ACTION, () => {
-						navigation.navigate("Dashboard");
-						revalidateCollection(SPARES_PURCHASE_ORDERS);
-						revalidateCollection(SPARES_PROCUREMENTS);
+
+						loadingDelay(() => {
+							navigation.navigate("Dashboard");
+							setLoading(false);
+							revalidateCollection(SPARES_PURCHASE_ORDERS);
+							revalidateCollection(SPARES_PROCUREMENTS);
+						})
 
 						sendNotifications(
-							[SUPER_ADMIN_ROLE, HEAD_OF_PROCUREMENT_ROLE],
+							(Number(data.quantity) * Number(data.unit_price)) > 5000 ? [SUPER_ADMIN_ROLE, HEAD_OF_PROCUREMENT_ROLE, GENERAL_MANAGER_ROLE] : [SUPER_ADMIN_ROLE, HEAD_OF_PROCUREMENT_ROLE],
 							revisedCode > 0
 								?
 								(
@@ -90,6 +100,7 @@ const CreateSparesPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavig
 							,
 							{ screen: "ViewSparesPurchaseOrderSummary", docID: data.id });
 
+						refreshContext?.refreshList(SPARES_PURCHASE_ORDERS);
 					}, (error) => {
 						console.error(error);
 					});
@@ -132,8 +143,8 @@ const CreateSparesPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavig
 
 
 			<View style={tailwind("mt-5")} />
-			<RegularButton text="Submit" operation={() => { setModalOpen(true) }} />
-			<RegularButton type="secondary" text="Cancel" operation={() => { navigation.navigate("Dashboard") }} />
+			<RegularButton text="Submit" loading={loading} operation={() => { setModalOpen(true) }} />
+			<RegularButton type="secondary" loading={loading} text="Cancel" operation={() => { navigation.navigate("Dashboard") }} />
 
 		</Body>
 	)
