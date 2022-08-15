@@ -29,6 +29,7 @@ import { getPortNameAndDeliveryLocations } from '../../../helpers/PortHelper';
 import FormRangeDateInputField from '../../../components/molecules/input/FormRangeDateInputField';
 import { Bunker } from '../../../types/Bunker';
 import { getBunkerNameList } from '../../../helpers/BunkerHelper';
+import FormSearchableDropdownInputField from '../../../components/molecules/input/FormSearchableDropdownInputField';
 
 const current = new Date();
 const currentDate = `${current.getDate().toString()}/${+current.getMonth().toString() + 1}/${current.getFullYear().toString()}`
@@ -72,6 +73,7 @@ const CreatePurchaseOrderFormScreen = ({ navigation, route }: RootNavigationProp
     proposed_date: string,
     currency_rate: string,
     unit_price: string,
+    price_unit_of_measurement: string,
     payment_term: string,
     delivery_mode: typeof LORRY_TANKER | typeof TRADER | typeof SHIP_TO_SHIP | typeof EX_PIPE_LINE,
     total_amount: string,
@@ -107,7 +109,7 @@ const CreatePurchaseOrderFormScreen = ({ navigation, route }: RootNavigationProp
 
   let procurement_data: procurementData = {
     procurement_id: data.id,
-    procurement_secondary_id: data.secondary_id,
+    procurement_secondary_id: data.display_id,
     purchase_order_date: `${new Date().getDate().toString()}/${(new Date().getMonth() + 1).toString()}/${new Date().getFullYear().toString()}`,
     supplier: data.supplier,
     product: data.product,
@@ -117,6 +119,7 @@ const CreatePurchaseOrderFormScreen = ({ navigation, route }: RootNavigationProp
 
     currency_rate: data.currency_rate,
     unit_price: data.unit_price,
+    price_unit_of_measurement: data.price_unit_of_measurement,
     payment_term: data.payment_term,
     delivery_mode: data.delivery_mode,
     total_amount: data.total_amount,
@@ -215,7 +218,7 @@ const CreatePurchaseOrderFormScreen = ({ navigation, route }: RootNavigationProp
 
             <View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 
-            <FormDropdownInputField
+            <FormSearchableDropdownInputField
               label="Receiving vessel"
               value={values.vessel_name}
               items={bunkerList}

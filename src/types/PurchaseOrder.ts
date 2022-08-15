@@ -22,6 +22,7 @@ export type PurchaseOrder = {
   proposed_date: string,
   currency_rate: Currencies,
   unit_price: string,
+  price_unit_of_measurement: string,
   payment_term: string,
   vessel_name: Bunker,
 
@@ -39,9 +40,10 @@ export type PurchaseOrder = {
   remarks: string,
   status: purchaseOrderStatuses,
 
-  purchase_vouchers?: Array<{ id: string, secondary_id: string }>
-  
+  balance_owing: string,
+  purchase_vouchers?: Array<{ id: string, secondary_id: string, paid_amount: string }>
+
   reject_notes: string,
-  created_at:Date,
+  created_at: Date,
   created_by: User,
 }

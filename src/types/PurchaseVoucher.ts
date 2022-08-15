@@ -38,6 +38,7 @@ export type PurchaseVoucher = {
   quantity: string,
   currency_rate: Currencies,
   unit_price: string,
+  price_unit_of_measurement: string,
   payment_term: string,
   delivery_mode: string,
   delivery_mode_type: string,

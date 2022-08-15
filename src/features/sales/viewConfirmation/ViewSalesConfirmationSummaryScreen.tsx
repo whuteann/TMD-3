@@ -96,6 +96,7 @@ const ViewSalesConfirmationSummaryScreen = ({ navigation, route }: RootNavigatio
 				<View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 
 				<InfoDisplay placeholder={`Barging Fee`} info={`${sales.barging_fee ? `${convertCurrency(sales.currency_rate!)}${addCommaNumber(sales.barging_fee, "-")}${sales.barging_remark ? `/${sales.barging_remark}` : ""}` : `-`}`} />
+				<InfoDisplay placeholder={`Barging Unit`} info={`${sales.barging_unit || "-"}`} />
 				<InfoDisplay placeholder={`Conversion Factor`} info={sales.conversion_factor || "-"} />
 				<InfoDisplay placeholder={`Payment Term`} info={sales.payment_term || "-"} />
 				<InfoDisplay placeholder={`Validity`} info={`Date: ${sales.validity_date == "--Select Date--" ? "-" : sales.validity_date}, Time: ${sales.validity_time}`} />

@@ -16,12 +16,14 @@ import { createAndDisplayPDF, loadPDFLogo } from '../../../functions/PDFv2Functi
 import { generatePurchaseOrderPDF } from '../../../components/templates/pdf/generatePurchaseOrderPDF';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { convertCurrency } from '../../../constants/Currency';
+import Line from '../../../components/atoms/display/Line';
 
 const ViewPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationProps<"ViewPurchaseOrderSummary">) => {
 
 	const tailwind = useTailwind();
 	const { docID } = route.params
 	const [status, setStatus] = useState("");
+	let amount_paid_total: number = 0;
 
 
 	const { data } = useDocument<PurchaseOrder>(`${PURCHASE_ORDERS}/${docID}`, {
@@ -52,6 +54,11 @@ const ViewPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationPro
 		setStatus={(val) => setStatus(val)}
 	/>
 
+	if (data.purchase_vouchers) {
+		data.purchase_vouchers.forEach((item) => {
+			amount_paid_total = (item.paid_amount ? Number(item.paid_amount) : 0) + amount_paid_total
+		});
+	}
 
 	return (
 		<Body header={<HeaderStack title={"View Purchase Order"} navigateProp={navigation} />} style={tailwind("mt-6")}>
@@ -65,7 +72,7 @@ const ViewPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationPro
 				<InfoDisplay placeholder="Product" info={data.product.name} />
 				<InfoDisplay placeholder="Unit of Measurement" info={data.unit_of_measurement} />
 				<InfoDisplay placeholder="Quantity" info={addCommaNumber(data.quantity, "-")} />
-				<InfoDisplay placeholder="Unit Price" info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(data.unit_price, "-")}`} />
+				<InfoDisplay placeholder="Unit Price" info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(data.unit_price, "-")} per ${data.price_unit_of_measurement}`} />
 				<InfoDisplay placeholder="Currency Rate" info={data.currency_rate} />
 				<InfoDisplay placeholder="Total Amount" info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(data.total_amount, "-")}`} />
 				<InfoDisplay placeholder="Payment Term" info={data.payment_term} />
@@ -90,19 +97,48 @@ const ViewPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationPro
 				/>
 
 				<InfoDisplay placeholder="Remarks" info={data.remarks || "-"} />
+
 				{
 					data.purchase_vouchers
 						?
 						<View>
+							<Line />
 							{
 								data.purchase_vouchers.map((item, index) => {
-									return <InfoDisplayLink key={item.id} placeholder={`Purchase Voucher ${index + 1}`} info={item.secondary_id} linkOnPress={() => { navigation.navigate("ViewPurchaseVoucherSummary", { docID: item.id }) }} />
+									if (data.purchase_vouchers) {
+										let displayID = data.purchase_vouchers[index].secondary_id;
+										return (
+											<View key={displayID}>
+												<InfoDisplayLink
+													placeholder={`Purchase Voucher ${index + 1}`}
+													info={`${displayID}`}
+													linkOnPress={() => {
+														navigation.navigate("ViewPurchaseVoucherSummary", { docID: item.id })
+													}} />
+												<InfoDisplay placeholder="Amount Paid" info={`${convertCurrency(data.currency_rate!)} ${item.paid_amount || "0"}`} />
+											</View>
+
+										)
+									}
 								})
+							}
+							<View style={tailwind("mb-5")} />
+
+							{
+								Number(data.total_amount) - amount_paid_total == 0
+									?
+									<View>
+										<InfoDisplay bold={true} placeholder='Amount Left' info={`${convertCurrency(data.currency_rate!)} ${Number(data.total_amount) - amount_paid_total}`} />
+										<InfoDisplay bold={true} placeholder='Payment status' info="complete" />
+									</View>
+									:
+									<InfoDisplay bold={true} placeholder='Amount Left' info={`${convertCurrency(data.currency_rate!)} ${Number(data.total_amount) - amount_paid_total}`} />
 							}
 						</View>
 						:
 						null
 				}
+
 				{
 					status == "Rejected"
 						?

@@ -87,7 +87,7 @@ const CreateInvoiceFormScreen2 = ({ navigation, route }: RootNavigationProps<"Cr
     contract: data.contract || "",
     products: data.products || {},
     discount: data.discount || "",
-    notes: data.notes || "",
+    notes: data.notes || ``,
     barging_fee: data.barging_fee || "",
     bank_details: data.bank_details?.name || "Select",
     total_payable: "0",

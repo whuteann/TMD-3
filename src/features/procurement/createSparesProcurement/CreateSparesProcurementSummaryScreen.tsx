@@ -25,6 +25,7 @@ import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { sendNotifications } from '../../../services/NotificationServices';
 import { useRefreshContext } from '../../../providers/RefreshProvider';
 import { loadingDelay } from '../../../helpers/GenericHelper';
+import Line from '../../../components/atoms/display/Line';
 
 const CreateSparesProcurementSummaryScreen = ({ navigation, route }: RootNavigationProps<"CreateSparesProcurementSummary">) => {
 
@@ -115,20 +116,31 @@ const CreateSparesProcurementSummaryScreen = ({ navigation, route }: RootNavigat
 				{
 					data.suppliers.map((item, index) => (
 						<View key={index}>
-							<InfoDisplay placeholder={`Supplier ${index + 1}`} info={item.supplier.name} />
+							<InfoDisplay placeholder={`Supplier ${index + 1}`} info={item.supplier.name} bold={true} />
 							<InfoDisplayLink placeholder="Attachment" info={item.filename} linkOnPress={() => { openDocument(SPARES_PROCUREMENTS, item.filename_storage) }} />
 							<InfoDisplay placeholder={`Quotation ${index + 1} No.`} info={item.quotation_no} />
 						</View>
 					))
 				}
 
-				<View style={tailwind("mt-3")}>
-					<InfoDisplay placeholder={`Sizing`} info={`${data.sizing || "-"}`} />
-					<InfoDisplay placeholder={`Product`} info={`${data.product.product_description}`} />
-					<InfoDisplay placeholder={`Quantity`} info={`${addCommaNumber(data.quantity, "-")}`} />
-					<InfoDisplay placeholder={`Unit of Measurement`} info={`${data.unit_of_measurement}`} />
-					<InfoDisplay placeholder={`Remarks`} info={`${data.remarks || "-"}`} />
-				</View>
+				<Line />
+
+				{
+					data.products.map((product, index) => {
+						return (
+							<View key={`${index}`} style={tailwind("mb-5")}>
+								<InfoDisplay placeholder={`Product ${index + 1}`} info={product.product.product_description} bold={true} />
+								<InfoDisplay placeholder={`Sizing`} info={product.sizing || "-"} />
+								<InfoDisplay placeholder={`Quantity`} info={`${product.quantity} ${product.unit_of_measurement}`} />
+							</View>
+						)
+					})
+				}
+
+				<Line />
+
+				<InfoDisplay placeholder={`Remarks`} info={`${data.remarks || "-"}`} />
+
 
 
 			</View>

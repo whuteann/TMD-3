@@ -47,9 +47,19 @@ export const generateSalesConfirmationPDF = (data: SalesConfirmation, image) => 
         <div style="display: flex; flex-direction: row;">
           <div style="width: 25%; ${pickBetween("font-size: 12px", "", "")}">Barging Fee</div>
           <div style="width: 25%; ${pickBetween("font-size: 12px", "", "")}">--</div>
-          <div style="width: 25%; ${pickBetween("font-size: 12px", "", "")}">--</div>
+          <div style="width: 25%; ${pickBetween("font-size: 12px", "", "")}">${data.barging_unit}</div>
           <div style="width: 25%; ${pickBetween("font-size: 12px", "", "")}">${data.barging_fee}</div>
         </div>
+        ${data.barging_remark
+          ?
+          `
+          <div style="display: flex; flex-direction: row;">
+            <div style="width: 25%; font-weight: bold; ${pickBetween("font-size: 12px", "", "")}">${data.barging_remark}</div>
+          </div>
+          `
+          :
+          ""
+        }
       `
       }
     }
@@ -148,9 +158,9 @@ export const generateSalesConfirmationPDF = (data: SalesConfirmation, image) => 
                   <div style=" ${pickBetween("font-size: 12px; width: 55%; line-height: 13px;", "width: 70%;", "width: 70%;")}">${data.confirmed_date}</div>
                 </div>
                 <div style="display: flex; flex-direction: row">
-                  <div style=" width: 30%; ${pickBetween("font-size: 12px; line-height: 13px;", "", "")}"><b>Trader</b> </div>
+                  <div style=" width: 30%; ${pickBetween("font-size: 12px; line-height: 13px;", "", "")}"><b>Payment Term</b> </div>
                   <div style="width: 9px; ${pickBetween("font-size: 12px; line-height: 13px;", "", "")}">:</div>
-                  <div style="${pickBetween("font-size: 12px; width: 55%; line-height: 13px;", "width: 70%;", "width: 70%;")}">-  </div>
+                  <div style="${pickBetween("font-size: 12px; width: 55%; line-height: 13px;", "width: 70%;", "width: 70%;")}">${data.payment_term}</div>
                 </div>
               </div>
 
@@ -181,7 +191,7 @@ export const generateSalesConfirmationPDF = (data: SalesConfirmation, image) => 
               </div>
             </div>
 
-            <div style="margin-top: 20px; height: 220px;">
+            <div style="margin-top: 20px; height: 260px;">
 
               <div style="display: flex; flex-direction: row;">
                 <div style="width: 70%; ${pickBetween("font-size: 12px", "", "")}"><b>Agent</b> : ---</div>
@@ -200,7 +210,7 @@ export const generateSalesConfirmationPDF = (data: SalesConfirmation, image) => 
               </div>
               <div style="border: 1px solid #000000; margin-top: 5px; margin-bottom: 5px;"></div>
                 ${productsList}
-              </div>
+            </div>
 
             <div style="width: 100%;">
               <div style="${pickBetween("font-size: 12px; line-height: 20px;", "", "")}">Sales tax imposed by authority (if any) to be for receiving vessel's owner's account.</div>

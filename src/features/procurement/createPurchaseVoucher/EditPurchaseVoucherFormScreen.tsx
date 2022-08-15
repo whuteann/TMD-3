@@ -12,7 +12,7 @@ import FormDateInputField from '../../../components/molecules/input/FormDateInpu
 import FormDropdownInputField from '../../../components/molecules/input/FormDropdownInputField';
 import { useCollection, useDocument } from '@nandorojo/swr-firestore';
 import LoadingData from '../../../components/atoms/loading/loadingData';
-import { BANKS, PURCHASE_VOUCHERS } from '../../../constants/Firebase';
+import { BANKS, PURCHASE_ORDERS, PURCHASE_VOUCHERS } from '../../../constants/Firebase';
 import { View } from 'react-native';
 import * as Yup from 'yup';
 import { updatePurchaseVoucher } from '../../../services/PurchaseVoucherServices';
@@ -26,6 +26,8 @@ import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
 import { UPDATE_ACTION } from '../../../constants/Action';
 import TextLabel from '../../../components/atoms/typography/TextLabel';
+import { PurchaseOrder } from '../../../types/PurchaseOrder';
+import { convertCurrency } from '../../../constants/Currency';
 
 
 
@@ -50,6 +52,7 @@ const EditPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigationProp
   const allowedStatuses = [DRAFT, REJECTED];
   let displayID: string = "";
   let poData = {};
+  let amount_paid_total: number = 0;
 
   let initialValues = {
     purchase_voucher_date: "",
@@ -69,12 +72,16 @@ const EditPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigationProp
     ignoreFirestoreDocumentSnapshotField: false,
   })
 
+  const { data: purchase_order } = useDocument<PurchaseOrder>(`${PURCHASE_ORDERS}/${data?.purchase_order_id}`, {
+    ignoreFirestoreDocumentSnapshotField: false,
+  })
+
   const { data: banks } = useCollection<Bank>(`${BANKS}`, {
     ignoreFirestoreDocumentSnapshotField: false,
     where: ["deleted", "==", false]
   })
 
-  if (!data || !banks) return <LoadingData message="This document might not exist" />;
+  if (!data || !banks || !purchase_order) return <LoadingData message="This document might not exist" />;
 
   if (!allowedStatuses.includes(data?.status!)) {
     return <Unauthorized />;
@@ -116,6 +123,16 @@ const EditPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigationProp
     remarks: data.remarks,
   }
 
+  if (purchase_order.purchase_vouchers) {
+    let purchase_vouchers_number: number = Number(data.secondary_id.split("")[data.secondary_id.split("").length - 1]);
+    let newArr: Array<{ id: string, secondary_id: string, paid_amount: string }> = [...purchase_order.purchase_vouchers];
+
+    newArr.splice(purchase_vouchers_number - 1, 1);
+
+    newArr.forEach((item) => {
+      amount_paid_total = Number(item.paid_amount) + amount_paid_total
+    });
+  }
 
   return (
     <Body header={<HeaderStack title={`Edit Purchase Voucher`} navigateProp={navigation} />} style={tailwind("mt-6")}>
@@ -139,7 +156,7 @@ const EditPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigationProp
                 swift_code: bank_chosen.swift_code,
                 address: bank_chosen.address,
               };
-            }else{
+            } else {
               bank_details = "";
             }
 
@@ -258,10 +275,17 @@ const EditPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigationProp
             />
 
             <FormTextInputField
-              label="Original Amount"
+              label="Original amount"
               required={true}
               editable={false}
-              value={values.original_amount}
+              value={`${convertCurrency(data.currency_rate)} ${Number(values.original_amount)}  `}
+            />
+
+            <FormTextInputField
+              label="Amount Left"
+              required={true}
+              editable={false}
+              value={`${convertCurrency(data.currency_rate)} ${Number(values.original_amount) - amount_paid_total}`}
             />
 
             <FormDropdownInputField
@@ -284,8 +308,8 @@ const EditPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigationProp
             <FormTextInputField
               label="Paid Amount"
               number={true}
-              value={values.paid_amount}
-              onChangeValue={text => setFieldValue("paid_amount", text)}
+              value={`${convertCurrency(data.currency_rate)} ${values.paid_amount}`}
+              onChangeValue={text => setFieldValue("paid_amount", text.replace(`${convertCurrency(data.currency_rate!)}`, "").trim())}
               hasError={errors.paid_amount && touched.paid_amount ? true : false}
               errorMessage={errors.paid_amount}
             />

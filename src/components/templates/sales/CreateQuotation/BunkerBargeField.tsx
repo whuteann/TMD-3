@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { useTailwind } from 'tailwind-rn/dist';
 import { TrashIcon } from '../../../../../assets/svg/SVG';
-import DropdownField from '../../../atoms/input/dropdown/DropdownField';
+import SearchableDropdownField from '../../../atoms/input/dropdown/SearchableDropdownField';
 import FormLabel from '../../../molecules/typography/FormLabel';
 
 interface InputProps {
@@ -67,7 +67,7 @@ const BunkerBargeField: React.FC<InputProps> = ({
             null
         }
       </View>
-      <DropdownField
+      <SearchableDropdownField
         shadow={true}
         value={bunkersLocal[index]}
         items={bunkerList}

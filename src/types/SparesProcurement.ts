@@ -13,10 +13,7 @@ export type SparesProcurement = {
   
   procurement_date: string,
   suppliers: Array<SupplierField>,
-  product: ShipSpare,
-  sizing: string,
-  quantity: string,
-  unit_of_measurement: string,
+  products: Array<{product: ShipSpare, sizing?: string, quantity: string, unit_of_measurement: string}>,
   proposed_date: DateRange,
   remarks: string,
   status: spareProcurementStatuses,

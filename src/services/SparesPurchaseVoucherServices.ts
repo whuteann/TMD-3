@@ -80,20 +80,35 @@ export const createSparesPurchaseVoucher = (data: any, user: any, onSuccess: (id
   )
 }
 
-export const confirmSparesPurchaseVoucher = (poID: string, pvID: string, pvSecondaryID: string, revisedCode: string, user: any, onSuccess: () => void, onError: (error: any) => void) => {
+export const confirmSparesPurchaseVoucher = (poID: string, pvID: string, paid_amount:string, pvSecondaryID: string, revisedCode: string, user: any, onSuccess: () => void, onError: (error: any) => void) => {
+  
+  const voucher_no: number = Number( pvSecondaryID.split("")[pvSecondaryID.split("").length - 1])
+
   getSparesPurchaseOrderData(
     poID,
     (poData) => {
+
+      let total_payable: number = Number(poData.total_amount);
+      let paid_amount_number: number = Number(paid_amount);
+
       if (poData.spares_purchase_vouchers) {
 
-        let newArr: Array<{ id: string, secondary_id: string }> = poData.spares_purchase_vouchers;
+        let newArr: Array<{ id: string, secondary_id: string, paid_amount: string }> = poData.spares_purchase_vouchers;
+        let spliceArr: Array<{ id: string, secondary_id: string, paid_amount: string }> = [...newArr];
+        let amount_paid: number = 0;
         const searchIndex = newArr.findIndex((pv) => pv.id == pvID);
 
+        spliceArr.splice(voucher_no - 1, 1);
+
+        spliceArr.map(item => {
+          amount_paid = amount_paid + Number(item.paid_amount);
+        })
+
         if (searchIndex.toString() == "-1") {
-          newArr.push({ id: pvID, secondary_id: pvSecondaryID });
+          newArr.push({ id: pvID, secondary_id: pvSecondaryID, paid_amount: paid_amount });
 
           updateSparesPurchaseOrder(poID, { spares_purchase_vouchers: newArr, status: PV_ISSUED }, user!, UPDATE_ACTION, () => {
-            updateSparesPurchaseVoucher(pvID, { display_id: pvSecondaryID, revised_code: revisedCode, status: IN_REVIEW }, user!, SUBMIT_ACTION, () => {
+            updateSparesPurchaseVoucher(pvID, { display_id: pvSecondaryID, revised_code: revisedCode, status: IN_REVIEW, balance_owing: `${total_payable - amount_paid - paid_amount_number}` }, user!, SUBMIT_ACTION, () => {
               onSuccess();
             }, () => {
             })
@@ -102,9 +117,10 @@ export const confirmSparesPurchaseVoucher = (poID: string, pvID: string, pvSecon
 
         } else {
           newArr[searchIndex].secondary_id = pvSecondaryID
+          newArr[searchIndex].paid_amount = paid_amount
 
           updateSparesPurchaseOrder(poID, { spares_purchase_vouchers: newArr, status: PV_ISSUED }, user!, UPDATE_ACTION, () => {
-            updateSparesPurchaseVoucher(pvID, { display_id: pvSecondaryID, revised_code: revisedCode, status: IN_REVIEW }, user!, SUBMIT_ACTION, () => {
+            updateSparesPurchaseVoucher(pvID, { display_id: pvSecondaryID, revised_code: revisedCode, status: IN_REVIEW, balance_owing: `${total_payable - amount_paid - paid_amount_number}` }, user!, SUBMIT_ACTION, () => {
               onSuccess();
             }, () => {
             })
@@ -113,8 +129,8 @@ export const confirmSparesPurchaseVoucher = (poID: string, pvID: string, pvSecon
           });
         }
       } else {
-        updateSparesPurchaseOrder(poID, { spares_purchase_vouchers: [{ id: pvID, secondary_id: pvSecondaryID }], status: PV_ISSUED }, user!, UPDATE_ACTION, () => {
-          updateSparesPurchaseVoucher(pvID, { display_id: pvSecondaryID, revised_code: revisedCode, status: IN_REVIEW }, user!, SUBMIT_ACTION, () => {
+        updateSparesPurchaseOrder(poID, { spares_purchase_vouchers: [{ id: pvID, secondary_id: pvSecondaryID, paid_amount: paid_amount }], status: PV_ISSUED }, user!, UPDATE_ACTION, () => {
+          updateSparesPurchaseVoucher(pvID, { display_id: pvSecondaryID, revised_code: revisedCode, status: IN_REVIEW, balance_owing: `${total_payable - paid_amount_number}` }, user!, SUBMIT_ACTION, () => {
             onSuccess();
           }, () => {
           })

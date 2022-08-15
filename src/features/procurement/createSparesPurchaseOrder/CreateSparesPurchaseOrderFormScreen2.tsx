@@ -27,6 +27,8 @@ import { UserSelector } from '../../../redux/reducers/Auth';
 import { UPDATE_ACTION } from '../../../constants/Action';
 import { Bunker } from '../../../types/Bunker';
 import { getBunkerNameList } from '../../../helpers/BunkerHelper';
+import { convertCurrency } from '../../../constants/Currency';
+import FormSearchableDropdownInputField from '../../../components/molecules/input/FormSearchableDropdownInputField';
 
 const formSchema = Yup.object().shape({
   vessel_name: Yup.string().required("Required"),
@@ -79,6 +81,7 @@ const CreateSparesPurchaseOrderFormScreen2 = ({ navigation, route }: RootNavigat
     contact_person: data.contact_person ? data.contact_person.name : "",
     ETA_delivery_date: data.ETA_delivery_date || "",
     remarks: data.remarks || "",
+    discount: data.discount || ""
   }
 
   return (
@@ -134,7 +137,7 @@ const CreateSparesPurchaseOrderFormScreen2 = ({ navigation, route }: RootNavigat
 
             <View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 
-            <FormDropdownInputField
+            <FormSearchableDropdownInputField
               label="Vessel Name"
               items={bunkerList}
               value={values.vessel_name}
@@ -190,6 +193,18 @@ const CreateSparesPurchaseOrderFormScreen2 = ({ navigation, route }: RootNavigat
               required={true}
               hasError={errors.ETA_delivery_date && touched.ETA_delivery_date ? true : false}
               errorMessage={errors.ETA_delivery_date}
+            />
+
+            <FormTextInputField
+              label="Discount"
+              value={`${convertCurrency(data.currency_rate!)} ${values.discount}`}
+              placeholder='RM0.00'
+              onChangeValue={
+                (val) => {
+                  setFieldValue(`discount`, val.replace(`${convertCurrency(data.currency_rate!)}`, '').trim());
+                }
+              }
+              number={true}
             />
 
             <FormTextInputField

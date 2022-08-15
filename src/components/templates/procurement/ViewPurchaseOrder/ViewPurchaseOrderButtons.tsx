@@ -168,10 +168,14 @@ const ViewPurchaseOrderButtons: React.FC<Props> = ({
 				{
 					permissions?.includes(CREATE_PURCHASE_VOUCHER)
 						?
-						<RegularButton type="secondary" text="Create Purchase Voucher" operation={() => { navigation.navigate("CreatePurchaseVoucherForm", { docID: nav_id }); }} />
+						<View>
+							<RegularButton type="secondary" text="Create Purchase Voucher" operation={() => { navigation.navigate("CreatePurchaseVoucherForm", { docID: nav_id }); }} />
+							<RegularButton text="Download" operation={() => { onDownload(); }} />
+						</View>
 						:
 						<RegularButton text="Download" operation={() => { onDownload(); }} />
 				}
+				<RegularButton text="Edit" operation={() => { navigation.navigate("EditPurchaseOrderForm", { docID: nav_id }); }} />
 			</View>
 		)
 

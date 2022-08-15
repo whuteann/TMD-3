@@ -98,7 +98,7 @@ const PortFormScreen = ({ navigation, route }: RootNavigationProps<"CreatePort" 
   return (
     <Body header={<HeaderStack title={"Port Details"} navigateProp={navigation} />} style={tailwind("mt-6")}>
       <Header
-        title={`${docID ? 'Create Port' : 'Edit Port'}`}
+        title={`${docID ? 'Edit Port' : 'Create Port'}`}
         color='text-black'
         alignment='text-left' />
 

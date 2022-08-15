@@ -239,7 +239,7 @@ export const linking: LinkingOptions<RootRoutes> = {
           docID: docID => docID,
         },
       },
-      
+
       CustomerSegmentationList: {
         path: "/customer-segmentation"
       },
@@ -282,6 +282,12 @@ export const linking: LinkingOptions<RootRoutes> = {
       // Procurement
       CreateProcurement: {
         path: "/procurements/create",
+      },
+      EditProcurement: {
+        path: "/procurements/:docID/edit",
+        parse: {
+          docID: docID => docID,
+        },
       },
       ViewAllProcurement: {
         path: "/procurements",
@@ -475,6 +481,31 @@ export const linking: LinkingOptions<RootRoutes> = {
       Settings: {
         path: "/settings",
       },
+
+      SalesPaymentTermList: {
+        path: "/payment-term/sales",
+      },
+      CreateSalesPaymentTerm: {
+        path: "/payment-term/sales/create",
+      },
+      EditSalesPaymentTerm: {
+        path: "/payment-term/sales/:docID/edit",
+        parse: {
+          docID: docID => docID,
+        }
+      },
+      ProcurementPaymentTermList: {
+        path: "/payment-term/procurement",
+      },
+      CreateProcurementPaymentTerm: {
+        path: "/payment-term/procurement/create",
+      },
+      EditProcurementPaymentTerm: {
+        path: "/payment-term/procurement/:docID/edit",
+        parse: {
+          docID: docID => docID,
+        }
+      }
     }
   }
 };

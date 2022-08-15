@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import AddButtonText from '../../../atoms/buttons/AddButtonText';
 import UploadButton from '../../../molecules/buttons/UploadButton';
-import AddNewSupplier from '../../add/AddNewSupplier';
 import { useTailwind } from 'tailwind-rn/dist';
 import FormTextInputField from '../../../molecules/input/FormTextInputField';
-import { TouchableOpacity, View } from 'react-native';
+import { Platform, TouchableOpacity, View } from 'react-native';
 import { Supplier } from '../../../../types/Supplier';
 import DropdownField from '../../../atoms/input/dropdown/DropdownField';
 import TextLabel from '../../../atoms/typography/TextLabel';
@@ -16,6 +14,7 @@ import { deleteFile } from '../../../../services/StorageServices';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../../redux/reducers/Auth';
 import { UPDATE_ACTION } from '../../../../constants/Action';
+import SearchableDropdownField from '../../../atoms/input/dropdown/SearchableDropdownField';
 
 type SupplierFieldLocal = {
   supplier: string,
@@ -143,14 +142,17 @@ const EditSupplierQuotationField: React.FC<inputProps> = ({
             null
         }
       </View>
-      <DropdownField
-        placeholder="Select"
-        value={localList[index].supplier}
-        items={suppliers ? suppliers.map(item => item.name) : []}
-        onChangeValue={(val) => { updateList("supplier", val) }}
-        hasError={Object.keys(supplierErrors || {}).includes("supplier")}
-        errorMessage={supplierErrors ? supplierErrors.supplier : ""}
-      />
+
+      <View style={tailwind(`${Platform.OS == "web" ? "z-50" : ""}`)}>
+        <SearchableDropdownField
+          placeholder="Select"
+          value={localList[index].supplier}
+          items={suppliers ? suppliers.map(item => item.name) : []}
+          onChangeValue={(val) => { updateList("supplier", val) }}
+          hasError={Object.keys(supplierErrors || {}).includes("supplier")}
+          errorMessage={supplierErrors ? supplierErrors.supplier : ""}
+        />
+      </View>
 
       {/* <AddButtonText text="Create New Supplier"
         onPress={() => {

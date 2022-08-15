@@ -117,7 +117,16 @@ export type RootRoutes = {
   CreateCustomerSegmentation: undefined;
   EditCustomerSegmentation: {docID: string};
 
+  SalesPaymentTermList: undefined;
+  CreateSalesPaymentTerm: undefined;
+  EditSalesPaymentTerm: {docID: string};
+
+  ProcurementPaymentTermList: undefined;
+  CreateProcurementPaymentTerm: undefined;
+  EditProcurementPaymentTerm: {docID: string};
+
   CreateProcurement: undefined;
+  EditProcurement: {docID: string};
   ViewAllProcurement: undefined;
   ViewProcurementSummary: { docID: string };
   PreviewProcurement: { docID: string };

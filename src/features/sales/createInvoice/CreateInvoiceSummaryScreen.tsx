@@ -186,6 +186,7 @@ const CreateInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"
         <View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 
         <InfoDisplay placeholder="Barging Fee" info={`${data.barging_fee ? `${convertCurrency(data.currency_rate!)}${addCommaNumber(data.barging_fee, "-")}${data.barging_remark ? `/${data.barging_remark}` : ""}` : `-`}`} />
+        <InfoDisplay placeholder={`Barging Unit`} info={`${data.barging_unit || "-"}`} />
         <InfoDisplay placeholder="Discount" info={`${convertCurrency(data.currency_rate!)}${addCommaNumber(data.discount, "-")}`} />
         <InfoDisplay placeholder="Total" info={`${convertCurrency(data.currency_rate!)}${addCommaNumber(data.total_payable, "-")}`} />
 

@@ -19,12 +19,13 @@ import TextLabel from '../../../components/atoms/typography/TextLabel';
 import TextInputField from '../../../components/atoms/input/text/TextInputField';
 import * as Yup from "yup";
 import { Bank } from '../../../types/Bank';
-import { BANKS,  RECEIPTS } from '../../../constants/Firebase';
+import { BANKS,  INVOICES,  RECEIPTS } from '../../../constants/Firebase';
 import { getBankNameList } from '../../../helpers/BankHelper';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
 import { UPDATE_ACTION } from '../../../constants/Action';
 import { convertCurrency } from '../../../constants/Currency';
+import { Invoice } from '../../../types/Invoice';
 
 
 const formSchema = Yup.object().shape({
@@ -38,6 +39,7 @@ const EditReceiptFormScreen = ({ navigation, route }: RootNavigationProps<"EditO
   const [loading, setLoading] = useState(false);
   const linkTo = useLinkTo();
   const user = useSelector(UserSelector);
+  let amount_paid_total: number = 0;
 
   let receiptID: string = "";
   let initialValues = {
@@ -60,12 +62,16 @@ const EditReceiptFormScreen = ({ navigation, route }: RootNavigationProps<"EditO
     ignoreFirestoreDocumentSnapshotField: false,
   })
 
+  const { data: invoice } = useDocument<Invoice>(`${INVOICES}/${data?.invoice_id}`, {
+    ignoreFirestoreDocumentSnapshotField: false,
+  })
+
   const { data: banks } = useCollection<Bank>(`${BANKS}`, {
     ignoreFirestoreDocumentSnapshotField: false,
     where: ["deleted", "==", false]
   })
 
-  if (!data || !banks) return <LoadingData message="This document might not exist" />;
+  if (!data || !banks || !invoice) return <LoadingData message="This document might not exist" />;
 
   const { bankList } = getBankNameList(banks);
   receiptID = data.secondary_id || "";
@@ -85,6 +91,19 @@ const EditReceiptFormScreen = ({ navigation, route }: RootNavigationProps<"EditO
     total_payable: data.total_payable || "",
     amount_received: data.amount_received || "",
   }
+
+
+  if (invoice.receipts) {
+    let receipt_number: number = Number(data.secondary_id.split("")[data.secondary_id.split("").length - 1]);
+    let newArr: Array<{ id: string, secondary_id: string, paid_amount: string }> = [...invoice.receipts];
+
+    newArr.splice(receipt_number-1, 1);
+
+		newArr.forEach((item) => {
+			amount_paid_total = Number(item.paid_amount) + amount_paid_total
+		});
+	}
+
 
   return (
     <Body header={<HeaderStack title={"Issue Receipt"} navigateProp={navigation} />} style={tailwind("pt-10")}>
@@ -200,8 +219,8 @@ const EditReceiptFormScreen = ({ navigation, route }: RootNavigationProps<"EditO
             />
 
             <FormTextInputField
-              label="Total"
-              value={`${convertCurrency(data.currency_rate!)} ${values.total_payable}`}
+              label="Total left"
+              value={`${convertCurrency(data.currency_rate!)} ${Number(invoice.total_payable) - amount_paid_total}`}
               editable={false}
             />
 

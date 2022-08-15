@@ -27,7 +27,9 @@ import {
   SPARES_PURCHASE_ORDERS,
   SPARES_PURCHASE_VOUCHERS,
   SALES,
-  CUSTOMER_SEGMENTATIONS
+  CUSTOMER_SEGMENTATIONS,
+  SALES_PAYMENT_TERMS,
+  PROCUREMENT_PAYMENT_TERMS
 } from "../constants/Firebase";
 import Constants from 'expo-constants';
 
@@ -79,6 +81,8 @@ export const bunkerRef = firestore.collection(BUNKERS);
 export const productRef = firestore.collection(PRODUCTS);
 export const shipSpareRef = firestore.collection(SHIP_SPARES);
 export const portRef = firestore.collection(PORTS);
+export const salesPaymentTermRef = firestore.collection(SALES_PAYMENT_TERMS);
+export const procurementPaymentTermRef = firestore.collection(PROCUREMENT_PAYMENT_TERMS);
 export const customerSegRef = firestore.collection(CUSTOMER_SEGMENTATIONS);
 
 export const quotationRef = firestore.collection(QUOTATIONS);

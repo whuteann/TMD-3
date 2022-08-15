@@ -1,5 +1,4 @@
 import { convertCurrency, convertCurrencyText } from "../../../constants/Currency";
-import { pickBetween } from "../../../helpers/GenericHelper";
 import { addCommaNumber } from "../../../helpers/NumericHelper";
 import { Receipt } from "../../../types/Receipt";
 import { CSSStyles } from "./CSS"
@@ -101,9 +100,14 @@ export const generateOfficialReceiptPDF = (data: Receipt, image) => {
                   Org. Amt
                 </div>
               </div>
-              <div style="width: 20%; border: 1px solid #000000; border-right: none">
+              <div style="width: 20%; border: 1px solid #000000;">
                 <div style="padding-left: 15px;">
                   Paid Amt
+                </div>
+              </div>
+              <div style="width: 20%; border: 1px solid #000000; border-right: none">
+                <div style="padding-left: 15px;">
+                  Balance Owing
                 </div>
               </div>
             </div>
@@ -126,6 +130,11 @@ export const generateOfficialReceiptPDF = (data: Receipt, image) => {
               <div style="width: 20%;">
                 <div style="padding-left: 15px;">
                   ${addCommaNumber(data.amount_received, "0")}
+                </div>
+              </div>
+              <div style="width: 20%;">
+                <div style="padding-left: 15px;">
+                  ${addCommaNumber(data.balance_owing, "0")}
                 </div>
               </div>
             </div>

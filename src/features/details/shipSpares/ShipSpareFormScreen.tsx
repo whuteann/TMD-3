@@ -26,8 +26,6 @@ const formSchema = Yup.object().shape({
   group: Yup.string().required("Required"),
   uom: Yup.string().required("Required"),
   ref_price: Yup.string().required("Required"),
-  quantity: Yup.string().required("Required"),
-  serial_number: Yup.string().required("Required")
 });
 
 const ShipSpareFormScreen = ({ navigation, route }: RootNavigationProps<"CreateShipSpare" | "EditShipSpare">) => {

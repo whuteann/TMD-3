@@ -16,6 +16,7 @@ import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { User } from '../../../types/User';
 import { convertCurrency } from '../../../constants/Currency';
 import { REJECTED } from '../../../types/Common';
+import Line from '../../../components/atoms/display/Line';
 
 
 const ViewInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"ViewInvoiceSummary">) => {
@@ -26,6 +27,7 @@ const ViewInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"Vi
 	const { docID } = route.params
 	const [status, setStatus] = useState("");
 	const linkTo = useLinkTo();
+	let amount_paid_total: number = 0;
 
 	const { data } = useDocument<Invoice>(`invoices/${docID}`, {
 		ignoreFirestoreDocumentSnapshotField: false,
@@ -50,6 +52,14 @@ const ViewInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"Vi
 		job_confirmation_id={data.job_confirmation_id || ""}
 		data={data}
 	/>
+
+
+	if (data.receipts) {
+		data.receipts.forEach((item) => {
+			amount_paid_total = Number(item.paid_amount) + amount_paid_total
+		});
+	}
+
 
 	return (
 		<Body header={<HeaderStack title={"View Invoice"} navigateProp={navigation} />} style={tailwind("pt-10")}>
@@ -99,9 +109,9 @@ const ViewInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"Vi
 							<InfoDisplay placeholder="Initial Ordered Quantity" info={`${addCommaNumber(item.quantity, "0")} ${item.unit}`} />
 							<InfoDisplay
 								placeholder="Price 1"
-								info={`${convertCurrency(data.currency_rate!)} ${addCommaNumber(item.price.value, "0")} ${item.price.unit}`} 
+								info={`${convertCurrency(data.currency_rate!)} ${addCommaNumber(item.price.value, "0")} ${item.price.unit}`}
 								secondLine={item.price.remarks ? item.price.remarks : undefined}
-								/>
+							/>
 							<InfoDisplay placeholder="Subtotal" info={`${convertCurrency(data.currency_rate!)} ${addCommaNumber(item.subtotal, "0")}`} />
 						</View>
 					))
@@ -110,6 +120,7 @@ const ViewInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"Vi
 				<View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 
 				<InfoDisplay placeholder="Barging Fee" info={`${data.barging_fee ? `${convertCurrency(data.currency_rate!)} ${addCommaNumber(data.barging_fee, "-")}${data.barging_remark ? `/${data.barging_remark}` : ""}` : `-`}`} />
+				<InfoDisplay placeholder={`Barging Unit`} info={`${data.barging_unit || "-"}`} />
 				<InfoDisplay placeholder="Discount" info={`${convertCurrency(data.currency_rate!)} ${addCommaNumber(data.discount, "-")}`} />
 				<InfoDisplay placeholder="Total" info={`${convertCurrency(data.currency_rate!)} ${addCommaNumber(data.total_payable, "-")}`} />
 
@@ -145,21 +156,41 @@ const ViewInvoiceSummaryScreen = ({ navigation, route }: RootNavigationProps<"Vi
 				{
 					data.receipts
 						?
-						data.receipts.map((item, index) => {
-							if (data.receipts) {
-								let displayID = data.receipts[index].secondary_id;
-								let navID = data.receipts[index].id;
-								return (
-									<InfoDisplayLink
-										key={index}
-										placeholder={`Official Receipt ${index + 1}`}
-										info={`${displayID}`}
-										linkOnPress={() => {
-											linkTo(`/receipts/${navID}/show`)
-										}} />
-								)
+						<View>
+							<Line />
+							{
+								data.receipts.map((item, index) => {
+									if (data.receipts) {
+										let displayID = data.receipts[index].secondary_id;
+										let navID = data.receipts[index].id;
+										return (
+											<View key={index}>
+												<InfoDisplayLink
+													placeholder={`Official Receipt ${index + 1}`}
+													info={`${displayID}`}
+													linkOnPress={() => {
+														linkTo(`/receipts/${navID}/show`)
+													}} />
+												<InfoDisplay placeholder="Amount Paid" info={`${convertCurrency(data.currency_rate!)} ${item.paid_amount}`} />
+											</View>
+
+										)
+									}
+								})
 							}
-						})
+							<View style={tailwind("mb-5")} />
+
+							{
+								Number(data.total_payable) - amount_paid_total == 0
+									?
+									<View>
+										<InfoDisplay bold={true} placeholder='Amount Left' info={`${convertCurrency(data.currency_rate!)} ${Number(data.total_payable) - amount_paid_total}`} />
+										<InfoDisplay bold={true} placeholder='Payment status' info="complete" />
+									</View>
+									:
+									<InfoDisplay bold={true} placeholder='Amount Left' info={`${convertCurrency(data.currency_rate!)} ${Number(data.total_payable) - amount_paid_total}`} />
+							}
+						</View>
 						:
 						null
 				}

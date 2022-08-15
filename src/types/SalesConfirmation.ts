@@ -12,6 +12,7 @@ export type salesConfirmationStatuses = typeof CONFIRMED | typeof NOT_CONFIRMED;
 export type SalesConfirmation = {
   secondary_id: string,
   quotation_id: string,
+  job_confirmation_id?: string,
   quotation_secondary_id: string,
   quotation_date?: string,
   confirmed_date: string,
@@ -24,8 +25,11 @@ export type SalesConfirmation = {
   remarks?: string,
   remarks_OT?: string,
   currency_rate: Currencies,
-  barging_fee: string,
-  barging_remark: string,
+
+  barging_fee?: string,
+  barging_remark?: string,
+  barging_unit?: string,
+
   conversion_factor: string,
   payment_term: string,
   receiving_vessel_name: string,

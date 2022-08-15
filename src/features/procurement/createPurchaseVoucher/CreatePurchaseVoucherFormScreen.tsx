@@ -6,7 +6,6 @@ import { useTailwind } from 'tailwind-rn';
 import RegularButton from '../../../components/atoms/buttons/RegularButton';
 import Body from '../../../components/atoms/display/Body';
 import HeaderStack from '../../../components/atoms/display/HeaderStack';
-import ViewPageHeaderText from '../../../components/molecules/display/ViewPageHeaderText';
 import FormTextInputField from '../../../components/molecules/input/FormTextInputField';
 import FormDateInputField from '../../../components/molecules/input/FormDateInputField';
 import FormDropdownInputField from '../../../components/molecules/input/FormDropdownInputField';
@@ -26,6 +25,7 @@ import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
 import { UPDATE_ACTION } from '../../../constants/Action';
 import TextLabel from '../../../components/atoms/typography/TextLabel';
+import { convertCurrency } from '../../../constants/Currency';
 
 
 const to_replace_string = PO_REGEX;
@@ -51,6 +51,7 @@ const CreatePurchaseVoucherFormScreen = ({ navigation, route }: RootNavigationPr
   const { docID } = route.params;
   let displayID: string = "";
   let poData = {};
+  let amount_paid_total: number = 0;
   const allowedStatuses = [NO_PURCHASE_VOUCHER, PV_ISSUED, PV_PENDING];
 
   let initialValues = {
@@ -108,6 +109,7 @@ const CreatePurchaseVoucherFormScreen = ({ navigation, route }: RootNavigationPr
     quantity: data.quantity,
     currency_rate: data.currency_rate,
     unit_price: data.unit_price,
+    price_unit_of_measurement: data.price_unit_of_measurement,
     payment_term: data.payment_term,
     delivery_mode: data.delivery_mode,
     delivery_mode_type: data.delivery_mode_type,
@@ -119,6 +121,11 @@ const CreatePurchaseVoucherFormScreen = ({ navigation, route }: RootNavigationPr
     remarks: data.remarks,
   }
 
+  if (data.purchase_vouchers) {
+    data.purchase_vouchers.forEach((item) => {
+      amount_paid_total = Number(item.paid_amount) + amount_paid_total
+    });
+  }
 
   return (
     <Body header={<HeaderStack title={`Create Purchase Voucher`} navigateProp={navigation} />} style={tailwind("mt-6")}>
@@ -230,7 +237,14 @@ const CreatePurchaseVoucherFormScreen = ({ navigation, route }: RootNavigationPr
               label="Original Amount"
               required={true}
               editable={false}
-              value={values.original_amount}
+              value={`${convertCurrency(data.currency_rate)} ${Number(values.original_amount)}`}
+            />
+
+            <FormTextInputField
+              label="Amount left"
+              required={true}
+              editable={false}
+              value={`${convertCurrency(data.currency_rate)} ${Number(values.original_amount) - amount_paid_total}`}
             />
 
 
@@ -254,8 +268,8 @@ const CreatePurchaseVoucherFormScreen = ({ navigation, route }: RootNavigationPr
             <FormTextInputField
               label="Paid Amount"
               number={true}
-              value={values.paid_amount}
-              onChangeValue={text => setFieldValue("paid_amount", text)}
+              value={`${convertCurrency(data.currency_rate)} ${values.paid_amount}`}
+              onChangeValue={text => setFieldValue("paid_amount", text.replace(`${convertCurrency(data.currency_rate!)}`, "").trim())}
               hasError={errors.paid_amount && touched.paid_amount ? true : false}
               errorMessage={errors.paid_amount}
             />

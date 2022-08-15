@@ -42,9 +42,16 @@ export const generateSalesInvoicePDF = (data: Invoice, image) => {
           <div style="width: 10%;  ">${index + 2}</div>
           <div style="width: 40%; ">Barging fee</div>
           <div style="width: 16.6666%; ">--</div>
-          <div style="width: 16.6666%; ">--</div>
+          <div style="width: 16.6666%; ">${data.barging_unit}</div>
           <div style="width: 16.6666%; text-align: right;">${data.barging_fee}</div>
         </div>
+        ${
+          data.barging_remark
+          ?
+          `<div style="width: 100%; padding-left: 10%;"><b>${data.barging_remark}</b></div>`
+          :
+          ""
+        }
         `;
       }
     }
@@ -99,7 +106,7 @@ export const generateSalesInvoicePDF = (data: Invoice, image) => {
                 </div>
 
                 <div style="display: flex; flex-direction: column; margin-top: 5px;">
-                  <div style="width: 100%; font-size: 12px; ${pickBetween("line-height: 13px;", "", "")}"><b>MASTER and/or OWNERS and/or CHARTERERS and/or OPERATORS and/or BUYER of NUR CEKAL and/or</b></div>
+                  <div style="width: 100%; font-size: 12px; ${pickBetween("line-height: 13px;", "", "")}"><b>MASTER and/or OWNERS and/or CHARTERERS and/or OPERATORS and/or BUYER of ${data.receiving_vessel_name.toUpperCase()} and/or</b></div>
                 </div>
                 
                 <div style="display: flex; flex-direction: column; margin-top: 10px; text-transform: uppercase;">
@@ -134,10 +141,6 @@ export const generateSalesInvoicePDF = (data: Invoice, image) => {
                   <div style="width: 40%; text-align: right; ${pickBetween("font-size: 12px; line-height: 16px;", "", "")}">Supply Barge :</div>
                   <div style="width: 60%; margin-left: 10px; ${pickBetween("font-size: 12px; line-height: 16px;", "", "")}"><b>${bunkersList}</b></div>
                 </div>
-                <div style="display: flex; flex-direction: row">
-                  <div style="width: 40%; text-align: right; ${pickBetween("font-size: 12px; line-height: 16px;", "", "")}">Page :</div>
-                  <div style="width: 60%; margin-left: 10px; ${pickBetween("font-size: 12px; line-height: 16px;", "", "")}"><b>1 of 1</b></div>
-                </div>
               </div>
           </div>
 
@@ -167,7 +170,7 @@ export const generateSalesInvoicePDF = (data: Invoice, image) => {
             </div>
           </div>
           
-          <div style="height: 120px;">
+          <div style="height: 180px;">
             ${productsList}
           </div>
 
@@ -215,7 +218,15 @@ export const generateSalesInvoicePDF = (data: Invoice, image) => {
           <div style="display: flex; flex-direction: row;">
             <div style="display: flex; flex-direction: column; line-height: 16px; width: 50%;">
               <div style="font-size: 12px">Notes:</div>
-              <div style="font-size: 12px; width: 100%;">${data.notes || "-"}</div>
+              <div style="font-size: 12px; width: 100%;">1. T/T remittance to be free of all charges.</div>
+              <div style="font-size: 12px; width: 100%;">2. Payment made after due date will be charged an interest of 2% per month pro-rata.</div>
+              ${
+                data.notes
+              ?
+              `<div style="font-size: 12px; width: 100%;">Additional remarks: ${data.notes}</div>`
+              :
+              ""
+              }
             </div>
 
             <div style="display: flex; flex-direction: column; line-height: 16px; width: 40%; margin-left:10%;">

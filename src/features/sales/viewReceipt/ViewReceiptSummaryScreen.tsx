@@ -43,7 +43,7 @@ const ViewReceiptSummaryScreen = ({ navigation, route }: RootNavigationProps<"Vi
 
       <View>
         <InfoDisplay placeholder="Receipt Date" info={data.receipt_date} />
-        <InfoDisplayLink placeholder="Invoice No." info={data.invoice_secondary_id} linkOnPress={() => { linkTo(`/invoices/${data.invoice_id}/preview`) }} />
+        <InfoDisplayLink placeholder="Invoice No." info={data.invoice_secondary_id} linkOnPress={() => { linkTo(`/invoices/${data.invoice_id}/show`) }} />
 
         <InfoDisplay placeholder="Invoice Date" info={data.invoice_date} />
         <InfoDisplay placeholder="Account Received In" info={data.account_received_in?.name} />

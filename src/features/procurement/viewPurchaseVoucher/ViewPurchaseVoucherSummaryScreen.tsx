@@ -76,7 +76,7 @@ const ViewPurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavigationP
 					<InfoDisplay placeholder="Product" info={data.product.name} />
 					<InfoDisplay placeholder="Unit of Measurement" info={data.unit_of_measurement} />
 					<InfoDisplay placeholder="Quantity" info={addCommaNumber(data.quantity, "-")} />
-					<InfoDisplay placeholder="Unit Price" info={data.unit_price ? `${convertCurrency(data.currency_rate)} ${addCommaNumber(data.unit_price, "-")}` : "-"} />
+					<InfoDisplay placeholder="Unit Price" info={data.unit_price ? `${convertCurrency(data.currency_rate)} ${addCommaNumber(data.unit_price, "-")} per ${data.price_unit_of_measurement}` : "-"} />
 					<InfoDisplay placeholder="Currency Rate" info={data.currency_rate} />
 					<InfoDisplay placeholder="Payment Term" info={data.payment_term} />
 					<InfoDisplay placeholder="Mode of Delivery" info={data.delivery_mode} />

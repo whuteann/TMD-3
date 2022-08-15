@@ -13,7 +13,7 @@ import FormTextInputField from '../../../components/molecules/input/FormTextInpu
 import * as Yup from 'yup';
 import { createProcurement } from '../../../services/ProcurementServices';
 import { revalidateCollection, useCollection } from '@nandorojo/swr-firestore';
-import { PROCUREMENTS, PRODUCTS, SUPPLIERS } from '../../../constants/Firebase';
+import { PROCUREMENTS, PROCUREMENT_PAYMENT_TERMS, PRODUCTS, SUPPLIERS } from '../../../constants/Firebase';
 import { View } from 'react-native';
 import { Supplier } from '../../../types/Supplier';
 import { Product } from '../../../types/Product';
@@ -22,7 +22,7 @@ import { getSupplierNames } from '../../../helpers/SupplierHelper';
 import { getProductNames } from '../../../helpers/ProductHelper';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
-import { LITRES, UNITS_LIST } from '../../../constants/Units';
+import { LITRE, LITRES, UNITS_LIST, UNITS_LIST_SINGULAR } from '../../../constants/Units';
 import FormRangeDateInputField from '../../../components/molecules/input/FormRangeDateInputField';
 import { CurrenciesList } from '../../../constants/Currency';
 import { DeliveryModes } from '../../../types/DeliveryModes';
@@ -30,6 +30,9 @@ import { sendNotifications } from '../../../services/NotificationServices';
 import { MARKETING_EXECUTIVE_ROLE, SUPER_ADMIN_ROLE } from '../../../types/Common';
 import { useRefreshContext } from '../../../providers/RefreshProvider';
 import { loadingDelay } from '../../../helpers/GenericHelper';
+import FormSearchableDropdownInputField from '../../../components/molecules/input/FormSearchableDropdownInputField';
+import { convertValue } from '../../../constants/Conversions';
+import { PaymentTerm } from '../../../types/PaymentTerm';
 
 const formSchema = Yup.object().shape({
   procurement_date: Yup.string().required("Required"),
@@ -43,6 +46,7 @@ const formSchema = Yup.object().shape({
   }),
   currency_rate: Yup.string().required("Required"),
   unit_price: Yup.string().required("Required").matches(/^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$/, "Please ensure the correct number format"),
+  price_unit_of_measurement: Yup.string().required("Required"),
   payment_term: Yup.string().required("Required"),
   delivery_mode: Yup.string().required("Required"),
 });
@@ -56,6 +60,7 @@ const initialValues = {
   proposed_date: { startDate: "", endDate: "" },
   currency_rate: "",
   unit_price: "",
+  price_unit_of_measurement: LITRE,
   payment_term: "",
   delivery_mode: ""
 };
@@ -78,7 +83,12 @@ const CreateProcurementFormScreen = ({ navigation }: RootNavigationProps<"Create
     where: ["deleted", "==", false]
   })
 
-  if (!suppliers || !products) return <LoadingData message="This document might not exist" />;
+  const { data: payment_terms } = useCollection<PaymentTerm>(`${PROCUREMENT_PAYMENT_TERMS}`, {
+    ignoreFirestoreDocumentSnapshotField: false,
+    where: ["deleted", "==", false]
+  })
+
+  if (!suppliers || !products || !payment_terms) return <LoadingData message="This document might not exist" />;
 
   const { suppliersList } = getSupplierNames(suppliers);
   const { productsList } = getProductNames(products);
@@ -95,6 +105,7 @@ const CreateProcurementFormScreen = ({ navigation }: RootNavigationProps<"Create
           (values) => {
             let supplier_picked = suppliers[suppliersList.indexOf(values.supplier)]
             let product_picked = products[productsList.indexOf(values.product)]
+            let total_amount: number = 0;
 
             let supplier_data: Supplier = {
               id: supplier_picked.id,
@@ -122,7 +133,9 @@ const CreateProcurementFormScreen = ({ navigation }: RootNavigationProps<"Create
 
             setLoading(true);
 
-            createProcurement({ ...values, supplier: supplier_data, product: product_data, total_amount: `${(Number(values.unit_price) * Number(values.quantity)).toFixed(2)}` }, user!
+            total_amount = convertValue(values.unit_of_measurement, values.price_unit_of_measurement, Number(values.quantity)) * Number(values.unit_price);
+
+            createProcurement({ ...values, supplier: supplier_data, product: product_data, total_amount: `${total_amount.toFixed(2)}` }, user!
               , (val) => {
                 const { displayID, newID } = val;
 
@@ -155,7 +168,7 @@ const CreateProcurementFormScreen = ({ navigation }: RootNavigationProps<"Create
 
             <View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 
-            <FormDropdownInputField
+            <FormSearchableDropdownInputField
               label="Supplier"
               value={values.supplier}
               items={suppliersList}
@@ -231,21 +244,36 @@ const CreateProcurementFormScreen = ({ navigation }: RootNavigationProps<"Create
               errorMessage={errors.currency_rate}
             />
 
-            <FormTextInputField
-              label="Unit Price"
-              value={values.unit_price}
-              onChangeValue={(val) => { setFieldValue("unit_price", val) }}
-              required={true}
-              number={true}
-              hasError={errors.unit_price && touched.unit_price ? true : false}
-              errorMessage={errors.unit_price}
+            <FormDouble
+              left={
+                <FormTextInputField
+                  label="Unit Price"
+                  value={values.unit_price}
+                  onChangeValue={(val) => { setFieldValue("unit_price", val) }}
+                  required={true}
+                  number={true}
+                  hasError={errors.unit_price && touched.unit_price ? true : false}
+                  errorMessage={errors.unit_price}
+                />
+              }
+              right={
+                <FormDropdownInputField
+                  label="Unit of measurement"
+                  value={values.price_unit_of_measurement}
+                  items={UNITS_LIST_SINGULAR}
+                  onChangeValue={(val) => { setFieldValue("price_unit_of_measurement", val) }}
+                  hasError={errors.price_unit_of_measurement && touched.price_unit_of_measurement ? true : false}
+                  errorMessage={errors.price_unit_of_measurement}
+                />
+              }
             />
+
 
             <FormDropdownInputField
               shadow={true}
               label="Payment Term"
               value={values.payment_term}
-              items={["Cash in advance", "Cash on delivery", "7 days", "14 days", "30 days"]}
+              items={payment_terms.map(item => { return item.name })}
               onChangeValue={(val) => { setFieldValue("payment_term", val) }}
               required={true}
               hasError={errors.payment_term && touched.payment_term ? true : false}

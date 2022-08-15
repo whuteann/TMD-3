@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { RootNavigationProps } from '../../../navigations/NavigationProps/NavigationProps';
 import AddNewButton from '../../../components/molecules/buttons/AddNewButton';
-import AddButtonText from '../../../components/atoms/buttons/AddButtonText';
 import SupplierQuotationField from '../../../components/templates/procurement/CreateSparesProcurement/SupplierQuotationField';
 import { FieldArray, Formik } from 'formik';
 import { useTailwind } from 'tailwind-rn';
@@ -9,9 +8,7 @@ import RegularButton from '../../../components/atoms/buttons/RegularButton';
 import Body from '../../../components/atoms/display/Body';
 import HeaderStack from '../../../components/atoms/display/HeaderStack';
 import FormTextInputField from '../../../components/molecules/input/FormTextInputField';
-import FormDropdownInputField from '../../../components/molecules/input/FormDropdownInputField';
-import FormDouble from '../../../components/molecules/alignment/FormDouble';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { useCollection } from '@nandorojo/swr-firestore';
 import { Supplier } from '../../../types/Supplier';
 import { SHIP_SPARES, SPARES_PROCUREMENTS, SUPPLIERS } from '../../../constants/Firebase';
@@ -24,9 +21,9 @@ import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
 import { ShipSpare } from '../../../types/ShipSpare';
 import { getShipSparesDescription } from '../../../helpers/ShipSpareHelper';
-import AddShipSparesInput from '../../../components/templates/add/AddShipSparesInput';
 import TextLabel from '../../../components/atoms/typography/TextLabel';
 import FormRangeDateInputField from '../../../components/molecules/input/FormRangeDateInputField';
+import ProductsField from '../../../components/templates/procurement/CreateSparesProcurement/ProductsField';
 
 
 
@@ -43,9 +40,14 @@ const formSchema = Yup.object().shape({
       uri: Yup.string().required("Required"),
     })
   ),
-  product: Yup.string().required("Required"),
-  quantity: Yup.string().required("Required").matches(/^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$/, "Please ensure the correct number format"),
-  unit_of_measurement: Yup.string().required("Required"),
+  products: Yup.array().of(
+    Yup.object().shape({
+      product: Yup.string().required("Required"),
+      sizing: Yup.string(),
+      quantity: Yup.string().required("Required").matches(/^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$/, "Please ensure the correct number format"),
+      unit_of_measurement: Yup.string().required("Required"),
+    })
+  ),
   proposed_date: Yup.object().shape({
     startDate: Yup.string().required("Required"),
     endDate: Yup.string()
@@ -58,7 +60,7 @@ const currentDate = `${current.getDate().toString()}/${+current.getMonth().toStr
 
 const CreateSparesProcurementFormScreen = ({ navigation }: RootNavigationProps<"CreateSparesProcurement">) => {
   const tailwind = useTailwind();
-  const [openCreateProduct, setOpenCreateProduct] = useState(false);
+  // const [openCreateProduct, setOpenCreateProduct] = useState(false);
   const [deleted, setDeleted] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -88,7 +90,7 @@ const CreateSparesProcurementFormScreen = ({ navigation }: RootNavigationProps<"
       uri: "",
       file: ""
     }],
-    product: "",
+    products: [{ product: "", sizing: "", quantity: "", unit_of_measurement: "" }],
     sizing: "",
     quantity: "",
     unit_of_measurement: "",
@@ -105,19 +107,31 @@ const CreateSparesProcurementFormScreen = ({ navigation }: RootNavigationProps<"
         initialValues={data}
         onSubmit={(values) => {
           setLoading(true);
+          let selectedProducts: Array<{ product: ShipSpare, sizing?: string, quantity: string, unit_of_measurement: string }> = [];
 
-          let selectedProduct = shipSpares[shipSparesList.indexOf(values.product)];
-          let product_data: ShipSpare = {
-            id: selectedProduct.id,
-            product_code: selectedProduct.product_code,
-            product_description: selectedProduct.product_description,
-            group: selectedProduct.group,
-            uom: selectedProduct.uom,
-            ref_price: selectedProduct.ref_price,
-            quantity: selectedProduct.quantity,
-            serial_number: selectedProduct.serial_number,
-            created_at: selectedProduct.created_at
-          }
+          values.products.map(product => {
+            let selectedProduct = shipSpares[shipSparesList.indexOf(product.product)];
+            let product_data: ShipSpare = {
+              id: selectedProduct.id,
+              product_code: selectedProduct.product_code,
+              product_description: selectedProduct.product_description,
+              group: selectedProduct.group,
+              uom: selectedProduct.uom,
+              ref_price: selectedProduct.ref_price,
+              quantity: selectedProduct.quantity,
+              serial_number: selectedProduct.serial_number,
+              created_at: selectedProduct.created_at
+            }
+
+            selectedProducts.push({
+              product: product_data,
+              sizing: product.sizing || "",
+              quantity: product.quantity,
+              unit_of_measurement: product.unit_of_measurement
+            });
+          })
+
+
           let suppliersPickedList: Array<any> = [];
           let suppliersFiles: Array<any> = [];
 
@@ -155,7 +169,7 @@ const CreateSparesProcurementFormScreen = ({ navigation }: RootNavigationProps<"
 
           UploadBatch(SPARES_PROCUREMENTS, suppliersFiles)
             .then((err) => {
-              createSparesProcurement({ ...values, suppliers: suppliersPickedList, product: product_data }, user!, (id) => {
+              createSparesProcurement({ ...values, suppliers: suppliersPickedList, products: selectedProducts }, user!, (id) => {
                 navigation.navigate("CreateSparesProcurementSummary", { docID: id });
                 setLoading(false);
               }, (error) => {
@@ -184,20 +198,21 @@ const CreateSparesProcurementFormScreen = ({ navigation }: RootNavigationProps<"
 
             <FieldArray name="suppliers">
               {({ remove, push }) => (
-                <View>
+                <View style={tailwind(`${Platform.OS == "web" ? "z-[10]" : ""}`)}>
                   {values.suppliers.length > 0 ? (
                     values.suppliers.map((supplierField, index) => (
-                      <SupplierQuotationField
-                        key={index}
-                        index={index}
-                        suppliers={suppliers}
-                        suppliersList={values.suppliers}
-                        length={values.suppliers.length}
-                        deleted={deleted}
-                        setFieldValue={(val) => setFieldValue("suppliers", val)}
-                        handleDelete={() => { remove(index); setDeleted(!deleted) }}
-                        errors={errors.suppliers && touched.suppliers ? errors.suppliers : undefined}
-                      />
+                      <View key={index} style={tailwind(`${Platform.OS == "web" ? `z-[${30 - index}]` : ""}`)}>
+                        <SupplierQuotationField
+                          index={index}
+                          suppliers={suppliers}
+                          suppliersList={values.suppliers}
+                          length={values.suppliers.length}
+                          deleted={deleted}
+                          setFieldValue={(val) => setFieldValue("suppliers", val)}
+                          handleDelete={() => { remove(index); setDeleted(!deleted) }}
+                          errors={errors.suppliers && touched.suppliers ? errors.suppliers : undefined}
+                        />
+                      </View>
                     ))) : null}
                   <AddNewButton text="Add Another Supplier & Quotation" onPress={() => push({ supplier: "", quotation_no: "", filename: "", uri: "", file: "" })} />
                 </View>
@@ -205,57 +220,38 @@ const CreateSparesProcurementFormScreen = ({ navigation }: RootNavigationProps<"
             </FieldArray>
 
             <View style={tailwind("mb-4")} />
-            <FormDropdownInputField
-              label={`Product`}
-              value={values.product}
-              items={shipSparesList}
-              onChangeValue={(val) => { setFieldValue("product", val) }}
-              required={true}
-              hasError={errors.product && touched.product ? true : false}
-              errorMessage={errors.product}
-            />
 
-            <View style={tailwind("mb-3")}>
+            <FieldArray name="products">
+              {({ remove, push }) => (
+                <View>
+                  {values.products.length > 0 ? (
+                    values.products.map((product, index) => (
+                      <View key={index}>
+                        <ProductsField
+                          index={index}
+                          length={values.products.length}
+                          products={values.products}
+                          deleted={deleted}
+                          onDelete={() => { remove(index); setDeleted(!deleted) }}
+                          productList={shipSparesList}
+                          errors={errors.products && touched.products ? errors.products : undefined}
+                        />
+                      </View>
+                    ))) : null}
+                  <AddNewButton text="Add Another Product" onPress={() => push({ product: "", sizing: "", quantity: "", unit_of_measurement: "" })} />
+                </View>
+              )}
+            </FieldArray>
+
+            {/* <View style={tailwind("mb-3")}>
               <AddButtonText text="Create New Product" onPress={() => { setOpenCreateProduct(!openCreateProduct); }} />
             </View>
             {openCreateProduct ? (
               <View style={tailwind("mb-2")}>
                 <AddShipSparesInput onCancel={() => { setOpenCreateProduct(false); }} />
               </View>
-            ) : null}
-
-            <FormTextInputField
-              label="Sizing (optional)"
-              placeholder="-- Type --"
-              value={values.sizing}
-              onChangeValue={(val) => { setFieldValue("sizing", val) }}
-            />
-
-            <FormDouble
-              left={
-                <FormTextInputField
-                  label='Quantity'
-                  number={true}
-                  value={values.quantity}
-                  required={true}
-                  onChangeValue={(val) => { setFieldValue("quantity", val) }}
-                  hasError={errors.quantity && touched.quantity ? true : false}
-                  errorMessage={errors.quantity}
-                />
-              }
-
-              right={
-                <FormTextInputField
-                  label='Unit of measurement'
-                  placeholder='Litres'
-                  value={values.unit_of_measurement}
-                  required={true}
-                  onChangeValue={(val) => { setFieldValue("unit_of_measurement", val) }}
-                  hasError={errors.unit_of_measurement && touched.unit_of_measurement ? true : false}
-                  errorMessage={errors.unit_of_measurement}
-                />
-              }
-            />
+            ) : null} */}
+            <View style={tailwind("mb-5")} />
 
             <FormRangeDateInputField
               label='Proposed Date'
@@ -282,6 +278,7 @@ const CreateSparesProcurementFormScreen = ({ navigation }: RootNavigationProps<"
                 <></>
             }
             <RegularButton text="Submit" operation={() => { handleSubmit(); }} loading={loading} />
+
           </View>
         )}
       </Formik>

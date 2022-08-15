@@ -41,6 +41,7 @@ const CreateReceiptFormScreen = ({ navigation, route }: RootNavigationProps<"Cre
 	const linkTo = useLinkTo();
 	const allowedStatuses = [APPROVED];
 	const user = useSelector(UserSelector);
+	let amount_paid_total: number = 0;
 
 	let initialValues = {
 		secondary_id: "",
@@ -97,6 +98,12 @@ const CreateReceiptFormScreen = ({ navigation, route }: RootNavigationProps<"Cre
 		cheque_number: "",
 	}
 
+	if (data.receipts) {
+		data.receipts.forEach((item) => {
+			amount_paid_total = Number(item.paid_amount) + amount_paid_total
+		});
+	}
+
 
 	return (
 		<Body header={<HeaderStack title={"Issue Receipt"} navigateProp={navigation} />} style={tailwind("pt-10")}>
@@ -106,7 +113,7 @@ const CreateReceiptFormScreen = ({ navigation, route }: RootNavigationProps<"Cre
 			<Formik
 				initialValues={initialValues}
 				validationSchema={formSchema}
-				onSubmit={(values) => {
+				onSubmit={(values, { resetForm }) => {
 					setLoading(true);
 					let bank_chosen = banks[bankList.indexOf(values.account_received_in || "")]
 
@@ -125,6 +132,7 @@ const CreateReceiptFormScreen = ({ navigation, route }: RootNavigationProps<"Cre
 						(id) => {
 							linkTo(`/receipts/${id}/summary`);
 							setLoading(false);
+							resetForm();
 						}, (error) => {
 							console.error(error);
 						}
@@ -217,8 +225,14 @@ const CreateReceiptFormScreen = ({ navigation, route }: RootNavigationProps<"Cre
 						/>
 
 						<FormTextInputField
-							label="Total"
-							value={`${convertCurrency(data.currency_rate!)} ${values.total_payable}`}
+							label="Total amount"
+							value={`${convertCurrency(data.currency_rate!)} ${Number(values.total_payable)}`}
+							editable={false}
+						/>
+
+						<FormTextInputField
+							label="Amount left"
+							value={`${convertCurrency(data.currency_rate!)} ${Number(values.total_payable) - amount_paid_total}`}
 							editable={false}
 						/>
 

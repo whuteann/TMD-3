@@ -111,6 +111,11 @@ import {
   CREATE_SPARES_PURCHASE_VOUCHER
 } from "../permissions/Permissions";
 import SettingsScreen from "../features/settings/SettingsScreen";
+import EditProcurementFormScreen from "../features/procurement/createprocurement/EditProcurementFormScreen";
+import SalesPaymentTermListScreen from "../features/details/paymentTerm/SalesPaymentTermListScreen";
+import SalesPaymentTermFormScreen from "../features/details/paymentTerm/SalesPaymentTermFormScreen";
+import ProcurementPaymentTermListScreen from "../features/details/paymentTerm/ProcurementPaymentTermListScreen";
+import ProcurementPaymentTermFormScreen from "../features/details/paymentTerm/ProcurementPaymentTermFormScreen";
 
 
 
@@ -186,6 +191,7 @@ const MainNavigation = () => {
 
       {/* Create Procurement  */}
       {(() => protectedRoute('CreateProcurement', CreateProcurementFormScreen, "Procurement", Stack, permissions, [CREATE_PROCUREMENT]))()}
+      {(() => protectedRoute('EditProcurement', EditProcurementFormScreen, "Procurement", Stack, permissions, [CREATE_PROCUREMENT]))()}
 
       {/* View Purchase Order */}
       {(() => protectedRoute('ViewAllPurchaseOrder', ViewAllPurchaseOrderScreen, "View Purchase Orders", Stack, permissions, [VIEW_PURCHASE_ORDER]))()}
@@ -288,6 +294,14 @@ const MainNavigation = () => {
       <Stack.Screen name="PortList" component={PortListScreen} options={{ title: "Ports" }} />
       <Stack.Screen name="CreatePort" component={PortFormScreen} options={{ title: "Ports" }} />
       <Stack.Screen name="EditPort" component={PortFormScreen} options={{ title: "Ports" }} />
+
+      <Stack.Screen name="SalesPaymentTermList" component={SalesPaymentTermListScreen} options={{ title: "Payment Term" }} />
+      <Stack.Screen name="CreateSalesPaymentTerm" component={SalesPaymentTermFormScreen} options={{ title: "Payment Term" }} />
+      <Stack.Screen name="EditSalesPaymentTerm" component={SalesPaymentTermFormScreen} options={{ title: "Payment Term" }} />
+
+      <Stack.Screen name="ProcurementPaymentTermList" component={ProcurementPaymentTermListScreen} options={{ title: "Payment Term" }} />
+      <Stack.Screen name="CreateProcurementPaymentTerm" component={ProcurementPaymentTermFormScreen} options={{ title: "Payment Term" }} />
+      <Stack.Screen name="EditProcurementPaymentTerm" component={ProcurementPaymentTermFormScreen} options={{ title: "Payment Term" }} />
 
       <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: "Settings" }} />
 

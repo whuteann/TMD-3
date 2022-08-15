@@ -1,5 +1,5 @@
 import React from "react";
-import { AwardIcon, CustomerIcon, GasIcon, ItemIcon, ItemPersonIcon, MoneyIcon, PortIcon, ProfileIcon, SettingsIcon, SettingsIcon2, ShipFrontIcon, ShipSideIcon } from "../../../assets/svg/SVG";
+import { AwardIcon, CustomerIcon, GasIcon, ItemIcon, ItemPersonIcon, MoneyIcon, PortIcon, ProfileIcon, SettingsIcon, SettingsIcon2, ShipFrontIcon, ShipSideIcon, VoucherIcon } from "../../../assets/svg/SVG";
 
 const details = (permissions: string[] | undefined) => {
   let tabs = [
@@ -57,6 +57,16 @@ const details = (permissions: string[] | undefined) => {
       onPress: (navigation) => { navigation.navigate("PortList") },
       icon: <ShipSideIcon height={25} width={25} />,
       text: "Port Details",
+    },
+    {
+      onPress: (navigation) => { navigation.navigate("SalesPaymentTermList") },
+      icon: <VoucherIcon height={25} width={25} />,
+      text: "Sales Payment Term",
+    },
+    {
+      onPress: (navigation) => { navigation.navigate("ProcurementPaymentTermList") },
+      icon: <VoucherIcon height={25} width={25} />,
+      text: "Procurement Payment Term",
     },
   ]
 

@@ -15,16 +15,16 @@ export type SparesPurchaseOrder = {
   display_id: string,
 
   supplier: Supplier,
-  product: ShipSpare,
-  quantity: string,
-  unit_of_measurement: string,
+  products: Array<{ product: ShipSpare, sizing?: string, quantity: string, unit_of_measurement: string, unit_price: string }>,
+
   proposed_date: string,
   currency_rate: Currencies,
-  unit_price: string,
   payment_term: string
 
   spares_procurement_id: string,
   spares_procurement_secondary_id: string,
+
+  discount: string,
   total_amount: string,
   type_of_supply: string,
   vessel_name: Bunker,
@@ -35,9 +35,8 @@ export type SparesPurchaseOrder = {
   remarks: string,
   status: sparesPurchaseOrderStatuses,
 
-  spares_purchase_voucher_id: string,
-  spares_purchase_voucher_secondary_id: string,
-  spares_purchase_vouchers?: Array<{ id: string, secondary_id: string }>,
+  balance_owing: string,
+  spares_purchase_vouchers?: Array<{ id: string, secondary_id: string, paid_amount: string }>,
 
   reject_notes: string,
 

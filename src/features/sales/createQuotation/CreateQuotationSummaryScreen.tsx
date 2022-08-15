@@ -149,6 +149,7 @@ const CreateQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps
 				<View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 
 				<InfoDisplay placeholder={`Barging Fee`} info={`${data.barging_fee ? `${convertCurrency(data.currency_rate!)} ${addCommaNumber(data.barging_fee, "-")}${data.barging_remark ? `/${data.barging_remark}` : ""}` : `-`}`} />
+				<InfoDisplay placeholder={`Barging Unit`} info={`${data.barging_unit || "-"}`} />
 				<InfoDisplay placeholder={`Conversion Factor`} info={`${data.conversion_factor || "-"}`} />
 				<InfoDisplay placeholder={`Payment Term`} info={`${data.payment_term || "-"}`} />
 				<InfoDisplay placeholder={`Remarks`} info={`${data.remarks || "-"}`} />

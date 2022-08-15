@@ -122,7 +122,9 @@ const ViewSparesProcurementButtons: React.FC<Props> = ({
               <RegularButton type="secondary" text="Reject" operation={() => { setStatus("Rejecting") }} />
             </View>
             :
-            <View />
+            <View>
+              <RegularButton text="Edit " operation={() => { navigation.navigate("EditSparesProcurement", { docID: docID }) }} />
+            </View>
         }
       </View>
     );

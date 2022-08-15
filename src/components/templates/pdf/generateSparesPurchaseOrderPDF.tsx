@@ -85,6 +85,11 @@ export const generateSparesPurchaseOrderPDF = (data: SparesPurchaseOrder, image)
                   <div style=" width: 3%; ">:</div>
                   <div style="width: 57%;"> ${data.payment_term}</div>
                 </div>
+                <div style="display: flex; flex-direction: row">
+                  <div style=" width: 40%"><b>Remarks</b> </div>
+                  <div style=" width: 3%; ">:</div>
+                  <div style="width: 57%;"> ${data.remarks}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -141,7 +146,7 @@ export const generateSparesPurchaseOrderPDF = (data: SparesPurchaseOrder, image)
                   <b>${addCommaNumber(data.unit_price, "0")}</b>
                 </div>
               </div>
-              <div style="width: 10%;"><b>${addCommaNumber(data.total_amount, "0")}</b></div>
+              <div style="width: 10%;"><b>${addCommaNumber(`${Number(data.quantity) * Number(data.unit_price)}`, "0")}</b></div>
 
             </div>
           </div>
@@ -149,14 +154,17 @@ export const generateSparesPurchaseOrderPDF = (data: SparesPurchaseOrder, image)
           <div style="border: 1px solid #000000; margin-top: 5px; margin-bottom: 5px;"></div>
           <div style="width: 100%; display: flex; flex-direction: row;">
             <div style="width: 80%; font-size: 12px;"><b>${converter.toWords(Number(data.total_amount)).toUpperCase()} ONLY</b></div>
+
             <div style="width: 20%;">
+              <div style="text-align: right; padding-left: 20%; font-size: 13px;">
+                Discount: <b>${addCommaNumber(data.discount, "0")}</b>
+              </div>
+              <div style="border: 1px solid #000000; margin-top: 5px; margin-bottom: 5px;"></div>
               <div style="text-align: right; padding-left: 20%; font-size: 13px;">
                 <b>${addCommaNumber(data.total_amount, "0")}</b>
               </div>
             </div>
           </div>
-          <div style="border: 1px solid #000000; margin-top: 5px; margin-bottom: 5px;"></div>
-          <div style="width: 70%; font-size: 13px;"><b>${data.remarks}</b></div>
 
           <div style="width: 100%; font-size: 11px; margin-top: 100px;"><b>THIS IS COMPUTER GENERATED, NO SIGNATURE REQUIRED</b></div>
         </div>        

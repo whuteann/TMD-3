@@ -23,6 +23,8 @@ export const BANKS = 'banks';
 export const PRODUCTS = 'products';
 export const SHIP_SPARES = 'ship_spares';
 export const PORTS = 'ports';
+export const SALES_PAYMENT_TERMS = 'sales_payment_term';
+export const PROCUREMENT_PAYMENT_TERMS = 'procurement_payment_term';
 export const CUSTOMER_SEGMENTATIONS = 'customer_segmentations';
 
 export const INCREMENTS = 'increments';

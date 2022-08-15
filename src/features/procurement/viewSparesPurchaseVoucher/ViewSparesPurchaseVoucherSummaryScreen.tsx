@@ -18,6 +18,7 @@ import { createAndDisplayPDF, loadPDFLogo } from '../../../functions/PDFv2Functi
 import { generateSparesPurchaseVoucherPDF } from '../../../components/templates/pdf/generateSparesPurchaseVoucherPDF';
 import { convertCurrency } from '../../../constants/Currency';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
+import Line from '../../../components/atoms/display/Line';
 
 
 const ViewSparesPurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavigationProps<"ViewSparesPurchaseVoucherSummary">) => {
@@ -47,8 +48,8 @@ const ViewSparesPurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavig
 	let buttons = <ViewSparesPurchaseVoucherButtons
 		displayID={data.display_id}
 		created_by={data.created_by}
-		product={data.product}
-		unit_price={data.unit_price}
+		products={data.products ? data.products.map(item => { return item.product }) : []}
+		unit_prices={data.products ? data.products.map(item => { return item.unit_price }) : []}
 		navID={data.id}
 		status={status}
 		navigation={navigation}
@@ -70,10 +71,22 @@ const ViewSparesPurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavig
 					<InfoDisplayLink placeholder="Purchase Order No." info={data.spares_purchase_order_secondary_id} linkOnPress={() => { linkTo(`/spares-purchase-orders/${data.spares_purchase_order_id}/show`) }} />
 
 					<InfoDisplay placeholder="Supplier" info={data.supplier.name} />
-					<InfoDisplay placeholder="Product" info={data.product.product_description} />
-					<InfoDisplay placeholder="Unit of Measurement" info={data.unit_of_measurement} />
-					<InfoDisplay placeholder="Quantity" info={data.quantity} />
-					<InfoDisplay placeholder="Unit Price" info={data.unit_price ? `${convertCurrency(data.currency_rate)} ${addCommaNumber(data.unit_price, "-")}` : "-"} />
+
+					<Line />
+					{
+						data.products.map((item, index) => {
+							return (
+								<View key={`${index}`} style={tailwind("mb-3")}>
+									<InfoDisplay placeholder={`Product ${index + 1}`} info={item.product.product_description} bold={true} />
+									<InfoDisplay placeholder={`Quantity`} info={`${item.quantity} ${item.unit_of_measurement}`} />
+									<InfoDisplay placeholder={`Unit price`} info={item.unit_price} />
+									<InfoDisplay placeholder={`Subtotal`} info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(`${Number(item.quantity) * Number(item.unit_price)}`, "0")}`} />
+								</View>
+							)
+						})
+					}
+					<Line />
+
 					<InfoDisplay placeholder="Currency Rate" info={data.currency_rate} />
 					<InfoDisplay placeholder="Payment Term" info={data.payment_term} />
 					<InfoDisplay placeholder="Vessel Name" info={data.vessel_name ? data.vessel_name.name : "-"} />
@@ -84,7 +97,9 @@ const ViewSparesPurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavig
 					<InfoDisplay placeholder="Remarks" info={data.remarks || "-"} />
 				</View>
 
-				<InfoDisplay placeholder="Original Amount" info={data.original_amount ? `${convertCurrency(data.currency_rate)} ${addCommaNumber(data.original_amount, "-")}` : "-"} />
+				<InfoDisplay placeholder="Original Amount" info={data.original_amount ? `${convertCurrency(data.currency_rate)} ${addCommaNumber(`${data.original_amount}`, "-")}` : "-"} />
+				<InfoDisplay placeholder="Discount" info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(data.discount, "0")}`} />
+				<InfoDisplay placeholder="Total payable" info={data.total_payable ? `${convertCurrency(data.currency_rate)} ${addCommaNumber(data.total_payable, "-")}` : "-"} />
 				<InfoDisplay placeholder="Account Purchase By" info={data.account_purchase_by.name || "-"} />
 				<InfoDisplay placeholder="Cheque No." info={data.cheque_no || "-"} />
 				<InfoDisplay placeholder="Paid Amount" info={data.paid_amount ? `${convertCurrency(data.currency_rate)} ${addCommaNumber(data.paid_amount, "-")}` : "-"} />

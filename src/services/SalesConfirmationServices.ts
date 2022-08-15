@@ -1,7 +1,7 @@
 import { functions, salesConfirmationRef } from "../functions/Firebase";
 import { SalesConfirmation } from "../types/SalesConfirmation";
 import { Product } from "../types/Product";
-import { DATE, QUOTATION_CODE, SALES_CODE } from "../types/Common";
+import { DATE, NOT_CONFIRMED, QUOTATION_CODE, SALES_CODE } from "../types/Common";
 import { addLog } from "./LogServices";
 import { SALES_CONFIRMATIONS } from "../constants/Firebase";
 import { Action, CREATE_ACTION, UPDATE_ACTION } from "../constants/Action";
@@ -33,6 +33,7 @@ export const createSalesConfirmation = (quotationID: string, quotation: any, pro
     currency_rate: quotation.currency_rate,
     barging_fee: quotation.barging_fee,
     barging_remark: quotation.barging_remark,
+    barging_unit: quotation.barging_unit,
     conversion_factor: quotation.conversion_factor,
     payment_term: quotation.payment_term,
     validity_date: quotation.validity_date,
@@ -74,10 +75,12 @@ export const createSalesConfirmation = (quotationID: string, quotation: any, pro
     );
 }
 
-export const recreateSalesConfirmation = (docID: string | undefined, quotation: any, products: Array<{ product: Product, unit: string, price: { value: string, unit: string } }>, user: any, onSuccess: () => void, onError: (error: any) => void) => {
+export const recreateSalesConfirmation = (docID: string | undefined, quotation: any, products: Array<{ product: Product, unit: string, price: { value: string, unit: string, remarks: string } }>, user: any, onSuccess: () => void, onError: (error: any) => void) => {
   let salesID = quotation.secondary_id.replace(to_replace_string, replace_string);
   delete quotation['products'];
   delete quotation['prices'];
+
+  console.log(products);
 
   let sales_confirmation =
   {
@@ -92,6 +95,7 @@ export const recreateSalesConfirmation = (docID: string | undefined, quotation: 
     currency_rate: quotation.currency_rate,
     barging_fee: quotation.barging_fee,
     barging_remark: quotation.barging_remark,
+    barging_unit: quotation.barging_unit,
     conversion_factor: quotation.conversion_factor,
     payment_term: quotation.payment_term,
     validity_date: quotation.validity_date,
@@ -104,6 +108,7 @@ export const recreateSalesConfirmation = (docID: string | undefined, quotation: 
     purchase_order_file: "",
     purchase_order_no: "",
     filename_storage: "",
+    status: NOT_CONFIRMED,
     created_by: user,
   };
 

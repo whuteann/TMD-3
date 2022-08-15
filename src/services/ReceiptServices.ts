@@ -85,21 +85,35 @@ export const updateReceipt = (reID: string, data: Object, user: any, log_action:
     );
 }
 
-export const confirmReceipt = (invID: string, receiptID: string, receiptSecondaryID: string, revisedCode: string, user: any, onSuccess: () => void, onError: (error: any) => void) => {
+export const confirmReceipt = (invID: string, receiptID: string, paid_amount: string, receiptSecondaryID: string, revisedCode: string, user: any, onSuccess: () => void, onError: (error: any) => void) => {
+
+  const receipt_no: number = Number(receiptSecondaryID.split("")[receiptSecondaryID.split("").length - 1])
+
   getInvoiceData(
     invID,
     (invData) => {
+      let total_payable: number = Number(invData.total_payable);
+      let paid_amount_number: number = Number(paid_amount);
 
       if (invData.receipts) {
 
-        let newArr: Array<{ id: string, secondary_id: string }> = invData.receipts;
+        let newArr: Array<{ id: string, secondary_id: string, paid_amount: string }> = invData.receipts;
+        let spliceArr: Array<{ id: string, secondary_id: string, paid_amount: string }> = [...newArr];
+        let amount_paid: number = 0;
         const searchIndex = newArr.findIndex((receipt) => receipt.id == receiptID);
 
+
+        spliceArr.splice(receipt_no - 1, 1);
+
+        spliceArr.map(item => {
+          amount_paid = amount_paid + Number(item.paid_amount);
+        })
+
         if (searchIndex.toString() == "-1") {
-          newArr.push({ id: receiptID, secondary_id: receiptSecondaryID });
+          newArr.push({ id: receiptID, secondary_id: receiptSecondaryID, paid_amount: paid_amount });
 
           updateInvoice(invID, { receipts: newArr }, user!, UPDATE_ACTION, () => {
-            updateReceipt(receiptID, { display_id: receiptSecondaryID, revised_code: revisedCode }, user!, SUBMIT_ACTION, () => {
+            updateReceipt(receiptID, { display_id: receiptSecondaryID, revised_code: revisedCode, balance_owing: `${total_payable - amount_paid - paid_amount_number}` }, user!, SUBMIT_ACTION, () => {
               onSuccess();
             }, () => {
             })
@@ -108,9 +122,10 @@ export const confirmReceipt = (invID: string, receiptID: string, receiptSecondar
 
         } else {
           newArr[searchIndex].secondary_id = receiptSecondaryID
+          newArr[searchIndex].paid_amount = paid_amount
 
           updateInvoice(invID, { receipts: newArr }, user!, UPDATE_ACTION, () => {
-            updateReceipt(receiptID, { display_id: receiptSecondaryID, revised_code: revisedCode }, user!, SUBMIT_ACTION, () => {
+            updateReceipt(receiptID, { display_id: receiptSecondaryID, revised_code: revisedCode, balance_owing: `${total_payable - amount_paid - paid_amount_number}`}, user!, SUBMIT_ACTION, () => {
               onSuccess();
             }, () => {
             })
@@ -119,8 +134,8 @@ export const confirmReceipt = (invID: string, receiptID: string, receiptSecondar
           });
         }
       } else {
-        updateInvoice(invID, { receipts: [{ id: receiptID, secondary_id: receiptSecondaryID, }] }, user!, UPDATE_ACTION, () => {
-          updateReceipt(receiptID, { display_id: receiptSecondaryID, revised_code: revisedCode }, user!, SUBMIT_ACTION, () => {
+        updateInvoice(invID, { receipts: [{ id: receiptID, secondary_id: receiptSecondaryID, paid_amount: paid_amount }] }, user!, UPDATE_ACTION, () => {
+          updateReceipt(receiptID, { display_id: receiptSecondaryID, revised_code: revisedCode, balance_owing: `${total_payable - paid_amount_number}` }, user!, SUBMIT_ACTION, () => {
             onSuccess();
           }, () => {
           })

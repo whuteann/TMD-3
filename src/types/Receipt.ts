@@ -19,6 +19,7 @@ export type Receipt = {
   barging_remark?: string,
   cheque_number?: string,
   customer?: Customer,
+  balance_owing?: string,
 
   products: Array<{ product: Product, BDN_quantity: { quantity: string, unit: string }, quantity: string, unit: string, price: { value: string; unit: string; }, subtotal: string }>,
   discount: string,

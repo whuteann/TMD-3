@@ -33,6 +33,7 @@ interface Props {
 	displayID: string,
 	salesID: string,
 	jobConfirmationID: string,
+	invoiceID: string | undefined,
 	jobID: string,
 	status: string,
 	rfqs: Array<RFQ>,
@@ -68,6 +69,7 @@ const ViewQuotationButtons: React.FC<Props> = ({
 	salesID,
 	jobConfirmationID,
 	jobID,
+	invoiceID,
 	setUploaded,
 	setStatus,
 	onDownload
@@ -129,7 +131,7 @@ const ViewQuotationButtons: React.FC<Props> = ({
 										navigation.navigate("ViewAllQuotation");
 										setStatus("Approved");
 										revalidateCollection(QUOTATIONS);
-									});									
+									});
 								}, (error) => {
 									console.error(error);
 								});
@@ -408,6 +410,20 @@ const ViewQuotationButtons: React.FC<Props> = ({
 										setUploaded(false);
 									}}
 								/>
+								{
+									invoiceID
+										?
+										<></>
+										:
+										<RegularButton
+											text="Revert to Approved"
+											type={"secondary"}
+											operation={() => {
+												updateQuotation(docID, { status: APPROVED }, user!, UPDATE_ACTION, () => { }, (error) => { console.error(error); })
+												setStatus(APPROVED);
+											}}
+										/>
+								}
 							</View>
 						)
 						:
@@ -482,6 +498,20 @@ const ViewQuotationButtons: React.FC<Props> = ({
 											)
 											:
 											<RegularButton text="Download" operation={onDownload} />
+									}
+									{
+										invoiceID
+											?
+											<></>
+											:
+											<RegularButton
+												text="Revert to Approved"
+												type={"secondary"}
+												operation={() => {
+													updateQuotation(docID, { status: APPROVED }, user!, UPDATE_ACTION, () => { }, (error) => { console.error(error); })
+													setStatus(APPROVED);
+												}}
+											/>
 									}
 								</View>
 							</View>

@@ -11,15 +11,16 @@ interface CardProps {
   date: string,
   label: string,
   read: boolean,
-  created_at: any ,
+  created_at: any,
   operation: () => void,
 }
 
 const NotificationCard: React.FC<CardProps> = ({
-  id, date, label, read, created_at,operation
+  id, date, label, read, created_at, operation
 }) => {
   const tailwind = useTailwind();
   const user = useSelector(UserSelector);
+  const time = `${created_at.toDate().getHours() < 10 ? `0${created_at.toDate().getHours()}` : created_at.toDate().getHours()}:${created_at.toDate().getMinutes() < 10 ? `0${created_at.toDate().getMinutes()}` : created_at.toDate().getMinutes()}`;
 
   const onPress = () => {
     if (!read) {
@@ -33,13 +34,17 @@ const NotificationCard: React.FC<CardProps> = ({
 
 
   return (
-    <TouchableOpacity style={tailwind("p-5")} onPress={onPress}>
-      <View style={tailwind(`${read ? "opacity-30" : ""}`)}>
-        <TextLabel content={date} style={tailwind("font-bold")} />
-        <TextLabel content={label} />
-        <TextLabel content={`${created_at.toDate().getHours() < 10 ? `0${created_at.toDate().getHours()}`: created_at.toDate().getHours()}:${created_at.toDate().getMinutes() < 10 ? `0${created_at.toDate().getMinutes()}` :  created_at.toDate().getMinutes()}`} style={tailwind("text-gray-primary")}/>
-        <View style={tailwind('border-b-2 border-black')} />
+    <TouchableOpacity style={tailwind("px-5 pb-10")} onPress={onPress}>
+      <View style={tailwind("flex-row")}>
+        <View style={tailwind("w-[7%] pt-[9]")}>
+          <View style={tailwind(`h-[8] w-[8] ${read ? "bg-gray-secondary" : "bg-primary"} rounded-full`)} />
+        </View>
+        <View style={tailwind(`w-[93%]`)}>
+          <TextLabel content={label} />
+          <TextLabel content={`${date} at ${time}`} style={tailwind("text-gray-primary")} />
+        </View>
       </View>
+      <View style={tailwind('border-b-2 border-gray-secondary w-full pt-4')} />
     </TouchableOpacity>
   )
 }

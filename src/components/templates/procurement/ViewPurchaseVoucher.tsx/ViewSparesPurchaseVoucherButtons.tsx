@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { TickIcon } from '../../../../../assets/svg/SVG';
 import { UPDATE_ACTION } from '../../../../constants/Action';
-import { SPARES_PURCHASE_VOUCHERS } from '../../../../constants/Firebase';
+import { SHIP_SPARES, SPARES_PURCHASE_VOUCHERS } from '../../../../constants/Firebase';
 import { loadingDelay } from '../../../../helpers/GenericHelper';
 import { EDIT_DRAFT, REVIEW_PURCHASE_VOUCHER } from '../../../../permissions/Permissions';
 import { useRefreshContext } from '../../../../providers/RefreshProvider';
@@ -24,8 +24,8 @@ interface Props {
 	navID: string,
 	status: string,
 	navigation: any,
-	product: ShipSpare,
-	unit_price: string,
+	products: Array<ShipSpare>,
+	unit_prices: Array<string>,
 	created_by: User,
 	setStatus: (status) => void;
 	onDownload?: () => void;
@@ -33,7 +33,7 @@ interface Props {
 
 
 const ViewSparesPurchaseVoucherButtons: React.FC<Props> = ({
-	status, navigation, displayID, navID, product, unit_price, created_by, setStatus, onDownload = () => { }
+	status, navigation, displayID, navID, products, unit_prices, created_by, setStatus, onDownload = () => { }
 }) => {
 
 	let bottom;
@@ -61,22 +61,29 @@ const ViewSparesPurchaseVoucherButtons: React.FC<Props> = ({
 			switch (action) {
 				case "approve":
 					approveSparesPurchaseVoucher(navID, user!, () => {
-						updateShipSpare(product.id, product.product_code, { product_code: product.product_code, ref_price: unit_price }, user!, UPDATE_ACTION, () => {
-							loadingDelay(() => {
-								setLoading(false);
-								navigation.navigate("ViewAllSparesPurchaseVoucher");
-								revalidateCollection(SPARES_PURCHASE_VOUCHERS);
-								setStatus("Approved");
-							})
+
+						products.map((product, index) => {
+							updateShipSpare(product.id, product.product_code, { product_code: product.product_code, ref_price: unit_prices[index] }, user!, UPDATE_ACTION, () => {
+								console.log("done");
+							}, (error) => {
+								console.error(error);
+							});
+						})
+
+						loadingDelay(() => {
+							setLoading(false);
+							navigation.navigate("ViewAllSparesPurchaseVoucher");
+							revalidateCollection(SPARES_PURCHASE_VOUCHERS);
+							revalidateCollection(SHIP_SPARES);
+							setStatus("Approved");
+						})
 
 
-							sendNotifications(
-								[SUPER_ADMIN_ROLE, ACCOUNT_ASSISTANT_ROLE],
-								`Purchase voucher ${displayID} has been approved by ${user?.name}.`,
-								{ screen: "ViewSparesPurchaseVoucherSummary", docID: navID });
-						}, (error) => {
-							console.error(error);
-						});
+						sendNotifications(
+							[SUPER_ADMIN_ROLE, ACCOUNT_ASSISTANT_ROLE],
+							`Purchase voucher ${displayID} has been approved by ${user?.name}.`,
+							{ screen: "ViewSparesPurchaseVoucherSummary", docID: navID });
+
 					}, (error) => {
 						console.error(error);
 					})

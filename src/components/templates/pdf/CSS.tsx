@@ -3,7 +3,6 @@
 export const CSSStyles = `
   body {
     font-family: "Times New Roman", Times, serif;
-
     margin: 10mm 15mm 10mm 15mm;
   }
   h1 {
@@ -40,16 +39,20 @@ export const CSSStyles = `
   .multiline {
   white-space: pre-wrap;
   }
-  @page {
-  margin: 20px;
-  }
+  
   .main {
     display: flex;
     flex-direction: column;
-}
-.main > div {
-    padding: 0;
-    line-height: 17px;
-    font-size: 12px;
-}
+  }
+  .main > div {
+      padding: 0;
+      line-height: 17px;
+      font-size: 12px;
+  }
+  #content {
+    display: table;
+  }
+
+  .page-number:before {
+    content: "Page: " counter(page);}
 `

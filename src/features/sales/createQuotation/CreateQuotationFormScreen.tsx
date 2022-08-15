@@ -5,10 +5,9 @@ import { Formik, FieldArray } from 'formik';
 import LoadingData from '../../../components/atoms/loading/loadingData';
 import { useLinkTo } from '@react-navigation/native';
 import { createQuotation, updateQuotation } from '../../../services/QuotationServices';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import ProductsField from '../../../components/templates/sales/CreateQuotation/ProductsField';
 import FormTextInputField from '../../../components/molecules/input/FormTextInputField';
-import FormDropdownInputField from '../../../components/molecules/input/FormDropdownInputField';
 import { useTailwind } from 'tailwind-rn/dist';
 import Body from '../../../components/atoms/display/Body';
 import HeaderStack from '../../../components/atoms/display/HeaderStack';
@@ -33,6 +32,7 @@ import { createSales } from '../../../services/SalesServices';
 import { UPDATE_ACTION } from '../../../constants/Action';
 import FormDateInputField from '../../../components/molecules/input/FormDateInputField';
 import { useRefreshContext } from '../../../providers/RefreshProvider';
+import FormSearchableDropdownInputField from '../../../components/molecules/input/FormSearchableDropdownInputField';
 
 const formSchema = Yup.object().shape({
   customer: Yup.string().required("Required"),
@@ -150,8 +150,8 @@ const CreateQuotationFormScreen = ({ navigation }: RootNavigationProps<"CreateQu
           }, () => {
           })
 
-          revalidateCollection(QUOTATIONS);
-          refreshContext?.refreshList(QUOTATIONS);
+        revalidateCollection(QUOTATIONS);
+        refreshContext?.refreshList(QUOTATIONS);
       }, (error) => {
         console.error(error);
       })
@@ -220,7 +220,7 @@ const CreateQuotationFormScreen = ({ navigation }: RootNavigationProps<"CreateQu
 
             <View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 
-            <FormDropdownInputField
+            <FormSearchableDropdownInputField
               label="Customer"
               value={values.customer}
               items={customerInfo?.nameList ? customerInfo?.nameList : ["", ""]}

@@ -16,6 +16,7 @@ import ViewSparesProcurementButtons from '../../../components/templates/procurem
 import { DRAFT, PENDING, REJECTED, SUBMITTED } from '../../../types/Common';
 import { useLinkTo } from '@react-navigation/native';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
+import Line from '../../../components/atoms/display/Line';
 
 const ViewSparesProcurementSummaryScreen = ({ navigation, route }: RootNavigationProps<"ViewSparesProcurementSummary">) => {
 	const tailwind = useTailwind();
@@ -44,7 +45,7 @@ const ViewSparesProcurementSummaryScreen = ({ navigation, route }: RootNavigatio
 		setStatus={setStatus}
 		onDownload={() => { }}
 	/>;
-;
+	;
 
 	return (
 		<Body header={<HeaderStack title={"View Spares Procurement"} navigateProp={navigation} />} style={tailwind("mt-6")}>
@@ -53,18 +54,18 @@ const ViewSparesProcurementSummaryScreen = ({ navigation, route }: RootNavigatio
 
 
 				<InfoDisplay placeholder={`Procurement Date`} info={`${data.procurement_date}`} />
-				
+
 				<InfoDisplay placeholder={`Proposed Date`} info={
-						data.proposed_date?.startDate
+					data.proposed_date?.startDate
+						?
+						data.proposed_date.endDate
 							?
-							data.proposed_date.endDate
-								?
-								`${data.proposed_date?.startDate} to ${data.proposed_date?.endDate}`
-								:
-								`${data.proposed_date.startDate}`
+							`${data.proposed_date?.startDate} to ${data.proposed_date?.endDate}`
 							:
-							"-"}
-					/>
+							`${data.proposed_date.startDate}`
+						:
+						"-"}
+				/>
 
 				{
 					data.suppliers.map((item, index) => (
@@ -82,35 +83,33 @@ const ViewSparesProcurementSummaryScreen = ({ navigation, route }: RootNavigatio
 					))
 				}
 
-				<View style={tailwind("mt-3")}>
-					<InfoDisplay placeholder={`Sizing`} info={`${data.sizing || "-"}`} />
-					<InfoDisplay placeholder={`Product`} info={`${data.product.product_description || "-"}`} />
-					<InfoDisplay placeholder={`Quantity`} info={`${addCommaNumber(data.quantity, "-")}`} />
+				<Line />
 
-					{
-						data.status == SUBMITTED || data.status == PENDING
-							?
-							<View>
-								<InfoDisplayLink placeholder="Purchase Order" info={data.spares_purchase_order_secondary_id} linkOnPress={() => { linkTo(`/spares-purchase-orders/${data.spares_purchase_order_id}/show`) }} />
-								<InfoDisplay placeholder={`Unit of Measurement`} info={`${data.unit_of_measurement}`} />
-								<InfoDisplay placeholder={`Remarks`} info={`${data.remarks || "-"}`} />
+				{
+					data.products.map((product, index) => {
+						return (
+							<View key={`${index}`} style={tailwind("mb-5")}>
+								<InfoDisplay placeholder={`Product ${index + 1}`} info={product.product.product_description} bold={true} />
+								<InfoDisplay placeholder={`Sizing`} info={product.sizing || "-"} />
+								<InfoDisplay placeholder={`Quantity`} info={`${product.quantity} ${product.unit_of_measurement}`} />
 							</View>
-							:
-							<View>
-								<InfoDisplay placeholder={`Unit of Measurement`} info={`${data.unit_of_measurement || "-"}`} />
-								<InfoDisplay placeholder={`Remarks`} info={`${data.remarks || "-"}`} />
-							</View>
-					}
+						)
+					})
+				}
 
-					{
-						status == REJECTED
-							?
-							<InfoDisplay placeholder={`Reject Notes`} info={`${data.reject_notes || "-"}`} />
-							:
-							null
-					}
+				<Line />
 
-				</View>
+				<InfoDisplay placeholder={`Remarks`} info={`${data.remarks || "-"}`} />
+
+				{
+					status == REJECTED
+						?
+						<InfoDisplay placeholder={`Reject Notes`} info={`${data.reject_notes || "-"}`} />
+						:
+						null
+				}
+
+
 
 
 			</View>

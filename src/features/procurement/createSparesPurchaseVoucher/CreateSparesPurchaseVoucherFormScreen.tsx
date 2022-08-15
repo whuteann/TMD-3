@@ -21,8 +21,7 @@ import { createSparesPurchaseVoucher } from '../../../services/SparesPurchaseVou
 import Unauthorized from '../../../components/atoms/unauthorized/Unauthorized';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
-import { updateSparesPurchaseOrder } from '../../../services/SparesPurchaseOrderServices';
-import { UPDATE_ACTION } from '../../../constants/Action';
+import { convertCurrency } from '../../../constants/Currency';
 
 
 const to_replace_string = SPARES_PURCHASE_ORDER_CODE;
@@ -44,12 +43,14 @@ const CreateSparesPurchaseVoucherFormScreen = ({ navigation, route }: RootNaviga
   let displayID: string = "";
   const user = useSelector(UserSelector);
   const allowedStatuses = [APPROVED_DOC, PV_ISSUED, PV_PENDING];
+  let amount_paid_total: number = 0;
 
   type initialValuesType = {
     purchase_voucher_date: string,
     account_purchase_by: string,
     cheque_no: string,
     paid_amount: string,
+    original_amount: string,
   };
 
   const { data } = useDocument<SparesPurchaseOrder>(`${SPARES_PURCHASE_ORDERS}/${docID}`, {
@@ -75,7 +76,8 @@ const CreateSparesPurchaseVoucherFormScreen = ({ navigation, route }: RootNaviga
     purchase_voucher_date: currentDate,
     account_purchase_by: "",
     cheque_no: "",
-    paid_amount: ""
+    paid_amount: "",
+    original_amount: data.total_amount,
   };
 
   let poData = {
@@ -83,13 +85,11 @@ const CreateSparesPurchaseVoucherFormScreen = ({ navigation, route }: RootNaviga
     invNumber: data.invNumber,
     spares_purchase_order_id: data.id,
     spares_purchase_order_secondary_id: data.display_id,
-    original_amount: data.total_amount,
+    discount: data.discount,
+    total_payable: data.total_amount,
     supplier: data.supplier,
-    product: data.product,
-    unit_of_measurement: data.unit_of_measurement,
-    quantity: data.quantity,
+    products: data.products,
     currency_rate: data.currency_rate,
-    unit_price: data.unit_price,
     payment_term: data.payment_term,
     vessel_name: data.vessel_name,
     type_of_supply: data.type_of_supply,
@@ -99,6 +99,11 @@ const CreateSparesPurchaseVoucherFormScreen = ({ navigation, route }: RootNaviga
     remarks: data.remarks,
   }
 
+  if (data.spares_purchase_vouchers) {
+    data.spares_purchase_vouchers.forEach((item) => {
+      amount_paid_total = Number(item.paid_amount) + amount_paid_total
+    });
+  }
 
   return (
     <Body header={<HeaderStack title={`Create Purchase Voucher`} navigateProp={navigation} />} style={tailwind("mt-6")}>
@@ -168,7 +173,19 @@ const CreateSparesPurchaseVoucherFormScreen = ({ navigation, route }: RootNaviga
             <FormTextInputField
               label="Original Amount"
               editable={false}
-              value={poData.original_amount}
+              value={`${convertCurrency(data.currency_rate)} ${values.original_amount}`}
+            />
+
+            <FormTextInputField
+              label="Discount"
+              editable={false}
+              value={`${convertCurrency(data.currency_rate)} ${data.discount || "0"}`}
+            />
+
+            <FormTextInputField
+              label="Amount left"
+              editable={false}
+              value={`${convertCurrency(data.currency_rate)} ${Number(poData.total_payable) - amount_paid_total}`}
             />
 
 
@@ -192,8 +209,8 @@ const CreateSparesPurchaseVoucherFormScreen = ({ navigation, route }: RootNaviga
             <FormTextInputField
               label="Paid Amount"
               number={true}
-              value={values.paid_amount}
-              onChangeValue={text => setFieldValue("paid_amount", text)}
+              value={`${convertCurrency(data.currency_rate)} ${values.paid_amount}`}
+              onChangeValue={text => setFieldValue("paid_amount", text.replace(`${convertCurrency(data.currency_rate!)}`, "").trim())}
               hasError={errors.paid_amount && touched.paid_amount ? true : false}
               errorMessage={errors.paid_amount}
             />

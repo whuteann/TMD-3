@@ -118,6 +118,7 @@ const EditInvoiceFormScreen = ({ navigation, route }: RootNavigationProps<"EditI
 
             <FormDateInputField
               label="Invoice Date"
+              required={true}
               value={values.invoice_date}
               onChangeValue={text => setFieldValue("invoice_date", text)}
               hasError={errors.invoice_date && touched.invoice_date ? true : false}

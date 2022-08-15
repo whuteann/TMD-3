@@ -9,8 +9,8 @@ import ViewPageHeaderText from '../../../components/molecules/display/ViewPageHe
 import FormTextInputField from '../../../components/molecules/input/FormTextInputField';
 import FormDouble from '../../../components/molecules/alignment/FormDouble';
 import FormDropdownInputField from '../../../components/molecules/input/FormDropdownInputField';
-import { useDocument } from '@nandorojo/swr-firestore';
-import { SPARES_PURCHASE_ORDERS } from '../../../constants/Firebase';
+import { useCollection, useDocument } from '@nandorojo/swr-firestore';
+import { PROCUREMENT_PAYMENT_TERMS, SPARES_PURCHASE_ORDERS } from '../../../constants/Firebase';
 import LoadingData from '../../../components/atoms/loading/loadingData';
 import * as Yup from "yup";
 import { useLinkTo } from '@react-navigation/native';
@@ -25,11 +25,18 @@ import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
 import { ShipSpare } from '../../../types/ShipSpare';
 import { CurrenciesList } from '../../../constants/Currency';
+import Line from '../../../components/atoms/display/Line';
+import TextLabel from '../../../components/atoms/typography/TextLabel';
+import { PaymentTerm } from '../../../types/PaymentTerm';
 
 
 const formSchema = Yup.object().shape({
   currency_rate: Yup.string().required("Required"),
-  unit_price: Yup.string().required("Required"),
+  products: Yup.array().of(
+    Yup.object().shape({
+      unit_price: Yup.string().required("Required").matches(/^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$/, "Please ensure the correct number format"),
+    })
+  ),
   payment_term: Yup.string().required("Required")
 });
 
@@ -37,6 +44,7 @@ const EditSparesPurchaseOrderFormScreen = ({ navigation, route }: RootNavigation
 
   const { docID } = route.params;
   const [loading, setLoading] = useState(false);
+  const [productErrors, setProductErrors] = useState<Array<{ unit_price: string }>>();
   const tailwind = useTailwind();
   const linkTo = useLinkTo();
   const allowedStatuses = [DRAFT, REJECTED];
@@ -47,12 +55,9 @@ const EditSparesPurchaseOrderFormScreen = ({ navigation, route }: RootNavigation
     spares_procurement_secondary_id: string,
     purchase_order_date: string,
     supplier: any,
-    product: ShipSpare,
-    unit_of_measurement: string,
-    quantity: string,
+    products: Array<{ product: ShipSpare, sizing?: string, quantity: string, unit_of_measurement: string, unit_price: string }>,
     proposed_date: string,
     currency_rate: string,
-    unit_price: string,
     payment_term: string,
     reject_notes: string
   };
@@ -61,7 +66,12 @@ const EditSparesPurchaseOrderFormScreen = ({ navigation, route }: RootNavigation
     ignoreFirestoreDocumentSnapshotField: false,
   })
 
-  if (!data) return <LoadingData message="This document might not exist" />;
+  const { data: payment_terms } = useCollection<PaymentTerm>(`${PROCUREMENT_PAYMENT_TERMS}`, {
+    ignoreFirestoreDocumentSnapshotField: false,
+    where: ["deleted", "==", false]
+  })
+
+  if (!data || !payment_terms) return <LoadingData message="This document might not exist" />;
 
   if (!allowedStatuses.includes(data?.status!)) {
     return <Unauthorized />;
@@ -73,13 +83,18 @@ const EditSparesPurchaseOrderFormScreen = ({ navigation, route }: RootNavigation
     spares_procurement_secondary_id: data.spares_procurement_secondary_id,
     purchase_order_date: `${new Date().getDate().toString()}/${(new Date().getMonth() + 1).toString()}/${new Date().getFullYear().toString()}`,
     supplier: data.supplier ? data.supplier : "",
-    product: data.product,
-    unit_of_measurement: data.unit_of_measurement || "",
-    quantity: data.quantity || "",
+    products: data.products.map(item => {
+      return {
+        product: item.product,
+        sizing: item.sizing || "",
+        quantity: item.quantity,
+        unit_of_measurement: item.unit_of_measurement,
+        unit_price: item.unit_price
+      }
+    }),
     proposed_date: data.proposed_date || "",
 
     currency_rate: data.currency_rate || "",
-    unit_price: data.unit_price || "",
     payment_term: data.payment_term || "",
     reject_notes: ""
   };
@@ -125,28 +140,48 @@ const EditSparesPurchaseOrderFormScreen = ({ navigation, route }: RootNavigation
               editable={false}
             />
 
-            <FormTextInputField
-              label="Product"
-              value={values.product.product_description}
-              editable={false}
-            />
+            <Line />
 
-            <FormDouble
-              left={
-                <FormTextInputField
-                  label="Quantity"
-                  value={values.quantity}
-                  editable={false}
-                />
-              }
-              right={
-                <FormTextInputField
-                  label="Unit of measurement"
-                  value={values.unit_of_measurement}
-                  editable={false}
-                />
-              }
-            />
+            {
+              values.products.map((item, index) => {
+                return (
+                  <View key={`${index}`} style={tailwind("mb-5")}>
+                    <TextLabel content={`Product ${index + 1} : ${item.product.product_description}`} style={tailwind("font-bold")} />
+
+                    <FormDouble
+                      left={
+                        <FormTextInputField
+                          label="Quantity"
+                          value={item.quantity}
+                          editable={false}
+                        />
+                      }
+                      right={
+                        <FormTextInputField
+                          label="Unit of measurement"
+                          value={item.unit_of_measurement}
+                          editable={false}
+                        />
+                      }
+                    />
+                    <FormTextInputField
+                      label="Unit Price"
+                      number={true}
+                      placeholder={"0.00"}
+                      value={values.products[index].unit_price}
+                      onChangeValue={(val) => { setFieldValue(`products.${index}.unit_price`, val) }}
+                      required={true}
+                      hasError={productErrors ? (productErrors[index] ? (productErrors[index].unit_price ? true : false) : false) : false}
+                      errorMessage={productErrors ? (productErrors[index] ? (productErrors[index].unit_price ? productErrors[index].unit_price : "") : "") : ""}
+                    />
+
+                  </View>
+                )
+              })
+            }
+
+            <Line />
+
 
             <FormTextInputField
               label="Proposed Date"
@@ -164,21 +199,11 @@ const EditSparesPurchaseOrderFormScreen = ({ navigation, route }: RootNavigation
               errorMessage={errors.currency_rate}
             />
 
-            <FormTextInputField
-              label="Unit Price"
-              number={true}
-              value={values.unit_price}
-              onChangeValue={(val) => { setFieldValue("unit_price", val) }}
-              required={true}
-              hasError={errors.unit_price && touched.unit_price ? true : false}
-              errorMessage={errors.unit_price}
-            />
-
             <FormDropdownInputField
               shadow={true}
               label="Payment Term"
               value={values.payment_term}
-              items={["Cash in advance", "Cash on delivery", "7 days", "14 days", "30 days"]}
+              items={payment_terms.map(item => { return item.name })}
               onChangeValue={(val) => { setFieldValue("payment_term", val) }}
               required={true}
               hasError={errors.payment_term && touched.payment_term ? true : false}
@@ -188,7 +213,7 @@ const EditSparesPurchaseOrderFormScreen = ({ navigation, route }: RootNavigation
             <View>
               <RegularButton
                 text="Next"
-                operation={handleSubmit}
+                operation={() => { handleSubmit(); setProductErrors(errors.products as Array<{ unit_price: string }>); }}
                 loading={loading}
               />
             </View>

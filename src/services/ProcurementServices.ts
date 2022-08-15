@@ -19,7 +19,7 @@ export const createProcurement = (procurement: any, user: any, onSuccess: ({ new
         incrementRef.doc(`${item.docs[0].id}`).update({ amount: newAmount });
 
         procurementRef
-          .add({ ...{ secondary_id: newID, created_at: current_time, status: "Requesting", created_by: user }, ...procurement })
+          .add({ ...{ secondary_id: newID, display_id: newID, created_at: current_time, status: "Requesting", created_by: user }, ...procurement })
           .then(
             (docRef) => {
               addLog(PROCUREMENTS, docRef.id, CREATE_ACTION, user!, () => {

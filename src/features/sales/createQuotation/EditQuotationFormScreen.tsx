@@ -35,6 +35,7 @@ import TextLabel from '../../../components/atoms/typography/TextLabel';
 import { updateSales } from '../../../services/SalesServices';
 import ModeOfDeliveryField from '../../../components/templates/sales/CreateQuotation/ModeOfDeliveryField';
 import FormDateInputField from '../../../components/molecules/input/FormDateInputField';
+import FormSearchableDropdownInputField from '../../../components/molecules/input/FormSearchableDropdownInputField';
 
 const formSchema = Yup.object().shape({
   customer: Yup.string().required("Required"),
@@ -243,7 +244,7 @@ const EditQuotationFormScreen = ({ navigation, route }: RootNavigationProps<"Edi
 
             <View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 
-            <FormDropdownInputField
+            <FormSearchableDropdownInputField
               label="Customer"
               value={values.customer}
               items={customerInfo?.nameList ? customerInfo?.nameList : ["", ""]}
@@ -254,7 +255,7 @@ const EditQuotationFormScreen = ({ navigation, route }: RootNavigationProps<"Edi
               required={true}
               hasError={errors.customer && touched.customer ? true : false}
               errorMessage={errors.customer}
-            />
+            /> 
 
             <FormTextInputField
               label="Address"

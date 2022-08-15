@@ -4,11 +4,12 @@ import UploadButton from '../../../molecules/buttons/UploadButton';
 import AddNewSupplier from '../../add/AddNewSupplier';
 import { useTailwind } from 'tailwind-rn/dist';
 import FormTextInputField from '../../../molecules/input/FormTextInputField';
-import { TouchableOpacity, View } from 'react-native';
+import { Platform, TouchableOpacity, View } from 'react-native';
 import { Supplier } from '../../../../types/Supplier';
 import DropdownField from '../../../atoms/input/dropdown/DropdownField';
 import TextLabel from '../../../atoms/typography/TextLabel';
 import { TrashIcon } from '../../../../../assets/svg/SVG';
+import SearchableDropdownField from '../../../atoms/input/dropdown/SearchableDropdownField';
 
 type SupplierField = {
   supplier: string,
@@ -82,13 +83,13 @@ const SupplierQuotationField: React.FC<inputProps> = ({
       case "file":
         newList[index] = { ...newList[index], ...value };
         break;
-    }  
+    }
 
     setLocalList([...newList]);
   }
 
   return (
-    <View>
+    <View style={tailwind(`${Platform.OS == "web" ? "z-50" : ""}`)}>
       <View style={tailwind("flex-row items-center")}>
 
         <View style={tailwind("flex-row w-1/5")}>
@@ -117,14 +118,18 @@ const SupplierQuotationField: React.FC<inputProps> = ({
             null
         }
       </View>
-      <DropdownField
-        placeholder="Select"
-        value={localList[index].supplier}
-        items={suppliers ? suppliers.map(item => item.name) : []}
-        onChangeValue={(val) => { updateList("supplier", val) }}
-        hasError={Object.keys(supplierErrors || {}).includes("supplier")}
-        errorMessage={supplierErrors ? supplierErrors.supplier : ""}
-      />
+
+      <View style={tailwind(`${Platform.OS == "web" ? "z-50" : ""}`)}>
+        <SearchableDropdownField
+          placeholder="Select"
+          value={localList[index].supplier}
+          items={suppliers ? suppliers.map(item => item.name) : []}
+          onChangeValue={(val) => { updateList("supplier", val) }}
+          hasError={Object.keys(supplierErrors || {}).includes("supplier")}
+          errorMessage={supplierErrors ? supplierErrors.supplier : ""}
+        />
+      </View>
+
       <View style={tailwind("mb-2")} />
       <View >
         <UploadButton

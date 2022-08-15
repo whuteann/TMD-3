@@ -10,7 +10,7 @@ import FormTextInputField from '../../../components/molecules/input/FormTextInpu
 import FormDropdownInputField from '../../../components/molecules/input/FormDropdownInputField';
 import { revalidateDocument, useCollection, useDocument } from '@nandorojo/swr-firestore';
 import LoadingData from '../../../components/atoms/loading/loadingData';
-import { BANKS, SPARES_PURCHASE_VOUCHERS } from '../../../constants/Firebase';
+import { BANKS, SPARES_PURCHASE_ORDERS, SPARES_PURCHASE_VOUCHERS } from '../../../constants/Firebase';
 import { View } from 'react-native';
 import * as Yup from 'yup';
 import { Bank } from '../../../types/Bank';
@@ -22,6 +22,8 @@ import Unauthorized from '../../../components/atoms/unauthorized/Unauthorized';
 import { UPDATE_ACTION } from '../../../constants/Action';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
+import { SparesPurchaseOrder } from '../../../types/SparesPurchaseOrder';
+import { convertCurrency } from '../../../constants/Currency';
 
 
 const to_replace_string = SPARES_PURCHASE_ORDER_CODE;
@@ -42,6 +44,7 @@ const EditSparesPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigati
   let displayID: string = "";
   const allowedStatuses = [DRAFT, REJECTED];
   const user = useSelector(UserSelector);
+  let amount_paid_total: number = 0;
 
   type initialValuesType = {
     purchase_voucher_date: string,
@@ -49,9 +52,14 @@ const EditSparesPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigati
     cheque_no: string,
     paid_amount: string,
     reject_notes: string,
+    original_amount: string
   };
 
   const { data } = useDocument<SparesPurchaseVoucher>(`${SPARES_PURCHASE_VOUCHERS}/${docID}`, {
+    ignoreFirestoreDocumentSnapshotField: false,
+  })
+
+  const { data: spares_purchase_order } = useDocument<SparesPurchaseOrder>(`${SPARES_PURCHASE_ORDERS}/${data?.spares_purchase_order_id}`, {
     ignoreFirestoreDocumentSnapshotField: false,
   })
 
@@ -60,7 +68,7 @@ const EditSparesPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigati
     where: ["deleted", "==", false]
   })
 
-  if (!data || !banks) return <LoadingData message="This document might not exist" />;
+  if (!data || !banks || !spares_purchase_order) return <LoadingData message="This document might not exist" />;
 
   if (!allowedStatuses.includes(data?.status!)) {
     return <Unauthorized />;
@@ -73,13 +81,23 @@ const EditSparesPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigati
   let initialValues: initialValuesType = {
     purchase_voucher_date: data.purchase_voucher_date || "",
     account_purchase_by: data.account_purchase_by.name || "",
+    original_amount: data.original_amount || "",
     cheque_no: data.cheque_no || "",
     paid_amount: data.paid_amount || "",
     reject_notes: " "
 
   };
 
+  if (spares_purchase_order.spares_purchase_vouchers) {
+    let purchase_vouchers_number: number = Number(data.secondary_id.split("")[data.secondary_id.split("").length - 1]);
+    let newArr: Array<{ id: string, secondary_id: string, paid_amount: string }> = [...spares_purchase_order.spares_purchase_vouchers];
 
+    newArr.splice(purchase_vouchers_number - 1, 1);
+
+    newArr.forEach((item) => {
+      amount_paid_total = Number(item.paid_amount) + amount_paid_total
+    });
+  }
 
   return (
     <Body header={<HeaderStack title={`Edit Purchase Voucher`} navigateProp={navigation} />} style={tailwind("mt-6")}>
@@ -102,7 +120,7 @@ const EditSparesPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigati
                 swift_code: bank_chosen.swift_code,
                 address: bank_chosen.address,
               }
-            }else{
+            } else {
               bank_details = ""
             }
 
@@ -148,9 +166,21 @@ const EditSparesPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigati
             />
 
             <FormTextInputField
-              label="Original Amount"
+              label="Total Amount"
               editable={false}
-              value={data.original_amount}
+              value={`${convertCurrency(data.currency_rate)} ${values.original_amount}`}
+            />
+
+            <FormTextInputField
+              label="Discount"
+              editable={false}
+              value={`${convertCurrency(data.currency_rate)} ${data.discount || "0"}`}
+            />
+
+            <FormTextInputField
+              label="Amount Left"
+              editable={false}
+              value={`${convertCurrency(data.currency_rate)} ${Number(data.original_amount) - amount_paid_total}`}
             />
 
 
@@ -174,7 +204,7 @@ const EditSparesPurchaseVoucherFormScreen = ({ navigation, route }: RootNavigati
             <FormTextInputField
               label="Paid Amount"
               number={true}
-              value={values.paid_amount}
+              value={`${convertCurrency(data.currency_rate)} ${values.paid_amount}`}
               onChangeValue={text => setFieldValue("paid_amount", text)}
               hasError={errors.paid_amount && touched.paid_amount ? true : false}
               errorMessage={errors.paid_amount}

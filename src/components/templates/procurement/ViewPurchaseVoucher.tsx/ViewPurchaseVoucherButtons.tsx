@@ -99,8 +99,8 @@ const PurchaseVoucherButtons: React.FC<Props> = ({
 		if (permissions?.includes(REVIEW_PURCHASE_VOUCHER)) {
 			bottom = (
 				<View>
-					<RegularButton text="Approve" operation={() => { setModalOpen(true) }} />
-					<RegularButton type="secondary" text="Reject" operation={() => { setStatus("Rejecting") }} />
+					<RegularButton text="Approve" loading={loading} operation={() => { setModalOpen(true) }} />
+					<RegularButton type="secondary" loading={loading} text="Reject" operation={() => { setStatus("Rejecting") }} />
 				</View>
 			)
 		} else {

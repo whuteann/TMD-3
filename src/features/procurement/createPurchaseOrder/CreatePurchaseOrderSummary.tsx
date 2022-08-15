@@ -122,7 +122,7 @@ const CreatePurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationP
 					<InfoDisplay placeholder="Product" info={data.product.name || "-"} />
 					<InfoDisplay placeholder="Unit of Measurement" info={data.unit_of_measurement || "-"} />
 					<InfoDisplay placeholder="Quantity" info={addCommaNumber(data.quantity, "-")} />
-					<InfoDisplay placeholder="Unit Price" info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(data.unit_price, "-")}`} />
+					<InfoDisplay placeholder="Unit Price" info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(data.unit_price, "-")} per ${data.price_unit_of_measurement}`} />
 					<InfoDisplay placeholder="Currency Rate" info={data.currency_rate || "-"} />
 					<InfoDisplay placeholder="Total Amount" info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(data.total_amount, "0")}`} />
 					<InfoDisplay placeholder="Payment Term" info={data.payment_term || "-"} />

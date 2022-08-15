@@ -35,8 +35,10 @@ export type Quotation = {
 
   //page 2
   currency_rate: Currencies,
-  barging_fee: string,
-  barging_remark: string,
+  barging_fee?: string,
+  barging_remark?: string,
+  barging_unit?: string,
+
   conversion_factor: string,
   payment_term: string,
   validity_date: string,
@@ -62,6 +64,7 @@ export type Quotation = {
   sales_confirmation_secondary_id?: string,
   confirmed_date?: string,
   job_confirmation_id?: string,
+  invoice_id?: string,
 
   created_at?: Date,
   deleted_at?: Date,

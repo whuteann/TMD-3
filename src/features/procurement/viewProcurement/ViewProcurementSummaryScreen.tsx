@@ -34,7 +34,7 @@ const ViewProcurementSummaryScreen = ({ navigation, route }: RootNavigationProps
 		<Body header={<HeaderStack title={"View Procurement"} navigateProp={navigation} />} style={tailwind("pt-10")}>
 			<View>
 
-				<ViewPageHeaderText doc="Procurement" id={data.secondary_id} />
+				<ViewPageHeaderText doc="Procurement" id={data.display_id} />
 
 				<View style={tailwind("h-[400px]")}>
 					<InfoDisplay placeholder="Procurement Date" info={data.procurement_date || "-"} />
@@ -50,16 +50,16 @@ const ViewProcurementSummaryScreen = ({ navigation, route }: RootNavigationProps
 							:
 							"-"}
 					/>
-					
+
 					<InfoDisplay placeholder="Supplier" info={data.supplier.name || "-"} />
 					<InfoDisplay placeholder="Product" info={data.product.name || "-"} />
 					<InfoDisplay placeholder="Quantity" info={addCommaNumber(data.quantity, "-")} />
 					<InfoDisplay placeholder="Unit of Measurement" info={data.unit_of_measurement || "-"} />
 					<InfoDisplay placeholder="Currency Rate" info={data.currency_rate || "-"} />
-					<InfoDisplay placeholder="Unit Price" info={`${convertCurrency(data.currency_rate)} ${data.unit_price}` || "-"} />
+					<InfoDisplay placeholder="Unit Price" info={`${convertCurrency(data.currency_rate)} ${data.unit_price} per ${data.price_unit_of_measurement}` || "-"} />
 					<InfoDisplay placeholder="Payment Term" info={data.payment_term || "-"} />
 					<InfoDisplay placeholder="Mode of Delivery" info={data.delivery_mode || "-"} />
-					<InfoDisplay placeholder="Total Amount" info={` ${data.total_amount}` || "-"} />
+					<InfoDisplay placeholder="Total Amount" info={`${convertCurrency(data.currency_rate)} ${data.total_amount}` || "-"} />
 
 					{
 						data.status == SUBMITTED || data.status == PENDING
@@ -77,9 +77,12 @@ const ViewProcurementSummaryScreen = ({ navigation, route }: RootNavigationProps
 				{
 					data.status == "Requesting"
 						?
-						<RegularButton type="secondary" text="Create Purchase Order" operation={() => { linkTo(`/purchase-orders/${data.id}/create`) }} />
+						<View>
+							<RegularButton type="primary" text="Edit Procurement" operation={() => { navigation.navigate("EditProcurement", { docID: docID }) }} />
+							<RegularButton type="secondary" text="Create Purchase Order" operation={() => { linkTo(`/purchase-orders/${data.id}/create`) }} />
+						</View>
 						:
-						null
+						<></>
 				}
 			</View>
 

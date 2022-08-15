@@ -255,7 +255,7 @@ const ViewAllProcurementSearchScreen = ({ navigation }: RootNavigationProps<"Vie
 					keyExtractor={(item: any) => item.id}
 					renderItem={({ item }: { item: any, index: number }) => {
 						return <ViewTabProcurement
-							id={item.secondary_id}
+							id={item.display_id}
 							nav_id={item.id}
 							org={item.created_by.name}
 							date={item.procurement_date}

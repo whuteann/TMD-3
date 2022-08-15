@@ -19,12 +19,14 @@ import { createAndDisplayPDF, loadPDFLogo } from '../../../functions/PDFv2Functi
 import { generateSparesPurchaseOrderPDF } from '../../../components/templates/pdf/generateSparesPurchaseOrderPDF';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { convertCurrency } from '../../../constants/Currency';
+import Line from '../../../components/atoms/display/Line';
 
 const ViewSparesPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigationProps<"ViewSparesPurchaseOrderSummary">) => {
 	const { docID } = route.params;
 	const linkTo = useLinkTo();
 	const tailwind = useTailwind();
 	const [status, setStatus] = useState('');
+	let amount_paid_total: number = 0;
 
 	const { data } = useDocument<SparesPurchaseOrder>(`${SPARES_PURCHASE_ORDERS}/${docID}`, {
 		ignoreFirestoreDocumentSnapshotField: false,
@@ -60,6 +62,11 @@ const ViewSparesPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigat
 		onDownload={() => { onDownload(); }}
 	/>
 
+	if (data.spares_purchase_vouchers) {
+		data.spares_purchase_vouchers.forEach((item) => {
+			amount_paid_total = (item.paid_amount ? Number(item.paid_amount) : 0) + amount_paid_total
+		});
+	}
 
 	return (
 		<Body header={<HeaderStack title={"View Purchase Order"} navigateProp={navigation} />} style={tailwind("mt-6")}>
@@ -71,13 +78,26 @@ const ViewSparesPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigat
 
 				<View>
 					<InfoDisplay placeholder="Supplier" info={data.supplier.name || "-"} />
-					<InfoDisplay placeholder="Product" info={data.product.product_description || "-"} />
-					<InfoDisplay placeholder="Unit of Measurement" info={data.unit_of_measurement || "-"} />
-					<InfoDisplay placeholder="Quantity" info={addCommaNumber(data.quantity, "-")} />
-					<InfoDisplay placeholder="Unit Price" info={data.unit_price ? `${convertCurrency(data.currency_rate)} ${addCommaNumber(data.unit_price, "-")}` : "-"} />
+
+					<Line />
+					{
+						data.products.map((item, index) => {
+							return (
+								<View key={`${index}`} style={tailwind("mb-3")}>
+									<InfoDisplay placeholder={`Product ${index + 1}`} info={item.product.product_description} bold={true} />
+									<InfoDisplay placeholder={`Quantity`} info={`${item.quantity} ${item.unit_of_measurement}`} />
+									<InfoDisplay placeholder={`Unit price`} info={item.unit_price} />
+									<InfoDisplay placeholder={`Subtotal`} info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(`${Number(item.quantity) * Number(item.unit_price)}`, "0")}`} />
+								</View>
+							)
+						})
+					}
+					<Line />
+
 					<InfoDisplay placeholder="Currency Rate" info={data.currency_rate || "-"} />
 					<InfoDisplay placeholder="Type of Supply" info={data.type_of_supply || "-"} />
-					<InfoDisplay placeholder="Total Amount" info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(`${Number(data.quantity) * Number(data.unit_price)}`, "-")}`} />
+					<InfoDisplay placeholder="Discount" info={`${convertCurrency(data.currency_rate!)}${addCommaNumber(data.discount, "-")}`} />
+					<InfoDisplay placeholder="Total Amount" info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(`${data.total_amount}`, "-")}`} />
 					<InfoDisplay placeholder="Payment Term" info={data.payment_term || "-"} />
 					<InfoDisplay placeholder="Vessel Name" info={data.vessel_name ? data.vessel_name.name : "-"} />
 					<InfoDisplay placeholder="Port" info={data.port || "-"} />
@@ -85,19 +105,7 @@ const ViewSparesPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigat
 					<InfoDisplay placeholder="Contact Person" info={data.contact_person ? data.contact_person.name : "-"} />
 					<InfoDisplay placeholder="ETA/ Delivery Date" info={data.ETA_delivery_date || "-"} />
 					<InfoDisplay placeholder="Remarks" info={data.remarks || "-"} />
-					{
-						data.spares_purchase_vouchers
-							?
-							<View>
-								{
-									data.spares_purchase_vouchers.map((item, index) => {
-										return <InfoDisplayLink key={item.id} placeholder={`Purchase Voucher ${index + 1}`} info={item.secondary_id} linkOnPress={() => { navigation.navigate("ViewSparesPurchaseVoucherSummary", { docID: item.id }) }} />
-									})
-								}
-							</View>
-							:
-							<></>
-					}
+
 					{
 						(data.doFile || data.invFile) && (status == VERIFIED_DOC || status == APPROVED_DOC || status == PV_PENDING || status == PV_ISSUED || status == DOC_SUBMITTED)
 							?
@@ -122,6 +130,47 @@ const ViewSparesPurchaseOrderSummaryScreen = ({ navigation, route }: RootNavigat
 							<InfoDisplay placeholder="Reject Notes" info={data.reject_notes || "-"} />
 							:
 							<></>
+					}
+
+					{
+						data.spares_purchase_vouchers
+							?
+							<View>
+								<Line />
+								{
+									data.spares_purchase_vouchers.map((item, index) => {
+										if (data.spares_purchase_vouchers) {
+											let displayID = data.spares_purchase_vouchers[index].secondary_id;
+											return (
+												<View key={index}>
+													<InfoDisplayLink
+														placeholder={`Purchase Voucher ${index + 1}`}
+														info={`${displayID}`}
+														linkOnPress={() => {
+															navigation.navigate("ViewSparesPurchaseVoucherSummary", { docID: item.id })
+														}} />
+													<InfoDisplay placeholder="Amount Paid" info={`${convertCurrency(data.currency_rate!)} ${item.paid_amount || "0"}`} />
+												</View>
+
+											)
+										}
+									})
+								}
+								<View style={tailwind("mb-5")} />
+
+								{
+									Number(data.total_amount) - amount_paid_total == 0
+										?
+										<View>
+											<InfoDisplay bold={true} placeholder='Amount Left' info={`${convertCurrency(data.currency_rate!)} ${Number(data.total_amount) - amount_paid_total}`} />
+											<InfoDisplay bold={true} placeholder='Payment status' info="complete" />
+										</View>
+										:
+										<InfoDisplay bold={true} placeholder='Amount Left' info={`${convertCurrency(data.currency_rate!)} ${Number(data.total_amount) - amount_paid_total}`} />
+								}
+							</View>
+							:
+							null
 					}
 				</View>
 			</View>

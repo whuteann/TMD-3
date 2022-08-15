@@ -25,6 +25,7 @@ export type Invoice = {
 
   barging_fee?: string,
   barging_remark?: string,
+  barging_unit?: string,
   attention_pic?: contactPerson,
   currency_rate?: Currencies,
   products: Array<{
@@ -52,7 +53,7 @@ export type Invoice = {
   job_confirmation_secondary_id?: string,
   receiving_vessel_name: string,
   status?: invoiceStatuses,
-  receipts?: Array<{ id: string, secondary_id: string }>
+  receipts?: Array<{ id: string, secondary_id: string, paid_amount: string }>
   created_at?: Date,
   created_by?: User,
   reject_notes?: string,

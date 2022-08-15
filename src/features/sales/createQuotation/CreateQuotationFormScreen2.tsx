@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { RootNavigationProps } from '../../../navigations/NavigationProps/NavigationProps';
 import { FieldArray, Formik } from 'formik';
 import { revalidateDocument, useCollection, useDocument } from '@nandorojo/swr-firestore';
@@ -10,7 +10,7 @@ import PricesField from "../../../components/templates/sales/CreateQuotation/Pri
 import { useTailwind } from "tailwind-rn";
 import FormTextInputField from "../../../components/molecules/input/FormTextInputField";
 import FormDropdownInputField from "../../../components/molecules/input/FormDropdownInputField";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import ConfirmModal from "../../../components/molecules/modal/ConfirmModal";
 import { DangerIcon } from "../../../../assets/svg/SVG";
 import Body from "../../../components/atoms/display/Body";
@@ -18,7 +18,7 @@ import HeaderStack from "../../../components/atoms/display/HeaderStack";
 import TextLabel from "../../../components/atoms/typography/TextLabel";
 import RegularButton from "../../../components/atoms/buttons/RegularButton";
 import * as Yup from 'yup';
-import { BUNKERS, QUOTATIONS } from "../../../constants/Firebase";
+import { BUNKERS, QUOTATIONS, SALES_PAYMENT_TERMS } from "../../../constants/Firebase";
 import DatePickerField from "../../../components/atoms/input/datetimepickers/DatePickerField";
 import TimePickerField from "../../../components/atoms/input/datetimepickers/TimePickerField";
 import { Bunker } from "../../../types/Bunker";
@@ -34,6 +34,8 @@ import { LITRE, LITRES } from "../../../constants/Units";
 import BunkerBargeField from "../../../components/templates/sales/CreateQuotation/BunkerBargeField";
 import AddNewButton from "../../../components/molecules/buttons/AddNewButton";
 import { CurrenciesList } from "../../../constants/Currency";
+import Line from "../../../components/atoms/display/Line";
+import { PaymentTerm } from "../../../types/PaymentTerm";
 
 const formSchema = Yup.object().shape({
   currency_rate: Yup.string().required("Required"),
@@ -56,6 +58,11 @@ const formSchema = Yup.object().shape({
     })
   ),
   barging_fee: Yup.string().matches(/^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$/, "Please ensure the correct number format"),
+  barging_unit: Yup.string().when('barging_fee', {
+    is: (barging_fee) => { return (barging_fee !== undefined) },
+    then: Yup.string().required('Required'),
+    otherwise: Yup.string()
+  }),
   bunker_barges: Yup.array().of(Yup.string().required("Required")),
 });
 
@@ -84,7 +91,12 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
     where: ["deleted", "==", false]
   })
 
-  if (!data || !bunkers) return <LoadingData message="This document might not exist" />;
+  const { data: payment_terms } = useCollection<PaymentTerm>(`${SALES_PAYMENT_TERMS}`, {
+    ignoreFirestoreDocumentSnapshotField: false,
+    where: ["deleted", "==", false]
+  })
+
+  if (!data || !bunkers || !payment_terms) return <LoadingData message="This document might not exist" />;
 
   if (!allowedStatuses.includes(data?.status!)) {
     return <Unauthorized />;
@@ -189,8 +201,9 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
 
           //page 2
           currency_rate: data.currency_rate || "",
-          barging_fee: data.barging_fee,
+          barging_fee: data.barging_fee || "",
           barging_remark: data.barging_remark || "",
+          barging_unit: data.barging_unit || "",
           conversion_factor: data.conversion_factor,
           payment_term: data.payment_term || "",
           validity_date: data.validity_date || "",
@@ -217,7 +230,7 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
               editable={false}
             />
 
-            <View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
+            <Line />
 
             <View style={tailwind("z-50")}>
               <FormDropdownInputField
@@ -253,7 +266,7 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
               left={
                 <FormTextInputField
                   label="Barging Fee"
-                  placeholder="-- Type --"
+                  placeholder="0.00"
                   value={values.barging_fee}
                   onChangeValue={(val) => { setFieldValue("barging_fee", val) }}
                   number={true}
@@ -272,6 +285,17 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
             />
 
             <FormTextInputField
+              label="Barging Unit"
+              placeholder="e.g. job"
+              value={values.barging_unit}
+              onChangeValue={(val) => { setFieldValue("barging_unit", val) }}
+              hasError={errors.barging_unit && touched.barging_unit ? true : false}
+              errorMessage={errors.barging_unit}
+            />
+
+            <Line />
+
+            <FormTextInputField
               label="Conversion Factor"
               placeholder="-- Type --"
               value={values.conversion_factor}
@@ -282,7 +306,7 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
               shadow={true}
               label="Payment Term"
               value={values.payment_term}
-              items={["Cash in advance", "Cash on delivery", "7 days", "14 days", "30 days", "45 days", "60 days"]}
+              items={payment_terms.map(item => { return item.name })}
               onChangeValue={(val) => { setFieldValue("payment_term", val) }}
               required={true}
               hasError={errors.payment_term && touched.payment_term ? true : false}
@@ -326,10 +350,10 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
             </View>
             <FieldArray name="bunker_barges">
               {({ remove, push }) => (
-                <View>
+                <View style={tailwind(`${Platform.OS == "web" ? "z-[19]" : ""}`)}>
                   {values.bunker_barges.length > 0 ? (
                     values.bunker_barges.map((port, index) => (
-                      <View key={index}>
+                      <View key={index} style={tailwind(`${Platform.OS == "web" ? `z-[${30 - index}]` : ""}`)}>
                         <BunkerBargeField
                           index={index}
                           length={values.bunker_barges.length}

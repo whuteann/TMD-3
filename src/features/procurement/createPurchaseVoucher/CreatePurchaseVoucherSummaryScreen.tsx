@@ -68,7 +68,7 @@ const CreatePurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavigatio
 			nextAction={() => {
 				setLoading(true);
 				
-				confirmPurchaseVoucher(data.purchase_order_id, data.id, displayID, revisedCode, user!, () => {
+				confirmPurchaseVoucher(data.purchase_order_id, data.id, data.paid_amount, displayID, revisedCode, user!, () => {
 
 					sendNotifications(
 						[HEAD_OF_ACCOUNTS_ROLE, SUPER_ADMIN_ROLE],
@@ -113,7 +113,7 @@ const CreatePurchaseVoucherSummaryScreen = ({ navigation, route }: RootNavigatio
 					<InfoDisplay placeholder="Product" info={data.product.name || "-"} />
 					<InfoDisplay placeholder="Unit of Measurement" info={data.unit_of_measurement || "-"} />
 					<InfoDisplay placeholder="Quantity" info={addCommaNumber(data.quantity, "-")} />
-					<InfoDisplay placeholder="Unit Price" info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(data.unit_price, "-")}`} />
+					<InfoDisplay placeholder="Unit Price" info={`${convertCurrency(data.currency_rate)} ${addCommaNumber(data.unit_price, "-")} per ${data.price_unit_of_measurement}`} />
 					<InfoDisplay placeholder="Currency Rate" info={data.currency_rate || "-"} />
 					<InfoDisplay placeholder="Payment Term" info={data.payment_term || "-"} />
 					<InfoDisplay placeholder="Mode of Delivery" info={data.delivery_mode || "-"} />

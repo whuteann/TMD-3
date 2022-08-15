@@ -4,10 +4,10 @@ import { ArrowDownIcon, CreateIcon, DownloadIcon, PreviewIcon } from '../../../.
 import ViewTabDropdown from '../../../molecules/buttons/ViewTabDropdown';
 import { useTailwind } from 'tailwind-rn/dist';
 import TextLabel from '../../../atoms/typography/TextLabel';
-import { APPROVED } from '../../../../types/Common';
+import { APPROVED, IN_REVIEW } from '../../../../types/Common';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../../redux/reducers/Auth';
-import { CREATE_SPARES_PURCHASE_ORDER } from '../../../../permissions/Permissions';
+import { CREATE_SPARES_PROCUREMENT, CREATE_SPARES_PURCHASE_ORDER } from '../../../../permissions/Permissions';
 
 interface inputProps {
   id: string,
@@ -37,10 +37,17 @@ const ViewTabSparesProcurement: React.FC<inputProps> = ({
       <ViewTabDropdown icon={<PreviewIcon height={25} width={25} />} text="Preview Procurement" setDropdown={path} navigation={() => { navigation.navigate(route, { docID: nav_id }) }} />
       {
         status == APPROVED && user?.permission?.includes(CREATE_SPARES_PURCHASE_ORDER)
-        ?
-        <ViewTabDropdown icon={<CreateIcon height={24} width={24} />} text="Create Purchase Order" setDropdown={path} navigation={() => { navigation.navigate("CreateSparesPurchaseOrder", { docID: nav_id }) }} />
-        :
-        <></>          
+          ?
+          <ViewTabDropdown icon={<CreateIcon height={24} width={24} />} text="Create Purchase Order" setDropdown={path} navigation={() => { navigation.navigate("CreateSparesPurchaseOrder", { docID: nav_id }) }} />
+          :
+          <></>
+      }
+      {
+        status == IN_REVIEW && user?.permission?.includes(CREATE_SPARES_PROCUREMENT)
+          ?
+          <ViewTabDropdown icon={<CreateIcon height={24} width={24} />} text="Edit Procurement" setDropdown={path} navigation={() => { navigation.navigate("EditSparesProcurement", { docID: nav_id }) }} />
+          :
+          <></>
       }
     </View>
   )

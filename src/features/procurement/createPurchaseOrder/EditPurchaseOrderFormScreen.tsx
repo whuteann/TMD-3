@@ -17,7 +17,7 @@ import { useLinkTo } from '@react-navigation/native';
 import { View } from 'react-native';
 import { PurchaseOrder } from '../../../types/PurchaseOrder';
 import { contactPerson, Supplier } from '../../../types/Supplier';
-import { DRAFT, PENDING, REJECTED } from '../../../types/Common';
+import { DRAFT, NO_PURCHASE_VOUCHER, PENDING, REJECTED } from '../../../types/Common';
 import Unauthorized from '../../../components/atoms/unauthorized/Unauthorized';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
@@ -28,6 +28,7 @@ import { getPortNameAndDeliveryLocations } from '../../../helpers/PortHelper';
 import FormRangeDateInputField from '../../../components/molecules/input/FormRangeDateInputField';
 import { Bunker } from '../../../types/Bunker';
 import { getBunkerNameList } from '../../../helpers/BunkerHelper';
+import FormSearchableDropdownInputField from '../../../components/molecules/input/FormSearchableDropdownInputField';
 
 
 const formSchema = Yup.object().shape({
@@ -48,7 +49,7 @@ const EditPurchaseOrderFormScreen = ({ navigation, route }: RootNavigationProps<
   const [locations, setLocations] = useState<Array<string>>(["sample"]);
   const tailwind = useTailwind();
   const linkTo = useLinkTo();
-  const allowedStatuses = [DRAFT, REJECTED];
+  const allowedStatuses = [DRAFT, REJECTED, NO_PURCHASE_VOUCHER];
   const user = useSelector(UserSelector);
   let delivery_details_label: string;
 
@@ -166,7 +167,7 @@ const EditPurchaseOrderFormScreen = ({ navigation, route }: RootNavigationProps<
 
             <View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 
-            <FormDropdownInputField
+            <FormSearchableDropdownInputField
               label="Receiving vessel"
               value={values.vessel_name}
               items={bunkerList}

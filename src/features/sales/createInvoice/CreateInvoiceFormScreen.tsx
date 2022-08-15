@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { RootNavigationProps } from '../../../navigations/NavigationProps/NavigationProps';
 import { Formik } from 'formik';
-import { useCollection, useDocument } from '@nandorojo/swr-firestore';
+import { revalidateDocument, useCollection, useDocument } from '@nandorojo/swr-firestore';
 import { Invoice } from '../../../types/Invoice';
 import LoadingData from '../../../components/atoms/loading/loadingData';
 import { createInvoice } from '../../../services/InvoiceServices';
@@ -17,7 +17,7 @@ import HeaderStack from '../../../components/atoms/display/HeaderStack';
 import { View } from 'react-native';
 import * as Yup from "yup";
 import { Product } from '../../../types/Product';
-import { CUSTOMERS, JOB_CONFIRMATIONS } from '../../../constants/Firebase';
+import { CUSTOMERS, JOB_CONFIRMATIONS, QUOTATIONS } from '../../../constants/Firebase';
 import { DRAFT, ISSUED_INV, NO_INVOICE } from '../../../types/Common';
 import Unauthorized from '../../../components/atoms/unauthorized/Unauthorized';
 import { useSelector } from 'react-redux';
@@ -28,6 +28,8 @@ import { updateJobConfirmation } from '../../../services/JobConfirmationServices
 import { updateSales } from '../../../services/SalesServices';
 import FormDateInputField from '../../../components/molecules/input/FormDateInputField';
 import { CustomerSegmentation } from '../../../types/CustomerSegmentation';
+import { updateQuotation } from '../../../services/QuotationServices';
+import { UPDATE_ACTION } from '../../../constants/Action';
 
 const formSchema = Yup.object().shape({
   do_no: Yup.string().required("Required"),
@@ -62,7 +64,7 @@ const CreateInvoiceFormScreen = ({ navigation, route }: RootNavigationProps<"Cre
     return <Unauthorized />;
   }
 
-  let invProducts: Array<{ product: Product, BDN_quantity: { quantity: string, unit: string }, quantity: string, unit: string, price: { value: string, unit: string }, subtotal: string }> = [];
+  let invProducts: Array<{ product: Product, BDN_quantity: { quantity: string, unit: string }, quantity: string, unit: string, price: { value: string, unit: string, remarks: string }, subtotal: string }> = [];
   data.products.map((item) => { invProducts.push({ product: item.product, BDN_quantity: { quantity: "", unit: LITRES }, quantity: item.quantity, unit: item.unit, price: item.price, subtotal: "" }) })
 
   initialValues = {
@@ -74,6 +76,7 @@ const CreateInvoiceFormScreen = ({ navigation, route }: RootNavigationProps<"Cre
     bunker_barges: data.bunker_barges,
     barging_fee: data.barging_fee,
     barging_remark: data.barging_remark,
+    barging_unit: data.barging_unit,
     customer: data.customer || {} as Customer,
     customer_name: data.customer?.name || "",
     currency_rate: data.currency_rate,
@@ -135,7 +138,7 @@ const CreateInvoiceFormScreen = ({ navigation, route }: RootNavigationProps<"Cre
 
           createInvoice(
             `${initialValues?.job_confirmation_secondary_id}`,
-            {  customer: customer_info, ...initialValues, ...values,  attention_pic: attention_pic_info },
+            { customer: customer_info, ...initialValues, ...values, attention_pic: attention_pic_info },
             user!, (newID, displayID) => {
               updateJobConfirmation(
                 data.id,
@@ -146,8 +149,13 @@ const CreateInvoiceFormScreen = ({ navigation, route }: RootNavigationProps<"Cre
                     { invoice_id: newID },
                     user,
                     () => {
-                      linkTo(`/invoices/${newID}/edit/cont`);
-                      setLoading(false);
+                      updateQuotation(data.quotation_id, { invoice_id: newID }, user, UPDATE_ACTION, () => {
+                        revalidateDocument(`${QUOTATIONS}/${data.quotation_id}`);
+                        linkTo(`/invoices/${newID}/edit/cont`);
+                        setLoading(false);
+                      }, (error) => {
+                        console.error(error);
+                      })
                     }, (error) => {
                       console.error(error);
                     }
@@ -166,6 +174,7 @@ const CreateInvoiceFormScreen = ({ navigation, route }: RootNavigationProps<"Cre
 
             <FormDateInputField
               label="Invoice Date"
+              required={true}
               value={values.invoice_date}
               onChangeValue={text => setFieldValue("invoice_date", text)}
               hasError={errors.invoice_date && touched.invoice_date ? true : false}

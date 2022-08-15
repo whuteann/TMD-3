@@ -4,7 +4,7 @@ import { TickIcon } from '../../../../assets/svg/SVG';
 import InfoDisplayLink from '../../../components/atoms/display/InfoDisplayLink';
 import ConfirmModal from '../../../components/molecules/modal/ConfirmModal';
 import InfoDisplay from '../../../components/atoms/display/InfoDisplay';
-import { revalidateCollection, useDocument } from '@nandorojo/swr-firestore';
+import { revalidateCollection, revalidateDocument, useDocument } from '@nandorojo/swr-firestore';
 import { Receipt } from '../../../types/Receipt';
 import LoadingData from '../../../components/atoms/loading/loadingData';
 import RegularButton from '../../../components/atoms/buttons/RegularButton';
@@ -14,7 +14,7 @@ import { useTailwind } from 'tailwind-rn/dist';
 import ViewPageHeaderText from '../../../components/molecules/display/ViewPageHeaderText';
 import { View } from 'react-native';
 import { useLinkTo } from '@react-navigation/native';
-import { RECEIPTS } from '../../../constants/Firebase';
+import { INVOICES, RECEIPTS } from '../../../constants/Firebase';
 import { confirmReceipt } from '../../../services/ReceiptServices';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
@@ -65,9 +65,10 @@ const CreateReceiptSummaryScreen = ({ navigation, route }: RootNavigationProps<"
       nextAction={() => {
         setLoading(true);
 
-        confirmReceipt(`${data.invoice_id}`, data.id, `${displayID}`, revisedCode, user!,
+        confirmReceipt(`${data.invoice_id}`, data.id, data.amount_received || "0" ,`${displayID}`, revisedCode, user!,
           () => {
 
+            revalidateDocument(`${INVOICES}/${data.invoice_id}`)
             loadingDelay(() => {
               navigation.navigate("Dashboard");
               revalidateCollection(RECEIPTS);

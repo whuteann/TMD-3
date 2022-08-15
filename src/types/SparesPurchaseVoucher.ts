@@ -20,6 +20,8 @@ export type SparesPurchaseVoucher = {
   doNumber: string,
   invNumber: string,
 
+  discount: string,
+  total_payable: string,
   original_amount: string,
   account_purchase_by: Bank,
   cheque_no: string,
@@ -30,11 +32,10 @@ export type SparesPurchaseVoucher = {
   spares_purchase_order_id: string,
   spares_purchase_order_secondary_id: string,
   supplier: Supplier,
-  product: ShipSpare,
-  unit_of_measurement: string,
-  quantity: string,
+
+  products: Array<{product: ShipSpare, sizing?: string, quantity: string, unit_of_measurement: string, unit_price: string}>,
+
   currency_rate: Currencies,
-  unit_price: string,
   payment_term: string,
   vessel_name: Bunker,
   type_of_supply: string,

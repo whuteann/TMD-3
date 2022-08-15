@@ -12,7 +12,7 @@ import { revalidateCollection } from '@nandorojo/swr-firestore';
 import { QUOTATIONS } from '../../../../constants/Firebase';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../../redux/reducers/Auth';
-import { APPROVED, ARCHIVED, CONFIRMED, DRAFT, IN_REVIEW, REJECTED, SUPER_ADMIN_ROLE } from '../../../../types/Common';
+import { APPROVED, ARCHIVED, CONFIRMED, DRAFT, IN_REVIEW, REJECTED } from '../../../../types/Common';
 import { useRefreshContext } from '../../../../providers/RefreshProvider';
 import { EDIT_DRAFT } from '../../../../permissions/Permissions';
 

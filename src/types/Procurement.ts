@@ -9,10 +9,13 @@ import { User } from "./User";
 export type procurementStatuses = typeof PENDING | typeof REQUESTING | typeof SUBMITTED;
 
 export type Procurement = {
+  secondary_id: string,
+  revised_code: number,
+  display_id: string,
+
   procurement_date: string,
   supplier: Supplier,
   product: Product,
-  secondary_id: string,
   unit_of_measurement: string,
   quantity: string,
   proposed_date: DateRange,
@@ -24,6 +27,7 @@ export type Procurement = {
   currency_rate: Currencies,
   delivery_mode: typeof LORRY_TANKER | typeof TRADER | typeof SHIP_TO_SHIP | typeof EX_PIPE_LINE;
   unit_price: string,
+  price_unit_of_measurement: string,
   payment_term: string,
   total_amount: string,
 }

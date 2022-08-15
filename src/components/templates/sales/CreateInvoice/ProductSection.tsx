@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useTailwind } from 'tailwind-rn/dist';
-import { string } from 'yup';
 import { convertValue } from '../../../../constants/Conversions';
-import { convertCurrency, Currencies } from '../../../../constants/Currency';
 import { UNITS_LIST, UNITS_LIST_SINGULAR } from '../../../../constants/Units';
 import { Product } from '../../../../types/Product';
 import Checkbox from '../../../atoms/input/checkbox/Checkbox';

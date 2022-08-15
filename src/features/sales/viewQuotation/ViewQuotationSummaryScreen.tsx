@@ -77,6 +77,7 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 			created_by={data.created_by}
 			salesID={`${data.sales_confirmation_id}`}
 			jobConfirmationID={`${data.job_confirmation_id}`}
+			invoiceID={data.invoice_id}
 			jobID={`${data.sales_id}`}
 			displayID={data.display_id}
 			rfqs={rfqs}
@@ -106,7 +107,7 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 				{
 					ports.map((item, index) => {
 						return (
-							<View key={item.port}>
+							<View key={item.delivery_location}>
 								{
 									index == 0
 										?
@@ -167,18 +168,6 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 				<InfoDisplay placeholder={`Validity`} info={`Date: ${data.validity_date == "" ? "-" : data.validity_date}`} />
 				<InfoDisplay placeholder={``} info={`Date: ${data.validity_time == "" ? "-" : data.validity_time}`} />
 
-				{
-					status == "Confirmed"
-						?
-						(
-							<View>
-								<InfoDisplayLink placeholder={`Sales Confirmation No.`} info={data.sales_confirmation_secondary_id} linkOnPress={() => { linkTo(`/sales-confirmation/${data.sales_confirmation_id}/show`) }} />
-								<InfoDisplay placeholder={`Confirmation Date`} info={data.confirmed_date} />
-							</View>
-						)
-						:
-						null
-				}
 
 				{
 					updatedProducts
@@ -224,10 +213,24 @@ const ViewQuotationSummaryScreen = ({ navigation, route }: RootNavigationProps<"
 				<View style={tailwind("border border-neutral-300 mb-5 mt-3")} />
 
 				<InfoDisplay placeholder={`Barging Fee`} info={`${data.barging_fee ? `${convertCurrency(data.currency_rate!)} ${addCommaNumber(data.barging_fee, "-")}${data.barging_remark ? `/${data.barging_remark}` : ""}` : `-`}`} />
+				<InfoDisplay placeholder={`Barging Unit`} info={`${data.barging_unit || "-"}`} />
 				<InfoDisplay placeholder={`Conversion Factor`} info={`${data.conversion_factor || "-"}`} />
 				<InfoDisplay placeholder={`Payment Term`} info={`${data.payment_term || "-"}`} />
 				<InfoDisplay placeholder={`Remarks`} info={`${data.remarks || "-"}`} />
 
+				{
+					status == "Confirmed"
+						?
+						(
+							<View>
+								<InfoDisplayLink placeholder={`Sales Confirmation No.`} info={data.sales_confirmation_secondary_id} linkOnPress={() => { linkTo(`/sales-confirmation/${data.sales_confirmation_id}/show`) }} />
+								<InfoDisplay placeholder={`Confirmation Date`} info={data.confirmed_date} />
+							</View>
+						)
+						:
+						null
+				}
+				
 				{
 					status == REJECTED
 						?

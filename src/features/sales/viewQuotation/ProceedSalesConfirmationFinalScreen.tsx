@@ -27,7 +27,7 @@ import { ACCOUNT_ASSISTANT_ROLE, CONFIRMED, NOT_CONFIRMED, OPERATION_TEAM_ROLE, 
 import Unauthorized from '../../../components/atoms/unauthorized/Unauthorized';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../redux/reducers/Auth';
-import { createJobConfirmation } from '../../../services/JobConfirmationServices';
+import { createJobConfirmation, recreateJobConfirmation } from '../../../services/JobConfirmationServices';
 import { SUBMIT_ACTION, UPDATE_ACTION } from '../../../constants/Action';
 import { addCommaNumber } from '../../../helpers/NumericHelper';
 import { updateSales } from '../../../services/SalesServices';
@@ -74,7 +74,44 @@ const ProceedSalesConfirmationFinalScreen = ({ navigation, route }: RootNavigati
 	const completeProceedSales = (values) => {
 		setLoading(true);
 
-		updateSalesConfirmation(docID, { ...values, status: CONFIRMED }, user!, SUBMIT_ACTION, () => {
+		if (data.job_confirmation_id) {
+
+			recreateJobConfirmation(data.job_confirmation_id, { ...data, ...values }, user!, (displayID) => {
+
+				sendNotifications(
+					[ACCOUNT_ASSISTANT_ROLE, OPERATION_TEAM_ROLE, SUPER_ADMIN_ROLE],
+					`Job confirmation ${displayID} updated by ${user?.name}.`,
+					{ screen: "JobConfirmationSummary", docID: data.job_confirmation_id })
+
+				updateSalesConfirmation(docID, { ...values, status: CONFIRMED }, user!, SUBMIT_ACTION, () => {
+					updateQuotation(data.quotation_id,
+						{ confirmed_date: data.confirmed_date, status: CONFIRMED },
+						user!,
+						UPDATE_ACTION,
+						() => {
+
+							refreshContext?.refreshList(SALES_CONFIRMATIONS);
+							
+
+							loadingDelay(() => {
+								setLoading(false);
+								revalidateCollection(SALES_CONFIRMATIONS);
+								linkTo("/dashboard");
+							});
+
+						}, (error) => {
+							console.error(error);
+						});
+
+
+				}, (error) => {
+					console.error(error);
+				});
+
+			}, (err) => { console.error(err) })
+
+		} else {
+
 			createJobConfirmation({ ...data, ...values }, user!, (val) => {
 				const { id, displayID } = val;
 				sendNotifications(
@@ -82,33 +119,40 @@ const ProceedSalesConfirmationFinalScreen = ({ navigation, route }: RootNavigati
 					`New job confirmation ${displayID} submitted by ${user?.name}.`,
 					{ screen: "JobConfirmationSummary", docID: id })
 
-				updateSales(data.sales_id, { job_id: id }, user, () => {
-					updateQuotation(data.quotation_id,
-						{ sales_confirmation_id: docID, sales_confirmation_secondary_id: data.secondary_id, confirmed_date: data.confirmed_date, job_confirmation_id: id, status: CONFIRMED },
-						user!,
-						UPDATE_ACTION,
-						() => {
-							
-							refreshContext?.refreshList(SALES_CONFIRMATIONS);
+				updateSalesConfirmation(docID, { ...values, status: CONFIRMED, job_confirmation_id: id }, user!, SUBMIT_ACTION, () => {
 
-							loadingDelay(()=>{
-								setLoading(false);
-								revalidateCollection(SALES_CONFIRMATIONS);
-								linkTo("/dashboard");
+					updateSales(data.sales_id, { job_id: id }, user, () => {
+						updateQuotation(data.quotation_id,
+							{ sales_confirmation_id: docID, sales_confirmation_secondary_id: data.secondary_id, confirmed_date: data.confirmed_date, job_confirmation_id: id, status: CONFIRMED },
+							user!,
+							UPDATE_ACTION,
+							() => {
+
+								refreshContext?.refreshList(SALES_CONFIRMATIONS);
+
+								loadingDelay(() => {
+									setLoading(false);
+									revalidateCollection(SALES_CONFIRMATIONS);
+									linkTo("/dashboard");
+								});
+
+							}, (error) => {
+								console.error(error);
 							});
-							
-						}, (error) => {
-							console.error(error);
-						});
+					}, (error) => {
+						console.error(error);
+					})
+
 				}, (error) => {
 					console.error(error);
-				})
+				});
+
 			}, (error) => {
 				console.error(error);
 			});
-		}, (error) => {
-			console.error(error);
-		});
+
+		}
+
 	}
 
 	const onDownload = async () => {
@@ -187,6 +231,7 @@ const ProceedSalesConfirmationFinalScreen = ({ navigation, route }: RootNavigati
 				<InfoDisplay placeholder={`Mode of Delivery`} info={data.delivery_mode || "-"} />
 				<InfoDisplay placeholder={`Currency  Rate`} info={data.currency_rate} />
 				<InfoDisplay placeholder={`Barging Fee`} info={`${data.barging_fee ? `${convertCurrency(data.currency_rate!)} ${addCommaNumber(data.barging_fee, "-")}${data.barging_remark ? `/${data.barging_remark}` : ""}` : `-`}`} />
+				<InfoDisplay placeholder={`Barging Unit`} info={`${data.barging_unit || "-"}`} />
 				<InfoDisplay placeholder={`Conversion Factor`} info={data.conversion_factor || "-"} />
 				<InfoDisplay placeholder={`Payment Term`} info={data.payment_term || "-"} />
 				<InfoDisplay placeholder={`Validity`} info={`Date: ${data.validity_date == "--Select Date--" ? "-" : data.validity_date}, Time: ${data.validity_time}`} />
