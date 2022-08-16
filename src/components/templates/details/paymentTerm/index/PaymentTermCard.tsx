@@ -14,6 +14,7 @@ const PaymentTermCard: React.FC<cardProps> = ({
 }) => {
   const tailwind = useTailwind();
 
+  
   return (
     <TouchableOpacity onPress={navigate}>
       <View
