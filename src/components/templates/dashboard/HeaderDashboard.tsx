@@ -25,7 +25,7 @@ const HeaderDashboard: React.FC<HeaderProps> = ({
     <View style={tailwind("bg-white h-14 flex-row items-center justify-around box-card-shadow rounded-none xl:hidden")}>
       <View style={tailwind("pr-[3.3rem]")}>
         <TouchableOpacity onPress={left.onPress} >
-          <MenuIcon height={55} width={55} />
+          <MenuIcon height={35} width={35} />
         </TouchableOpacity>
       </View>
       <View>

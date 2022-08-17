@@ -84,6 +84,7 @@ const ViewQuotationButtons: React.FC<Props> = ({
 	const tailwind = useTailwind();
 	const user = useSelector(UserSelector);
 	const permissions = user?.permission;
+	
 
 	const refreshContext = useRefreshContext();
 
@@ -520,6 +521,8 @@ const ViewQuotationButtons: React.FC<Props> = ({
 			</View>
 		)
 	}
+
+
 
 	return (
 		<View>

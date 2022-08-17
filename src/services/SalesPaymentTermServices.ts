@@ -43,7 +43,6 @@ export const updatePaymentTermSales = (id: string, existingName: string, data: a
     name
   } = data;
 
-  console.log("here");
 
   if (existingName !== name) {
     salesPaymentTermRef.doc(id)
@@ -53,7 +52,6 @@ export const updatePaymentTermSales = (id: string, existingName: string, data: a
       .then(
         (docRef) => {
           addLog(SALES_PAYMENT_TERMS, id, log_action, user!, () => {
-            console.log("here 2")
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in updateSalesPaymentTerm: ${error}`);

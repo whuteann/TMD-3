@@ -9,7 +9,32 @@ var converter = require('number-to-words');
 export const generateSparesPurchaseOrderPDF = (data: SparesPurchaseOrder, image) => {
   var htmlContent: string = '';
 
-  // Pull data here 
+  var productsList: string = '';
+  // Pull data here
+  data.products.map((item, index) =>{
+    productsList = `
+    ${productsList}
+    <div style="display: flex; flex-direction: row;">
+
+      <div style="width: 5%;"><b>${index + 1}. </b></div>
+      <div style="width: 15%;"><b>${item.product.product_code}</b></div>
+      <div style="width: 35%;"><b>${item.product.product_description}</b></div>
+      <div style="width: 10%;"><b>${item.unit_of_measurement}</b></div>
+      <div style="width: 10%;">
+        <div style="padding-left: 10px;"> 
+        <b>${addCommaNumber(item.quantity, "0")}</b>
+        </div>
+      </div>
+      <div style="width: 15%;">
+        <div style="padding-left: 20px;">  
+          <b>${addCommaNumber(item.unit_price, "0")}</b>
+        </div>
+      </div>
+      <div style="width: 10%;"><b>${addCommaNumber(`${Number(item.quantity) * Number(item.unit_price)}`, "0")}</b></div>
+
+    </div>
+    `
+  })
 
   htmlContent = `
     <!DOCTYPE html>
@@ -130,25 +155,9 @@ export const generateSparesPurchaseOrderPDF = (data: SparesPurchaseOrder, image)
               <div style="padding-left: 10%;">${data.currency_rate}</div>
             </div>
             <div style="border: 1px solid #000000; margin-top: 5px; margin-bottom: 5px;"></div>
-            <div style="display: flex; flex-direction: row;">
+            
+            ${productsList}
 
-              <div style="width: 5%;"><b>1. </b></div>
-              <div style="width: 15%;"><b>${data.product.product_code}</b></div>
-              <div style="width: 35%;"><b>${data.product.product_description}</b></div>
-              <div style="width: 10%;"><b>${data.unit_of_measurement}</b></div>
-              <div style="width: 10%;">
-                <div style="padding-left: 10px;"> 
-                 <b>${addCommaNumber(data.quantity, "0")}</b>
-                </div>
-              </div>
-              <div style="width: 15%;">
-                <div style="padding-left: 20px;">  
-                  <b>${addCommaNumber(data.unit_price, "0")}</b>
-                </div>
-              </div>
-              <div style="width: 10%;"><b>${addCommaNumber(`${Number(data.quantity) * Number(data.unit_price)}`, "0")}</b></div>
-
-            </div>
           </div>
 
           <div style="border: 1px solid #000000; margin-top: 5px; margin-bottom: 5px;"></div>

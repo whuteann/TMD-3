@@ -13,7 +13,7 @@ import Body from '../../../components/atoms/display/Body';
 import { FlatList } from 'react-native';
 import CardSpace from '../../../components/atoms/space/CardSpace';
 import { PaymentTerm } from '../../../types/PaymentTerm';
-import PaymentTermCard from '../../../components/templates/details/paymentTerm/index/paymentTermCard';
+import PaymentTermCard from '../../../components/templates/details/paymentTerm/PaymentTermCard';
 
 const ProcurementPaymentTermListScreen = ({ navigation }: RootNavigationProps<"ProcurementPaymentTermList">) => {
   const [isPaginating, setIsPaginating] = useState<boolean>(false);

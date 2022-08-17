@@ -43,7 +43,6 @@ const ProcurementPaymentTermFormScreen = ({ navigation, route }: RootNavigationP
     setLoading(true);
 
     if (docID) {
-      console.log(values);
       return updatePaymentTermProcurement(docID, payment_term?.name || '', values, user!, UPDATE_ACTION, () => {
         setLoading(false);
         setModalVisible(true);

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Platform, TouchableOpacity, View } from 'react-native';
-import { ArrowDownIcon, DownloadIcon, PreviewIcon } from '../../../../../assets/svg/SVG';
+import { ArrowDownIcon, CreateIcon, DownloadIcon, PreviewIcon } from '../../../../../assets/svg/SVG';
 import ViewTabDropdown from '../../../molecules/buttons/ViewTabDropdown';
 import { useTailwind } from 'tailwind-rn/dist';
 import TextLabel from '../../../atoms/typography/TextLabel';
+import { REQUESTING } from '../../../../types/Common';
 
 interface inputProps {
   id: string,
@@ -20,16 +21,26 @@ const ViewTabProcurement: React.FC<inputProps> = ({
   const tailwind = useTailwind();
   const [dropdown, setDropdown] = useState(false);
 
-  let dropdowns;
+  let dropdowns = <></>;
 
   let route = "ViewProcurementSummary";
   let path = () => { setDropdown(!dropdown) };
 
-  dropdowns = (
-    <View>
-      <ViewTabDropdown icon={<PreviewIcon height={25} width={25} />} text="Preview Procurement" setDropdown={path} navigation={() => { navigation.navigate(route, { docID: nav_id }) }} />
-    </View>
-  )
+  if (status == REQUESTING) {
+    dropdowns = (
+      <View>
+        <ViewTabDropdown icon={<PreviewIcon height={25} width={25} />} text="Preview Procurement" setDropdown={path} navigation={() => { navigation.navigate(route, { docID: nav_id }) }} />
+        <ViewTabDropdown icon={<CreateIcon height={24} width={24} />} text="Edit Procurement" setDropdown={path} navigation={() => { navigation.navigate("EditProcurement", { docID: nav_id }) }} />
+      </View>
+    )
+  } else {
+    dropdowns = (
+      <View>
+        <ViewTabDropdown icon={<PreviewIcon height={25} width={25} />} text="Preview Procurement" setDropdown={path} navigation={() => { navigation.navigate(route, { docID: nav_id }) }} />
+      </View>
+    )
+  }
+
 
   return (
     <TouchableOpacity onPress={path}>

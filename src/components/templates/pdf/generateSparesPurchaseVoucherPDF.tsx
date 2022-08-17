@@ -1,5 +1,4 @@
 import { convertCurrencyText } from "../../../constants/Currency";
-import { pickBetween } from "../../../helpers/GenericHelper";
 import { addCommaNumber } from "../../../helpers/NumericHelper";
 import { SparesPurchaseVoucher } from "../../../types/SparesPurchaseVoucher";
 import { CSSStyles } from "./CSS"
@@ -8,6 +7,46 @@ var converter = require('number-to-words');
 
 export const generateSparesPurchaseVoucherPDF = (data: SparesPurchaseVoucher, image) => {
 
+  let productList: string = "";
+
+  data.products.map((item, index) => {
+
+    if (index == 0) {
+      productList = `
+      <div style="display: flex; flex-direction: row; margin-top: 10px;  width: 100%;">
+        <div style="display: flex; flex-direction: row; width: 33.3333333%;">
+          <div style=" width: 30%">${data.supplier.account_no || "-"}</div>
+          <div style="width: 70%;">${data.supplier.name}</div>
+        </div>
+        <div style="width: 33.3333333%;">
+          <div style="padding-left: 10%;">
+            ${data.products[index].product.product_description}
+          </div>
+        </div>
+        <div style="width: 33.3333333%; ">
+          <div style="padding-left: 10%;">
+            ${addCommaNumber(data.paid_amount, "0")}
+          </div>
+        </div>
+      </div>
+      `
+    } else {
+      productList = `
+      ${productList}
+      <div style="display: flex; flex-direction: row; margin-top: 10px;  width: 100%;">
+        <div style="display: flex; flex-direction: row; width: 33.3333333%;">
+        </div>
+        <div style="width: 33.3333333%;">
+          <div style="padding-left: 10%;">
+            ${data.products[index].product.product_description}
+          </div>
+        </div>
+        <div style="width: 33.3333333%; ">
+        </div>
+      </div>
+    `
+    }
+  })
 
   var htmlContent = `
   <!DOCTYPE html>
@@ -74,22 +113,8 @@ export const generateSparesPurchaseVoucherPDF = (data: SparesPurchaseVoucher, im
               <div style="padding-left: 10%;">Amount(RM)</div>
             </div>
           </div>
-          <div style="display: flex; flex-direction: row; margin-top: 10px;  width: 100%;">
-            <div style="display: flex; flex-direction: row; width: 33.3333333%;">
-            <div style=" width: 30%">${data.supplier.account_no || "-"}</div>
-              <div style="width: 70%;">${data.supplier.name}</div>
-            </div>
-            <div style="width: 33.3333333%;">
-              <div style="padding-left: 10%;">
-                ${data.product.product_description}
-              </div>
-            </div>
-            <div style="width: 33.3333333%; ">
-              <div style="padding-left: 10%;">
-                ${addCommaNumber(data.paid_amount, "0")}
-              </div>
-            </div>
-          </div>
+          
+          ${productList}
 
           <div style="display: flex; flex-direction: row; margin-top: 25px; width: 85%;">
             <div style="width: 30%; border: 1px solid #000000; border-left: none">

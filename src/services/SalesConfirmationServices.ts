@@ -80,7 +80,6 @@ export const recreateSalesConfirmation = (docID: string | undefined, quotation: 
   delete quotation['products'];
   delete quotation['prices'];
 
-  console.log(products);
 
   let sales_confirmation =
   {

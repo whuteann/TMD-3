@@ -64,7 +64,6 @@ const ViewSparesPurchaseVoucherButtons: React.FC<Props> = ({
 
 						products.map((product, index) => {
 							updateShipSpare(product.id, product.product_code, { product_code: product.product_code, ref_price: unit_prices[index] }, user!, UPDATE_ACTION, () => {
-								console.log("done");
 							}, (error) => {
 								console.error(error);
 							});

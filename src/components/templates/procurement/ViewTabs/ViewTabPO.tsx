@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Platform, TouchableOpacity, View } from 'react-native';
-import { ArrowDownIcon, DownloadIcon, PreviewIcon, PVIcon } from '../../../../../assets/svg/SVG';
+import { ArrowDownIcon, CreateIcon, DownloadIcon, PreviewIcon, PVIcon } from '../../../../../assets/svg/SVG';
 import ViewTabDropdown from '../../../molecules/buttons/ViewTabDropdown';
 import { useTailwind } from 'tailwind-rn/dist';
 import TextLabel from '../../../atoms/typography/TextLabel';
@@ -9,7 +9,7 @@ import { createAndDisplayPDF, loadPDFLogo } from '../../../../functions/PDFv2Fun
 import { generatePurchaseOrderPDF } from '../../pdf/generatePurchaseOrderPDF';
 import { useSelector } from 'react-redux';
 import { UserSelector } from '../../../../redux/reducers/Auth';
-import { EDIT_DRAFT } from '../../../../permissions/Permissions';
+import { CREATE_PURCHASE_VOUCHER, EDIT_DRAFT } from '../../../../permissions/Permissions';
 
 interface inputProps {
   id: string,
@@ -30,6 +30,8 @@ const ViewTabPO: React.FC<inputProps> = ({
   const tailwind = useTailwind();
   const user = useSelector(UserSelector);
   const role = user?.role;
+  const permissions = user?.permission;
+  
   const onDownload = async () => {
     let image = await loadPDFLogo();
     let html = generatePurchaseOrderPDF(data, image);
@@ -37,6 +39,7 @@ const ViewTabPO: React.FC<inputProps> = ({
   }
 
   let dropdowns;
+
 
   let route = "ViewPurchaseOrderSummary";
   let path = () => { setDropdown(!dropdown) };
@@ -75,18 +78,27 @@ const ViewTabPO: React.FC<inputProps> = ({
         }
       </View>
     )
-  } else {
+  } else if (status == NO_PURCHASE_VOUCHER) {
     dropdowns = (
       <View>
         <ViewTabDropdown icon={<PreviewIcon height={25} width={25} />} text="Preview Purchase Order" setDropdown={path} navigation={() => { navigation.navigate(route, { docID: nav_id }) }} />
+        <ViewTabDropdown icon={<CreateIcon height={24} width={24} />} text="Edit Purchase Order" setDropdown={path} navigation={() => { navigation.navigate("EditPurchaseOrderForm", { docID: nav_id }) }} />
         <ViewTabDropdown icon={<DownloadIcon height={25} width={25} />} text="Download Purchase Order" setDropdown={path} navigation={() => { onDownload() }} />
         {
-          (role == "Account Assistant" || role == "Head of Finance & Accounts" || role == "Super Admin") && status == NO_PURCHASE_VOUCHER
+          permissions?.includes(CREATE_PURCHASE_VOUCHER)
             ?
             <ViewTabDropdown icon={<PVIcon height={25} width={25} />} text="Create Purchase Voucher" setDropdown={path} navigation={() => { navigation.navigate("CreatePurchaseVoucherForm", { docID: nav_id }) }} />
             :
             null
         }
+      </View>
+    )
+
+  } else {
+    dropdowns = (
+      <View>
+        <ViewTabDropdown icon={<PreviewIcon height={25} width={25} />} text="Preview Purchase Order" setDropdown={path} navigation={() => { navigation.navigate(route, { docID: nav_id }) }} />
+        <ViewTabDropdown icon={<DownloadIcon height={25} width={25} />} text="Download Purchase Order" setDropdown={path} navigation={() => { onDownload() }} />
       </View>
     )
   }

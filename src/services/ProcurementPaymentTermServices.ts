@@ -43,8 +43,6 @@ export const updatePaymentTermProcurement = (id: string, existingName: string, d
     name
   } = data;
 
-  console.log("here");
-
   if (existingName !== name) {
     procurementPaymentTermRef.doc(id)
       .update({
@@ -53,7 +51,6 @@ export const updatePaymentTermProcurement = (id: string, existingName: string, d
       .then(
         (docRef) => {
           addLog(PROCUREMENT_PAYMENT_TERMS, id, log_action, user!, () => {
-            console.log("here 2")
             onSuccess();
           }, (error) => {
             onError(`Something went wrong in updateProcurementPaymentTerm: ${error}`);

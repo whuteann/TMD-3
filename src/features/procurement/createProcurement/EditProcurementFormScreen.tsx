@@ -121,9 +121,6 @@ const EditProcurementFormScreen = ({ navigation, route }: RootNavigationProps<"E
   revisedCode = data.revised_code !== undefined ? Number(data.revised_code) + 1 : 1;
   displayID = `${data.secondary_id}${REVISED_CODE(revisedCode)}`;
 
-  console.log(revisedCode);
-  console.log(displayID);
-
   return (
     <Body header={<HeaderStack title={"Edit Procurement"} navigateProp={navigation} />} style={tailwind("mt-6")}>
 

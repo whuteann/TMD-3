@@ -707,7 +707,6 @@ const ViewSparesPurchaseOrderButtons: React.FC<Props> = ({
 									<View>
 										<RegularButton type={invFile || invUploaded ? "secondary" : "disabled"} text="Create Purchase Voucher" operation={() => {
 											if (invFile && invNo) {
-												console.log("hit");
 												navigation.navigate("CreateSparesPurchaseVoucherForm", { docID: nav_id })
 											} else {
 												if (!invFileNo && !invNo) {

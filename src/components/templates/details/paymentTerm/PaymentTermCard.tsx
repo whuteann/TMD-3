@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import { ArrowRightIcon } from '../../../../../../assets/svg/SVG';
 import { useTailwind } from 'tailwind-rn/dist';
-import TextLabel from '../../../../atoms/typography/TextLabel';
+import { ArrowRightIcon } from '../../../../../assets/svg/SVG';
+import TextLabel from '../../../atoms/typography/TextLabel';
 
 interface cardProps {
   title: string,
@@ -14,7 +14,6 @@ const PaymentTermCard: React.FC<cardProps> = ({
 }) => {
   const tailwind = useTailwind();
 
-  
   return (
     <TouchableOpacity onPress={navigate}>
       <View

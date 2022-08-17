@@ -1,9 +1,9 @@
 import { revalidateCollection, useCollection } from "@nandorojo/swr-firestore";
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { Image, Platform, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
 import { useTailwind } from "tailwind-rn/dist";
-import { BellIcon } from "../../../../../assets/svg/SVG";
+import { BellButtonIcon, BellIcon } from "../../../../../assets/svg/SVG";
 import { NOTIFICATIONS, USERS } from "../../../../constants/Firebase";
 import { userRef } from "../../../../functions/Firebase";
 import { UserSelector } from "../../../../redux/reducers/Auth";
@@ -32,8 +32,8 @@ const getReadNotifications = async (userID: string,) => {
 
       const sortedList = list.sort((a, b) => {
         return b.created_at - a.created_at;
-    });
-    
+      });
+
       return sortedList;
     })
 
@@ -50,6 +50,7 @@ const NotificationButton: React.FC<ButtonProps> = ({
   let count = (<></>);
   let notifications_count: number | undefined = 0;
   let notifications: Array<Notification> = [] as Array<Notification>;
+  let notifications_exist: boolean = false;
 
   const { data: notifications_not_read } = useCollection<Notification>(`${USERS}/${user?.id}/${NOTIFICATIONS}`, {
     ignoreFirestoreDocumentSnapshotField: false,
@@ -92,14 +93,7 @@ const NotificationButton: React.FC<ButtonProps> = ({
         </View>
       )
     } else {
-      count = (
-        <View style={tailwind("rounded-full bg-red-500 z-30 w-[23px] h-[23px] absolute top-[5px] left-[17px]")}>
-          <TextLabel
-            content={`${notifications_count}`}
-            style={tailwind(`text-white absolute bottom-[-3.5px] ${notifications_count > 9 ? (notifications_count < 20 ? "left-[5px]" : "left-[3.6px]") : "left-[7.5px]"} ${notifications_count == 1 ? "left-[9px]" : ""}`)}
-          />
-        </View>
-      )
+      notifications_exist = true;
     }
   }
 
@@ -111,8 +105,36 @@ const NotificationButton: React.FC<ButtonProps> = ({
           revalidateCollection(`${USERS}/${user?.id}/${NOTIFICATIONS}`);
         }
       }}>
-        {count}
-        <BellIcon height={40} width={40} />
+        {
+          Platform.OS == "web"
+            ?
+            <View>
+              {
+                notifications_exist
+                  ?
+                  <View style={tailwind("rounded-full bg-red-500 z-30 w-[11px] h-[11px] absolute top-[2px] left-[22px]")} />
+                  :
+                  <></>
+              }
+              <BellButtonIcon height={35} width={35} />
+            </View>
+            :
+            <View>
+              {
+                notifications_exist
+                  ?
+                  <View style={tailwind("rounded-full bg-red-500 z-30 w-[8px] h-[8px] absolute left-[14px]")} />
+                  :
+                  <></>
+              }
+              <Image
+                source={require("../../../../../assets/icons/BellButton.png")}
+                //  source={require("../../../assets/images/catto.jpg")} 
+                style={{ height: 23, width: 20 }}
+              />
+            </View>
+        }
+
       </TouchableOpacity>
 
       <NotificationModal visible={visible} onClose={() => { setVisible(false) }} notifications={notifications} read_count={notifications_count || 0} navigation={navigation} />

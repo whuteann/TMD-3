@@ -17,6 +17,7 @@ import { addNotificationReceivedListener, addNotificationResponseReceivedListene
 import { NOTIFICATIONS, USERS } from '../../constants/Firebase';
 import { revalidateCollection, useDocument } from '@nandorojo/swr-firestore';
 import { User } from '../../types/User';
+import { BellButtonIcon } from '../../../assets/svg/SVG';
 
 
 const Dashboard = ({ navigation, route }: DrawerNavigationProps<"Dashboard">) => {
@@ -104,6 +105,7 @@ const Dashboard = ({ navigation, route }: DrawerNavigationProps<"Dashboard">) =>
                 </View>}
             />
           </View> */}
+
           <View style={tailwind("flex-col lg:flex-row items-start mt-7 justify-between flex-1")}>
             <View style={tailwind("w-full lg:w-1/2 lg:pr-10 order-2 lg:order-1")}>
               <MenuSection title="Sales Related:" tabs={sales(permissions)} navigateProp={navigation} />
