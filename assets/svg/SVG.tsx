@@ -1100,3 +1100,18 @@ export const UploadIcon = ({ width, height }: IconProps) => {
     </Svg>
   )
 }
+
+export const BellButtonIcon = ({ width, height }: IconProps) => {
+  return (
+    <Svg
+      width={width}
+      height={height}
+      viewBox="0 0 14 16"
+    >
+      <Path
+        d="M7 16a2 2 0 002-2H5a2 2 0 002 2zm6.731-4.678C13.127 10.673 12 9.7 12 6.5a4.935 4.935 0 00-4-4.849V1a1 1 0 10-2 0v.651A4.935 4.935 0 002 6.5C2 9.7.873 10.673.269 11.322A.976.976 0 000 12a1 1 0 001 1h12a1 1 0 001-1 .976.976 0 00-.269-.678z"
+        data-name="Icon awesome-bell"
+      ></Path>
+    </Svg>
+  )
+}

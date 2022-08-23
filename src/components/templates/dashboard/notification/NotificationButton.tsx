@@ -8,7 +8,6 @@ import { NOTIFICATIONS, USERS } from "../../../../constants/Firebase";
 import { userRef } from "../../../../functions/Firebase";
 import { UserSelector } from "../../../../redux/reducers/Auth";
 import { Notification } from "../../../../types/Notification";
-import TextLabel from "../../../atoms/typography/TextLabel";
 import NotificationModal from "./NotificationModal";
 
 interface ButtonProps {
@@ -47,7 +46,7 @@ const NotificationButton: React.FC<ButtonProps> = ({
   const user = useSelector(UserSelector);
   const [visible, setVisible] = useState(false);
   const [notifications_read, setNotifications_read] = useState<Array<any>>([]);
-  let count = (<></>);
+
   let notifications_count: number | undefined = 0;
   let notifications: Array<Notification> = [] as Array<Notification>;
   let notifications_exist: boolean = false;
@@ -82,20 +81,12 @@ const NotificationButton: React.FC<ButtonProps> = ({
 
   notifications_count = notifications_not_read?.length;
 
-  if (notifications_count) {
-    if (notifications_count > 99) {
-      count = (
-        <View style={tailwind("rounded-full bg-red-500 z-30 w-[23px] h-[23px] absolute top-[5px] left-[17px]")}>
-          <TextLabel
-            content="99+"
-            style={tailwind(`text-white text-12px w-[30px] absolute bottom-[-2px]`)}
-          />
-        </View>
-      )
-    } else {
-      notifications_exist = true;
-    }
+  if (notifications_count == 0) {
+    notifications_exist = false;
+  }else{
+    notifications_exist = true;
   }
+
 
   return (
     <View>

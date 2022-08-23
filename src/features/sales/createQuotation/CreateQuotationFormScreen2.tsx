@@ -93,7 +93,9 @@ const CreateQuotationFormScreen2 = ({ navigation, route }: RootNavigationProps<"
 
   const { data: payment_terms } = useCollection<PaymentTerm>(`${SALES_PAYMENT_TERMS}`, {
     ignoreFirestoreDocumentSnapshotField: false,
-    where: ["deleted", "==", false]
+    where: ["deleted", "==", false],
+    parseDates: ["created_at"],
+    orderBy: ["created_at", "asc"],
   })
 
   if (!data || !bunkers || !payment_terms) return <LoadingData message="This document might not exist" />;

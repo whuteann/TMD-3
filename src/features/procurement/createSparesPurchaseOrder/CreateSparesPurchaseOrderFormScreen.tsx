@@ -73,7 +73,9 @@ const CreateSparesPurchaseOrderFormScreen = ({ navigation, route }: RootNavigati
 
   const { data: payment_terms } = useCollection<PaymentTerm>(`${PROCUREMENT_PAYMENT_TERMS}`, {
     ignoreFirestoreDocumentSnapshotField: false,
-    where: ["deleted", "==", false]
+    where: ["deleted", "==", false],
+    parseDates: ["created_at"],
+    orderBy: ["created_at", "asc"],
   })
 
   if (!data || !payment_terms) return <LoadingData message="This document might not exist" />;

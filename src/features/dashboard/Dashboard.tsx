@@ -17,7 +17,6 @@ import { addNotificationReceivedListener, addNotificationResponseReceivedListene
 import { NOTIFICATIONS, USERS } from '../../constants/Firebase';
 import { revalidateCollection, useDocument } from '@nandorojo/swr-firestore';
 import { User } from '../../types/User';
-import { BellButtonIcon } from '../../../assets/svg/SVG';
 
 
 const Dashboard = ({ navigation, route }: DrawerNavigationProps<"Dashboard">) => {
